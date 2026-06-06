@@ -1,0 +1,214 @@
+{
+  "main": {
+    "id": "f7585b347c34029c",
+    "type": "split",
+    "children": [
+      {
+        "id": "c584460dba0a683a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "969ffdee0a60b653",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Stand Up/2026-06-06.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-06-06"
+            }
+          },
+          {
+            "id": "221d6c46825375a1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Stand Up/2026-06-06.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-06-06"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ff8121f35094ba97",
+    "type": "split",
+    "children": [
+      {
+        "id": "6b0e9b7d237e6a4e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "15977192b7b4a9c2",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "eda38fc68ff8ca65",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "44423e85ae493b00",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "69713d3226b929b2",
+    "type": "split",
+    "children": [
+      {
+        "id": "be92b0dd6b8442b8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ed1af5f91f31387f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Stand Up/2026-06-06.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "2026-06-06 的反向链接列表"
+            }
+          },
+          {
+            "id": "82cfab25d9abdd7c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Stand Up/2026-06-06.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "2026-06-06 的出链列表"
+            }
+          },
+          {
+            "id": "1d61d37a98be105d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "402932682f3055ed",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "b3183b7ce6cf88e8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Stand Up/2026-06-06.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "2026-06-06 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "221d6c46825375a1",
+  "lastOpenFiles": [
+    "Stand Up/2026-06-06.md.tmp.22152.c15fc263a91b",
+    "Stand Up/2026-06-06.md.tmp.22152.6ce71f52f9cf",
+    "Readme.md",
+    "Readme.md.tmp.22152.548ff28c6045",
+    "Stand Up/2026-06-06.md",
+    "Readme.md.tmp.22152.aff8ac6a5786",
+    "欢迎.md",
+    "Stand Up",
+    "代办",
+    "想法池"
+  ]
+}
