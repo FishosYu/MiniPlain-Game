@@ -999,7 +999,7 @@
       }
 
     if (player.breaks >= 20 && player.breaks % 20 === 0) {
-      addLog('🌙 天黑了……只能看见周围8格');
+      addLog('🌙 天黑了……只能看见周围4格');
     }
     if (player.breaks >= 25 && player.breaks % 20 === 5) {
       addLog('☀️ 天亮了');
@@ -2293,7 +2293,7 @@
       <span>❤️ ${player.stamina}/${STAMINA_MAX}</span>
       <span>⭐ Lv.${player.level} (${player.exp}/${expToNext()})</span>
       <span>⛏️ 凿石 ${player.breaks}</span>
-      <span class="${isNight() ? 'tag-night' : ''}">${isNight() ? '🌙 夜间(周围8格视野，🔥照亮3格)' : '☀️ 白天'} · 周期 ${cyclePos}/20</span>
+      <span class="${isNight() ? 'tag-night' : ''}">${isNight() ? '🌙 夜间(周围4格视野，🔥照亮3格)' : '☀️ 白天'} · 周期 ${cyclePos}/20</span>
     `;
     renderInv();
     renderChest();
