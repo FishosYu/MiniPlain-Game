@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://bw3sxfo73hmwo"]
+
+[ext_resource type="Texture2D" uid="uid://baebuq0rq6lbf" path="res://normal test/new_canvas_texture.tres" id="1_8y735"]
+[ext_resource type="Texture2D" uid="uid://nl51xcxvd4uc" path="res://normal test/light.jpg" id="2_m5uc0"]
+
+[node name="Node2D" type="Node2D" unique_id=9106286]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=696833021]
+color = Color(0.40483505, 0.4362766, 0.45193166, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=527787241]
+position = Vector2(28, 53)
+texture = ExtResource("1_8y735")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1389249958]
+position = Vector2(9, 42)
+color = Color(0.73375803, 0.61096436, 0.4610392, 1)
+texture = ExtResource("2_m5uc0")
+texture_scale = 0.1
+height = 50.0
+
+[node name="PointLight2D2" type="PointLight2D" parent="." unique_id=1632104375]
+position = Vector2(-20, 32)
+color = Color(0.73375803, 0.61096436, 0.4610392, 1)
+energy = 0.21
+texture = ExtResource("2_m5uc0")
+texture_scale = 0.1
+
+[node name="PointLight2D3" type="PointLight2D" parent="." unique_id=749417926]
+position = Vector2(98, 49)
+color = Color(0.5960384, 0.6344935, 0.7242403, 1)
+energy = 0.25
+texture = ExtResource("2_m5uc0")
+texture_scale = 0.82
+height = 172.0
