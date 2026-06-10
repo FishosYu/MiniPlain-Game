@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://dxapkxijfkibg"]
+
+[ext_resource type="PackedScene" uid="uid://b0j26wc1n8no7" path="res://node_3d.tscn" id="1_scene"]
+[ext_resource type="Material" uid="uid://bi7v4eo36tmy1" path="res://assets/shaders/camera_mapping/camera_mapped_pixel_pbr.tres" id="2_material"]
+[ext_resource type="Script" uid="uid://dvwjifh45vdhj" path="res://assets/shaders/camera_mapping/camera_mapping_controller.gd" id="3_controller"]
+[ext_resource type="Script" uid="uid://dv1crwul66luq" path="res://assets/shaders/camera_mapping/test/light_direction_controller.gd" id="4_light_controller"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.025, 0.03, 0.04, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.46, 0.52, 1)
+ambient_light_energy = 0.35
+reflected_light_source = 1
+ssao_enabled = true
+ssao_radius = 1.5
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributes_test"]
+
+[node name="CameraMappingTest" type="Node3D" unique_id=834966809]
+
+[node name="EnvironmentMesh" parent="." unique_id=914147847 instance=ExtResource("1_scene")]
+transform = Transform3D(0.99990356, -0.010150674, 0.009471056, 0.010204369, 0.999932, -0.005638041, -0.009413198, 0.00573414, 0.9999394, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1347642520]
+environment = SubResource("Environment_test")
+camera_attributes = SubResource("CameraAttributes_test")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1450183240]
+transform = Transform3D(0.7373748, -0.33019853, -0.58927715, 0.5920126, 0.7359902, 0.32838923, 0.32526863, -0.5910053, 0.7381823, 0, 0, 0)
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 0.7
+shadow_enabled = true
+shadow_blur = 0.0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=68569714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.5, 3.5)
+light_color = Color(0.8141618, 0.7692337, 0.7028606, 1)
+light_energy = 4.0
+shadow_enabled = true
+shadow_blur = 0.0
+omni_range = 10.0
+
+[node name="LightPositions" type="Node3D" parent="." unique_id=1236868298]
+
+[node name="Left" type="Marker3D" parent="LightPositions" unique_id=1114299946]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3, 0)
+
+[node name="Right" type="Marker3D" parent="LightPositions" unique_id=1173051767]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 3, 0)
+
+[node name="Up" type="Marker3D" parent="LightPositions" unique_id=809525831]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+
+[node name="Down" type="Marker3D" parent="LightPositions" unique_id=712295239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="CameraMappingController" type="Node" parent="." unique_id=2136325369 node_paths=PackedStringArray("camera", "receiver_root")]
+script = ExtResource("3_controller")
+camera = NodePath("../EnvironmentMesh/Camera")
+material = ExtResource("2_material")
+receiver_root = NodePath("../EnvironmentMesh")
+
+[node name="LightDirectionController" type="Node" parent="." unique_id=1913575916 node_paths=PackedStringArray("camera", "omni_light", "directional_light", "status_label")]
+script = ExtResource("4_light_controller")
+camera = NodePath("../EnvironmentMesh/Camera")
+omni_light = NodePath("../OmniLight3D")
+directional_light = NodePath("../DirectionalLight3D")
+status_label = NodePath("../HUD/PanelContainer/MarginContainer/Status")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1026760427]
+
+[node name="PanelContainer" type="PanelContainer" parent="HUD" unique_id=336298810]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 334.0
+offset_bottom = 28.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/PanelContainer" unique_id=368757947]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 3
+
+[node name="Status" type="Label" parent="HUD/PanelContainer/MarginContainer" unique_id=1254572521]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "[1] Omni  [2] Directional | OmniLight | Hard shadows | Step 1 px"

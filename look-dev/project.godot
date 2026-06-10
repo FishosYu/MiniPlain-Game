@@ -11,8 +11,17 @@ config_version=5
 [application]
 
 config/name="LookDev"
+run/main_scene="res://assets/shaders/camera_mapping/test/camera_mapping_test.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display/window]
+
+size/viewport_width=340
+size/viewport_height=180
+size/window_width_override=1360
+size/window_height_override=720
+stretch/mode="viewport"
 
 [physics]
 
@@ -21,4 +30,9 @@ config/icon="res://icon.svg"
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+anti_aliasing/quality/msaa_3d=0
+anti_aliasing/quality/screen_space_aa=0
+anti_aliasing/quality/use_taa=false
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
 rendering_device/driver.windows="d3d12"
