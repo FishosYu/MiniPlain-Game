@@ -20,7 +20,7 @@ ssao_radius = 1.5
 [node name="CameraMappingTest" type="Node3D" unique_id=834966809]
 
 [node name="EnvironmentMesh" parent="." unique_id=914147847 instance=ExtResource("1_scene")]
-transform = Transform3D(0.99990356, -0.010150674, 0.009471056, 0.010204369, 0.999932, -0.005638041, -0.009413198, 0.00573414, 0.9999394, 0, 0, 0)
+transform = Transform3D(0.99990356, -0.010150674, 0.009471056, 0.010204369, 0.999932, -0.005638041, -0.009413198, 0.00573414, 0.9999394, 0.01965475, -0.021681786, 0.1282773)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1347642520]
 environment = SubResource("Environment_test")
