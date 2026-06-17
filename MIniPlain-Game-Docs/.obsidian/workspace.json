@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "GameDocs/美术音乐资产需求.md",
+                "file": "想法池/清单.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "美术音乐资产需求"
+              "title": "清单"
             }
           }
         ],
@@ -200,13 +200,15 @@
   },
   "active": "221d6c46825375a1",
   "lastOpenFiles": [
-    "Stand Up/2026-06-08.md",
-    "GameDocs/index.html 代码结构与架构说明.md",
-    "GameDocs/index.html 代码结构与架构说明.md.tmp.42112.364ddacb5228",
-    "README.md",
+    "GameDocs/配方与烹饪系统/配方详细.md",
+    "GameDocs/配方与烹饪系统/烹饪详细.md",
     "GameDocs/美术音乐资产需求.md",
     "GameDocs/游戏玩法流程.md",
+    "GameDocs/index.html 代码结构与架构说明.md",
     "想法池/清单.md",
+    "Stand Up/2026-06-08.md",
+    "GameDocs/index.html 代码结构与架构说明.md.tmp.42112.364ddacb5228",
+    "README.md",
     "想法池/未命名",
     "Stand Up/2026-06-06.md",
     "Stand Up/2026-06-06.md.tmp.22152.c15fc263a91b",

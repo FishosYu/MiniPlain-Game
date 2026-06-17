@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1yapuxksdmvq"
-path="res://.godot/imported/albedo.png-c9d8621d540d17e03de66df5434d357e.ctex"
+uid="uid://ckpw3j5e1s7al"
+path="res://.godot/imported/scene_normal.png-86ad7ec829e94ae7ffa6cbb4aa73285a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://normal test/albedo.png"
-dest_files=["res://.godot/imported/albedo.png-c9d8621d540d17e03de66df5434d357e.ctex"]
+source_file="res://DIG/normal test/scene_normal.png"
+dest_files=["res://.godot/imported/scene_normal.png-86ad7ec829e94ae7ffa6cbb4aa73285a.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

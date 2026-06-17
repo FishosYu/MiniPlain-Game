@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckpw3j5e1s7al"
-path="res://.godot/imported/scene_normal.png-2af64d6c2ab7e304c29f2f4212c4af02.ctex"
+uid="uid://nl51xcxvd4uc"
+path="res://.godot/imported/light.jpg-9de5cf2d5c0685b305f88856ed0abe78.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://normal test/scene_normal.png"
-dest_files=["res://.godot/imported/scene_normal.png-2af64d6c2ab7e304c29f2f4212c4af02.ctex"]
+source_file="res://DIG/normal test/light.jpg"
+dest_files=["res://.godot/imported/light.jpg-9de5cf2d5c0685b305f88856ed0abe78.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

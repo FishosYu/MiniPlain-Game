@@ -1,0 +1,269 @@
+[gd_scene format=3 uid="uid://c54mgpvuudw7v"]
+
+[ext_resource type="Script" uid="uid://iie574xulaii" path="res://DIG/procedural_damage/CrackDebugViewer.gd" id="1_viewer"]
+[ext_resource type="Texture2D" uid="uid://c1yapuxksdmvq" path="res://DIG/normal test/albedo.png" id="2_albedo"]
+[ext_resource type="Texture2D" uid="uid://b8wykqpbl1wt8" path="res://DIG/normal test/normal.png" id="3_normal"]
+[ext_resource type="Texture2D" uid="uid://nl51xcxvd4uc" path="res://DIG/normal test/light.jpg" id="4_light"]
+[ext_resource type="Resource" path="res://DIG/procedural_damage/default_crack_damage_config.tres" id="5_config"]
+[ext_resource type="Texture2D" uid="uid://baebuq0rq6lbf" path="res://DIG/normal test/new_canvas_texture.tres" id="5_rh84x"]
+
+[node name="CrackDamageDebug" type="Node2D" unique_id=601237099]
+script = ExtResource("1_viewer")
+albedo_texture = ExtResource("2_albedo")
+normal_texture = ExtResource("3_normal")
+config = ExtResource("5_config")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1123709360]
+color = Color(0.404835, 0.436277, 0.451932, 1)
+
+[node name="OreSprite" type="Sprite2D" parent="." unique_id=1834096865]
+position = Vector2(54, 42)
+scale = Vector2(3, 3)
+texture = ExtResource("5_rh84x")
+
+[node name="MaskTitleLabel" type="Label" parent="." unique_id=1354894631]
+offset_left = 158.0
+offset_top = 8.0
+offset_right = 338.0
+offset_bottom = 21.0
+theme_override_font_sizes/font_size = 9
+text = "Masks"
+
+[node name="CrackMaskLabel" type="Label" parent="." unique_id=532219420]
+offset_left = 158.0
+offset_top = 24.0
+offset_right = 208.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 8
+text = "crack"
+horizontal_alignment = 1
+
+[node name="DamageMaskLabel" type="Label" parent="." unique_id=1454298373]
+offset_left = 220.0
+offset_top = 24.0
+offset_right = 270.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 8
+text = "damage"
+horizontal_alignment = 1
+
+[node name="CombinedMaskLabel" type="Label" parent="." unique_id=788823478]
+offset_left = 282.0
+offset_top = 24.0
+offset_right = 336.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 8
+text = "combined"
+horizontal_alignment = 1
+
+[node name="CrackMaskSprite" type="Sprite2D" parent="." unique_id=872040846]
+z_index = 10
+position = Vector2(183, 65)
+scale = Vector2(1.5, 1.5)
+
+[node name="DamageMaskSprite" type="Sprite2D" parent="." unique_id=1115265811]
+z_index = 10
+position = Vector2(245, 65)
+scale = Vector2(1.5, 1.5)
+
+[node name="CombinedMaskSprite" type="Sprite2D" parent="." unique_id=1079311782]
+z_index = 10
+position = Vector2(309, 65)
+scale = Vector2(1.5, 1.5)
+
+[node name="KeyLight" type="PointLight2D" parent="." unique_id=160546943]
+position = Vector2(20, 53)
+color = Color(0.733758, 0.610964, 0.461039, 1)
+energy = 1.15
+texture = ExtResource("4_light")
+texture_scale = 0.22
+height = 50.0
+
+[node name="FillLight" type="PointLight2D" parent="." unique_id=462795589]
+position = Vector2(111, 97)
+color = Color(0.596038, 0.634494, 0.72424, 1)
+energy = 0.35
+texture = ExtResource("4_light")
+texture_scale = 0.2
+height = 120.0
+
+[node name="DamageSlider" type="HSlider" parent="." unique_id=1691234733]
+offset_left = 10.0
+offset_top = 252.0
+offset_right = 326.0
+offset_bottom = 268.0
+max_value = 1.0
+step = 0.01
+
+[node name="SeedLabel" type="Label" parent="." unique_id=1558447667]
+offset_left = 11.0
+offset_top = 209.0
+offset_right = 47.0
+offset_bottom = 222.0
+theme_override_font_sizes/font_size = 8
+text = "seed"
+
+[node name="SeedSpinBox" type="SpinBox" parent="." unique_id=701799411]
+offset_left = 49.0
+offset_top = 202.0
+offset_right = 135.5
+offset_bottom = 233.0
+max_value = 999999.0
+value = 12345.0
+select_all_on_focus = true
+
+[node name="MainCountLabel" type="Label" parent="." unique_id=1718278911]
+offset_left = 292.0
+offset_top = 206.0
+offset_right = 332.0
+offset_bottom = 219.0
+theme_override_font_sizes/font_size = 8
+text = "cores"
+
+[node name="MainCountSpinBox" type="SpinBox" parent="." unique_id=1561097908]
+offset_left = 338.0
+offset_top = 203.0
+offset_right = 424.5
+offset_bottom = 234.0
+min_value = 1.0
+max_value = 8.0
+value = 2.0
+select_all_on_focus = true
+
+[node name="EnergyLabel" type="Label" parent="." unique_id=379605117]
+offset_left = 151.0
+offset_top = 205.0
+offset_right = 189.0
+offset_bottom = 218.0
+theme_override_font_sizes/font_size = 8
+text = "energy"
+
+[node name="EnergySpinBox" type="SpinBox" parent="." unique_id=353679630]
+offset_left = 193.0
+offset_top = 202.0
+offset_right = 279.5
+offset_bottom = 233.0
+min_value = 4.0
+max_value = 48.0
+value = 16.0
+select_all_on_focus = true
+
+[node name="BranchChanceLabel" type="Label" parent="." unique_id=852040000]
+offset_left = 440.0
+offset_top = 204.0
+offset_right = 490.0
+offset_bottom = 217.0
+theme_override_font_sizes/font_size = 8
+text = "branch %"
+
+[node name="BranchChanceSpinBox" type="SpinBox" parent="." unique_id=69520902]
+offset_left = 494.0
+offset_top = 201.0
+offset_right = 580.5
+offset_bottom = 232.0
+max_value = 50.0
+value = 8.0
+select_all_on_focus = true
+
+[node name="CrackToggle" type="CheckBox" parent="." unique_id=1163293809]
+offset_left = 430.0
+offset_top = 133.0
+offset_right = 488.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 8
+button_pressed = true
+text = "crack"
+
+[node name="DamageToggle" type="CheckBox" parent="." unique_id=871075393]
+offset_left = 494.0
+offset_top = 133.0
+offset_right = 564.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 8
+button_pressed = true
+text = "damage"
+
+[node name="CrackColorLabel" type="Label" parent="." unique_id=36422909]
+offset_left = 430.0
+offset_top = 163.0
+offset_right = 468.0
+offset_bottom = 176.0
+theme_override_font_sizes/font_size = 8
+text = "color"
+
+[node name="CrackColorPicker" type="ColorPickerButton" parent="." unique_id=1794851676]
+offset_left = 472.0
+offset_top = 159.0
+offset_right = 564.0
+offset_bottom = 183.0
+color = Color(1, 0.88, 0.18, 1)
+
+[node name="CrackModeLabel" type="Label" parent="." unique_id=1687902900]
+offset_left = 457.0
+offset_top = 45.0
+offset_right = 495.0
+offset_bottom = 58.0
+theme_override_font_sizes/font_size = 8
+text = "mode"
+
+[node name="CrackModeOption" type="OptionButton" parent="." unique_id=1975760057]
+offset_left = 501.0
+offset_top = 35.0
+offset_right = 640.0
+offset_bottom = 66.0
+selected = 0
+item_count = 2
+popup/item_0/text = "Random Walk"
+popup/item_0/id = 0
+popup/item_1/text = "Voronoi"
+popup/item_1/id = 1
+
+[node name="VoronoiSiteCountLabel" type="Label" parent="." unique_id=849598845]
+offset_left = 503.0
+offset_top = 105.0
+offset_right = 541.0
+offset_bottom = 118.0
+theme_override_font_sizes/font_size = 8
+text = "sites"
+
+[node name="VoronoiSiteCountSpinBox" type="SpinBox" parent="." unique_id=853427326]
+offset_left = 499.0
+offset_top = 71.0
+offset_right = 585.5
+offset_bottom = 102.0
+min_value = 2.0
+max_value = 32.0
+value = 10.0
+select_all_on_focus = true
+
+[node name="VoronoiEdgeThresholdLabel" type="Label" parent="." unique_id=837973647]
+offset_left = 603.0
+offset_top = 104.0
+offset_right = 639.0
+offset_bottom = 117.0
+theme_override_font_sizes/font_size = 8
+text = "edge"
+
+[node name="VoronoiEdgeThresholdSpinBox" type="SpinBox" parent="." unique_id=258094874]
+offset_left = 597.0
+offset_top = 71.0
+offset_right = 683.5
+offset_bottom = 102.0
+min_value = 0.1
+max_value = 8.0
+step = 0.1
+value = 1.2000000000000002
+select_all_on_focus = true
+
+[node name="StatusLabel" type="Label" parent="." unique_id=145375583]
+offset_left = 356.0
+offset_top = 254.0
+offset_right = 456.0
+offset_bottom = 312.0
+theme_override_font_sizes/font_size = 7
+text = "Damage 0.00"
+autowrap_mode = 2
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=429917443]
+position = Vector2(277, 116)
+zoom = Vector2(2.43, 2.43)

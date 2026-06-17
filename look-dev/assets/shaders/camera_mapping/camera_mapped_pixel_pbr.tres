@@ -1,8 +1,8 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://bi7v4eo36tmy1"]
 
 [ext_resource type="Shader" uid="uid://dvvwisdfk10ec" path="res://assets/shaders/camera_mapping/camera_mapped_pixel_pbr.gdshader" id="1_shader"]
-[ext_resource type="Texture2D" uid="uid://57mkp17at35" path="res://normal test/scene_diffuse.png" id="2_albedo"]
-[ext_resource type="Texture2D" uid="uid://ckpw3j5e1s7al" path="res://normal test/scene_normal.png" id="3_normal"]
+[ext_resource type="Texture2D" uid="uid://57mkp17at35" path="res://DIG/normal test/scene_diffuse.png" id="2_albedo"]
+[ext_resource type="Texture2D" uid="uid://ckpw3j5e1s7al" path="res://DIG/normal test/scene_normal.png" id="3_normal"]
 
 [resource]
 render_priority = 0

@@ -1,5 +1,5 @@
 [gd_scene format=3 uid="uid://db75j2ei5vb82"]
 
-[ext_resource type="PackedScene" uid="uid://crl3dy0nma1tm" path="res://normal test/test_scene.glb" id="1_uhqqe"]
+[ext_resource type="PackedScene" uid="uid://crl3dy0nma1tm" path="res://DIG/normal test/test_scene.glb" id="1_uhqqe"]
 
 [node name="test_scene" unique_id=717815456 instance=ExtResource("1_uhqqe")]
