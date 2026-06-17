@@ -1,0 +1,127 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://DIG/pixel_ore_damage/PixelOreDebugViewer.gd" id="1_viewer"]
+[ext_resource type="Texture2D" path="res://DIG/normal test/albedo.png" id="2_albedo"]
+[ext_resource type="Texture2D" path="res://DIG/normal test/light.jpg" id="3_light"]
+[ext_resource type="Resource" path="res://DIG/pixel_ore_damage/default_pixel_ore_damage_config.tres" id="4_config"]
+
+[node name="PixelOreDamageDebug" type="Node2D"]
+script = ExtResource("1_viewer")
+albedo_texture = ExtResource("2_albedo")
+config = ExtResource("4_config")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.405, 0.436, 0.452, 1)
+
+[node name="OreSprite" type="Sprite2D" parent="."]
+position = Vector2(70, 58)
+scale = Vector2(5, 5)
+
+[node name="PreviewTitleLabel" type="Label" parent="."]
+offset_left = 174.0
+offset_top = 8.0
+offset_right = 346.0
+offset_bottom = 21.0
+theme_override_font_sizes/font_size = 9
+text = "Pixel damage previews"
+
+[node name="DamageFieldLabel" type="Label" parent="."]
+offset_left = 174.0
+offset_top = 25.0
+offset_right = 236.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 8
+text = "field"
+horizontal_alignment = 1
+
+[node name="MaskLabel" type="Label" parent="."]
+offset_left = 246.0
+offset_top = 25.0
+offset_right = 308.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 8
+text = "mask"
+horizontal_alignment = 1
+
+[node name="CombinedLabel" type="Label" parent="."]
+offset_left = 318.0
+offset_top = 25.0
+offset_right = 386.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 8
+text = "combined"
+horizontal_alignment = 1
+
+[node name="DamageFieldSprite" type="Sprite2D" parent="."]
+position = Vector2(205, 70)
+scale = Vector2(2, 2)
+
+[node name="MaskSprite" type="Sprite2D" parent="."]
+position = Vector2(277, 70)
+scale = Vector2(2, 2)
+
+[node name="CombinedSprite" type="Sprite2D" parent="."]
+position = Vector2(352, 70)
+scale = Vector2(2, 2)
+
+[node name="KeyLight" type="PointLight2D" parent="."]
+position = Vector2(28, 58)
+color = Color(0.734, 0.611, 0.461, 1)
+energy = 0.9
+texture = ExtResource("3_light")
+texture_scale = 0.22
+height = 50.0
+
+[node name="FillLight" type="PointLight2D" parent="."]
+position = Vector2(120, 108)
+color = Color(0.596, 0.634, 0.724, 1)
+energy = 0.28
+texture = ExtResource("3_light")
+texture_scale = 0.2
+height = 120.0
+
+[node name="SeedLabel" type="Label" parent="."]
+offset_left = 12.0
+offset_top = 207.0
+offset_right = 48.0
+offset_bottom = 220.0
+theme_override_font_sizes/font_size = 8
+text = "seed"
+
+[node name="SeedSpinBox" type="SpinBox" parent="."]
+offset_left = 50.0
+offset_top = 200.0
+offset_right = 136.5
+offset_bottom = 231.0
+max_value = 999999.0
+value = 12345.0
+select_all_on_focus = true
+
+[node name="DamageLabel" type="Label" parent="."]
+offset_left = 12.0
+offset_top = 235.0
+offset_right = 64.0
+offset_bottom = 248.0
+theme_override_font_sizes/font_size = 8
+text = "damage"
+
+[node name="DamageSlider" type="HSlider" parent="."]
+offset_left = 68.0
+offset_top = 231.0
+offset_right = 386.0
+offset_bottom = 247.0
+max_value = 1.0
+step = 0.01
+
+[node name="StatusLabel" type="Label" parent="."]
+offset_left = 408.0
+offset_top = 207.0
+offset_right = 650.0
+offset_bottom = 276.0
+theme_override_font_sizes/font_size = 8
+text = "Damage 0.00"
+autowrap_mode = 2
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(280, 120)
+zoom = Vector2(2.35, 2.35)
