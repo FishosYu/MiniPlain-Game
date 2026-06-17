@@ -31,12 +31,14 @@ func create_ellipse(config, grid_seed: int) -> Dictionary:
 				float(config.stone_strength)
 			)
 
+	var anchor_points := _make_anchor_points(size, config)
 	return {
 		"size": size,
 		"cells": cells,
 		"seed": grid_seed,
 		"solid_count": solid_count,
 		"last_moved_count": 0,
+		"anchor_points": anchor_points,
 	}
 
 
@@ -91,10 +93,23 @@ func _make_cell(material_type: int, max_strength: float) -> Dictionary:
 		"material_type": material_type,
 		"strength": max_strength,
 		"max_strength": max_strength,
+		"stress": 0.0,
 		"falling": false,
 		"component_id": -1,
 		"component_role": "empty" if material_type == MATERIAL_EMPTY else "stable",
 	}
+
+
+func _make_anchor_points(size: Vector2i, config) -> Array[Vector2i]:
+	var points: Array[Vector2i] = []
+	var center := (Vector2(size) - Vector2.ONE) * 0.5
+	var anchor_center := center + Vector2(float(size.x) * config.anchor_offset.x, float(size.y) * config.anchor_offset.y)
+	var radius: float = float(config.anchor_radius)
+	for y in size.y:
+		for x in size.x:
+			if Vector2(x, y).distance_to(anchor_center) <= radius:
+				points.append(Vector2i(x, y))
+	return points
 
 
 func _hash_noise(noise_seed_value: int, x: int, y: int) -> float:

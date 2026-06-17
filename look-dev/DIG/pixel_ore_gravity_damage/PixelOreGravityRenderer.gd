@@ -19,19 +19,21 @@ func render_final(grid: Dictionary, config) -> Image:
 			if int(cell.get("material_type", GridScript.MATERIAL_EMPTY)) == GridScript.MATERIAL_EMPTY:
 				continue
 
-			if bool(cell.get("falling", false)):
+			if str(cell.get("component_role", "stable")) == "unsupported":
 				image.set_pixel(x, y, config.loose_color)
 			elif _is_edge_pixel(grid, x, y):
 				image.set_pixel(x, y, config.edge_color)
-			elif float(cell.get("strength", 0.0)) < float(cell.get("max_strength", 1.0)):
+			elif float(cell.get("stress", 0.0)) > 0.0 or float(cell.get("strength", 0.0)) < float(cell.get("max_strength", 1.0)):
 				image.set_pixel(x, y, config.damaged_color)
 			else:
 				image.set_pixel(x, y, config.body_color)
 
+	if bool(config.show_anchors):
+		_mark_anchors(image, grid, config)
 	return image
 
 
-func render_component_preview(grid: Dictionary) -> Image:
+func render_component_preview(grid: Dictionary, config) -> Image:
 	var size: Vector2i = grid.get("size", Vector2i(32, 32))
 	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0.0, 0.0, 0.0, 1.0))
@@ -43,13 +45,17 @@ func render_component_preview(grid: Dictionary) -> Image:
 				continue
 
 			var role: String = str(cell.get("component_role", "stable"))
-			if role == "falling":
-				image.set_pixel(x, y, Color(1.0, 0.72, 0.16, 1.0))
+			if role == "unsupported":
+				image.set_pixel(x, y, config.unsupported_color)
+			elif role == "damaged":
+				image.set_pixel(x, y, config.damaged_color)
 			elif role == "oversized":
 				image.set_pixel(x, y, Color(0.42, 0.48, 1.0, 1.0))
 			else:
 				image.set_pixel(x, y, Color(0.78, 0.80, 0.76, 1.0))
 
+	if bool(config.show_anchors):
+		_mark_anchors(image, grid, config)
 	return image
 
 
@@ -91,3 +97,11 @@ func _is_edge_pixel(grid: Dictionary, x: int, y: int) -> bool:
 		if _grid.is_empty(grid, p.x, p.y):
 			return true
 	return false
+
+
+func _mark_anchors(image: Image, grid: Dictionary, config) -> void:
+	for anchor in grid.get("anchor_points", []):
+		var point: Vector2i = anchor
+		if point.x < 0 or point.y < 0 or point.x >= image.get_width() or point.y >= image.get_height():
+			continue
+		image.set_pixelv(point, config.anchor_color)

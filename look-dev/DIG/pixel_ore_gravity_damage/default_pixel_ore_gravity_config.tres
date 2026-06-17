@@ -6,3 +6,7 @@
 script = ExtResource("1_config")
 grid_size = Vector2i(32, 32)
 pixel_scale = 5
+impact_radius = 4
+impact_power = 1.2
+anchor_offset = Vector2(0, 0.12)
+anchor_radius = 3.0
