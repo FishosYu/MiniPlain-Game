@@ -15,14 +15,24 @@
       --danger: #c45c4a;
       --night: #2a2838;
       --highlight: #e8f4e0;
+      --pixel-panel: #fff4d8;
+      --pixel-paper: #fff9e9;
+      --pixel-shadow: #c69a52;
+      --pixel-shadow-soft: #c9b072;
+      --pixel-dark: #3d3830;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-      background: var(--bg);
+      background:
+        linear-gradient(90deg, rgba(61,56,48,.035) 1px, transparent 1px),
+        linear-gradient(rgba(61,56,48,.035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 16px 16px, 16px 16px, 100% 100%;
       color: var(--text);
       min-height: 100vh;
       padding: 12px;
+      image-rendering: pixelated;
     }
     h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #5a5548; }
     .screen-hidden { display: none !important; }
@@ -104,6 +114,7 @@
     .game-shell {
       max-width: 960px;
       margin: 0 auto;
+      padding-bottom: 16px;
     }
     .game-top {
       display: flex;
@@ -111,9 +122,19 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--pixel-panel);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
+      box-shadow: 6px 6px 0 var(--pixel-shadow), 9px 9px 0 rgba(61, 56, 48, .18);
     }
-    .game-top h1 { margin-bottom: 0; }
+    .game-top h1 {
+      margin-bottom: 0;
+      color: var(--pixel-dark);
+      font-weight: 800;
+      text-shadow: 2px 2px 0 #efc477;
+    }
     .codex-screen {
       padding: 16px 0;
     }
@@ -236,24 +257,37 @@
       .layout { grid-template-columns: 1fr; }
     }
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      background: var(--pixel-paper);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
+      padding: 12px;
+      box-shadow: 6px 6px 0 var(--pixel-shadow-soft), 9px 9px 0 rgba(61, 56, 48, .14);
     }
-    .stats { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.85rem; margin-bottom: 8px; }
-    .stats span { white-space: nowrap; }
+    .stats { display: flex; flex-wrap: wrap; gap: 7px; font-size: 0.82rem; margin-bottom: 10px; }
+    .stats span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      white-space: nowrap;
+      padding: 4px 7px;
+      background: var(--pixel-panel);
+      border: 2px solid var(--pixel-dark);
+      box-shadow: 3px 3px 0 #d8c896;
+      font-weight: 700;
+    }
     #grid-wrap {
       overflow: auto;
       display: flex;
       justify-content: center;
-      padding: 4px;
+      padding: 8px;
+      background: #dccaa2;
+      border: 3px solid var(--pixel-dark);
+      box-shadow: inset 0 0 0 3px rgba(255,255,255,.22), 4px 4px 0 #a98f60;
     }
     #grid {
       display: grid;
       grid-template-columns: repeat(11, 40px);
-      gap: 2px;
+      gap: 3px;
       user-select: none;
     }
     .cell {
@@ -263,16 +297,26 @@
       align-items: center;
       justify-content: center;
       font-size: 22px;
-      border-radius: 4px;
+      border-radius: 0;
       cursor: default;
       position: relative;
-      border: 1px solid transparent;
-      transition: background .15s;
+      border: 2px solid rgba(61, 56, 48, .32);
+      box-shadow: inset 0 -4px 0 rgba(61, 56, 48, .08);
+      transition: transform .08s ease, filter .08s ease;
     }
-    .cell.hidden { background: #c8c0b4 !important; opacity: 0.35; }
-    .cell.player { outline: 2px solid #5a8f4a; outline-offset: -2px; z-index: 2; }
-    .cell.breakable { cursor: pointer; border-color: #a8c898; background: var(--highlight) !important; }
-    .cell.breakable:hover { filter: brightness(0.95); }
+    .cell.hidden { background: #9f978d !important; opacity: 0.42; }
+    .cell.player {
+      z-index: 2;
+      border-color: var(--pixel-dark);
+      box-shadow: inset 0 0 0 3px #5a8f4a, inset 0 -4px 0 rgba(61, 56, 48, .1);
+    }
+    .cell.breakable {
+      cursor: pointer;
+      border-color: var(--pixel-dark);
+      background: var(--highlight) !important;
+      box-shadow: inset 0 0 0 3px #a8c898, inset 0 -4px 0 rgba(61, 56, 48, .08);
+    }
+    .cell.breakable:hover { transform: translate(1px, 1px); filter: brightness(0.97); }
     .cell.ground-normal { background: #e8e2d6; }
     .cell.has-forge { background: #d8d8d8; }
     .cell.ground-water { background: #b8d8e8; }
@@ -281,17 +325,22 @@
       font-size: 0.75rem;
       max-height: 72px;
       overflow-y: auto;
-      color: #6a655c;
-      margin-top: 6px;
+      color: #fff9e9;
+      margin-top: 10px;
+      padding: 8px;
+      background: #2f2b26;
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 rgba(61, 56, 48, .18);
       line-height: 1.35;
     }
+    .log div + div { margin-top: 3px; padding-top: 3px; border-top: 1px dotted rgba(255,249,233,.25); }
     .inv-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      gap: 8px;
       max-height: 280px;
       overflow-y: auto;
-      padding: 2px;
+      padding: 4px;
     }
     .inv-cell {
       display: flex;
@@ -299,35 +348,88 @@
       align-items: center;
       justify-content: flex-start;
       padding: 6px 4px 5px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #faf8f4;
+      border: 3px solid var(--pixel-dark);
+      border-radius: 0;
+      background: var(--panel);
+      box-shadow: 3px 3px 0 #d8c896;
       min-height: 72px;
       cursor: pointer;
       -webkit-user-select: none;
       user-select: none;
+      transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
     }
-    .inv-cell:hover { background: var(--highlight); border-color: #c5d8b8; }
-    .inv-cell.selected { background: #dce8d4; border-color: var(--accent); }
+    .inv-cell:hover { background: var(--highlight); transform: translate(1px, 1px); box-shadow: 2px 2px 0 #a9bd96; }
+    .inv-cell.selected { background: #ffe4ba; border-color: #8e3528; box-shadow: 3px 3px 0 #8e3528; }
     .inv-cell[draggable="true"] { cursor: grab; }
     .inv-cell.dragging { opacity: 0.45; }
-    .inv-cell.bulk-flash { background: #c8ddb8 !important; border-color: var(--accent); }
+    .inv-cell.bulk-flash { background: #c8ddb8 !important; border-color: var(--accent); box-shadow: 3px 3px 0 #4d6e42; }
     #inventory .inv-cell[data-id], #chest-inventory .inv-cell[data-id] { touch-action: manipulation; }
     .inv-cell-icon { font-size: 28px; line-height: 1; margin-bottom: 4px; }
     .inv-cell-name { font-size: 0.62rem; line-height: 1.25; color: #5a5548; text-align: center; word-break: break-all; }
     .inv-cell-count { font-size: 0.58rem; color: #8a8578; margin-top: 2px; }
-    .inv-empty { grid-column: 1 / -1; color: #999; padding: 12px; text-align: center; font-size: 0.8rem; }
-    #chest-panel { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); }
+    .inv-empty {
+      grid-column: 1 / -1;
+      color: #8a8578;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      border: 2px dashed #c9b072;
+      background: rgba(255,255,255,.38);
+    }
+    #chest-panel {
+      margin-top: 12px;
+      padding: 10px;
+      border: 3px solid var(--pixel-dark);
+      background: #fff4d8;
+      box-shadow: 4px 4px 0 #d8c896;
+    }
     #chest-panel.hidden { display: none; }
     #chest-panel .chest-title { color: #5a5548; }
-    #craft-section.craft-locked .craft-box { border-color: #ddd; }
-    #craft-section.craft-ready #craft-title { color: #4a7a3a; }
+    .panel-title,
+    #chest-panel .chest-title {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 7px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .panel-divider {
+      margin: 12px 0;
+      border: none;
+      border-top: 3px solid var(--pixel-dark);
+      box-shadow: 0 3px 0 #d8c896;
+    }
+    #craft-section {
+      padding: 10px;
+      background: var(--pixel-panel);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 #d8c896;
+    }
+    #craft-title {
+      display: inline-block;
+      padding: 3px 7px;
+      margin-bottom: 2px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    #craft-section.craft-locked .craft-box { border-color: #a99f91; opacity: .76; }
+    #craft-section.craft-ready #craft-title { color: #4a7a3a; border-color: #4a7a3a; }
     .craft-row {
       display: flex;
       align-items: flex-end;
       gap: 6px;
       margin: 8px 0;
       flex-wrap: wrap;
+    }
+    .craft-row > span {
+      align-self: center;
+      color: var(--pixel-dark);
+      font-size: 1rem;
+      font-weight: 800;
     }
     .craft-slot-wrap {
       display: flex;
@@ -338,7 +440,7 @@
     }
     .craft-result-label {
       font-size: 0.62rem;
-      color: #6a655c;
+      color: #5a5548;
       text-align: center;
       line-height: 1.2;
       max-width: 56px;
@@ -349,38 +451,42 @@
     .craft-box {
       width: 48px;
       height: 48px;
-      border: 2px dashed var(--border);
-      border-radius: 6px;
+      border: 3px dashed var(--pixel-dark);
+      border-radius: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
       line-height: 1;
-      background: #faf8f4;
+      background: var(--panel);
+      box-shadow: inset 0 -4px 0 rgba(61, 56, 48, .08), 3px 3px 0 #d8c896;
       cursor: pointer;
       -webkit-user-select: none;
       user-select: none;
     }
     .craft-box .slot-emoji { pointer-events: none; font-size: 28px; }
-    .craft-box.filled { border-style: solid; border-color: var(--accent); }
-    .craft-box.result { border-color: #c9a227; background: #fff9e6; cursor: pointer; }
-    .craft-box.drag-over { background: #e0edd8; border-color: var(--accent); }
+    .craft-box.filled { border-style: solid; border-color: #4d6e42; background: #e0edd8; }
+    .craft-box.result { border-style: solid; border-color: #c9a227; background: #fff9e6; cursor: pointer; }
+    .craft-box.drag-over { background: #e0edd8; border-color: var(--accent); transform: translate(1px, 1px); }
     .craft-box[draggable="true"] { cursor: grab; }
     button {
       font-family: inherit;
       font-size: 0.8rem;
       padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
+      border: 3px solid var(--pixel-dark);
+      border-radius: 0;
       background: var(--accent);
       color: #fff;
       cursor: pointer;
+      box-shadow: 4px 4px 0 #4d6e42;
+      font-weight: 700;
+      transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
     }
-    button:hover { background: var(--accent-hover); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button:hover { background: var(--accent-hover); transform: translate(1px, 1px); box-shadow: 3px 3px 0 #4d6e42; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: 4px 4px 0 #8a8578; }
     .modal-bg {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,.35);
+      background: rgba(47,43,38,.55);
       display: none;
       align-items: center;
       justify-content: center;
@@ -388,17 +494,19 @@
     }
     .modal-bg.show { display: flex; }
     .modal {
-      background: var(--panel);
-      border-radius: 12px;
+      background: var(--pixel-panel);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
       padding: 16px;
-      max-width: 360px;
+      max-width: 400px;
       width: 90%;
       max-height: 80vh;
       overflow-y: auto;
+      box-shadow: 8px 8px 0 var(--pixel-shadow), 12px 12px 0 rgba(61, 56, 48, .25);
     }
-    .modal h3 { margin-bottom: 10px; font-size: 1rem; }
+    .modal h3 { margin-bottom: 10px; font-size: 1rem; color: var(--pixel-dark); text-shadow: 2px 2px 0 #efc477; }
     .modal p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 8px; }
-    .hint { font-size: 0.72rem; color: #8a8578; margin-top: 6px; }
+    .hint { font-size: 0.72rem; color: #8a8578; margin-top: 6px; line-height: 1.45; }
     body.night-mode #grid .cell:not(.visible-night):not(.player) {
       background: #3a3848 !important;
       color: transparent;
@@ -418,11 +526,27 @@
     .cell.has-campfire { background: #f0e0c8; }
     .cell.has-crystal { background: #ebe8f5; }
     .cell.spawn-tile { background: #f5e8e6; box-shadow: inset 0 0 0 1px #e8b4b0; }
-    .tag-night { color: #6a5a8a; font-weight: 600; }
+    .tag-night {
+      color: #4a3f73;
+      background: #e5ddff !important;
+      border-color: #5a4a8a !important;
+      box-shadow: 3px 3px 0 #9a86c8 !important;
+      font-weight: 800;
+    }
     .merchant-item { display: block; width: 100%; text-align: left; margin: 4px 0; padding: 8px; }
     .modal-btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .modal-btn-row button { flex: 1; min-width: 100px; }
-    .page-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 0; font-size: 0.85rem; }
+    .page-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0;
+      padding: 6px;
+      font-size: 0.85rem;
+      background: var(--pixel-paper);
+      border: 2px solid var(--pixel-dark);
+    }
     #victory-modal .modal { text-align: center; max-width: 400px; }
     #victory-modal h3 { font-size: 1.4rem; color: #5a4a8a; }
     .dev-tools {
@@ -538,14 +662,14 @@
       <p class="hint">WASD / 方向键移动 · 点击高亮格清除石头(需相邻普通地面且消耗1体力) · 点击地面物品互动</p>
     </div>
     <div class="panel">
-      <div><strong>背包</strong> <span id="inv-cap"></span></div>
+      <div class="panel-title"><strong>背包</strong> <span id="inv-cap"></span></div>
       <div class="inv-grid" id="inventory"></div>
       <div id="chest-panel" class="hidden">
         <div class="chest-title"><strong>🧰 箱子</strong> <span id="chest-cap"></span></div>
         <div class="inv-grid" id="chest-inventory"></div>
-        <p class="hint" style="margin-top:6px">与背包物品可相互拖拽转移</p>
+        <p class="hint">与背包物品可相互拖拽转移</p>
       </div>
-      <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
+      <hr class="panel-divider">
       <div id="craft-section">
         <strong id="craft-title">制造</strong>
         <div class="craft-row">
@@ -574,7 +698,7 @@
       <h3 id="modal-title"></h3>
       <div id="modal-body"></div>
       <div id="modal-footer">
-        <button id="modal-close" style="margin-top:10px">关闭</button>
+        <button class="pixel-btn muted" id="modal-close">关闭</button>
       </div>
     </div>
   </div>
@@ -585,7 +709,7 @@
       <p>七页遗落之书已全部献予水晶球，这片石落之地向你敞开了道路。</p>
       <div class="modal-btn-row">
         <button id="btn-victory-restart">再来一局</button>
-        <button id="btn-victory-map" style="background:#8a8578">返回地图</button>
+        <button class="pixel-btn muted" id="btn-victory-map">返回地图</button>
       </div>
     </div>
   </div>
@@ -1926,7 +2050,7 @@
 
     if (allSubmitted) {
       footer.innerHTML = `<div class="modal-btn-row">
-        <button type="button" id="btn-crystal-map" style="background:#8a8578">返回地图</button>
+        <button class="pixel-btn muted" type="button" id="btn-crystal-map">返回地图</button>
         <button type="button" id="btn-crystal-win">通关键 · 通关</button>
       </div>`;
       document.getElementById('btn-crystal-map').onclick = () => {
@@ -1937,7 +2061,7 @@
         document.getElementById('victory-modal').classList.add('show');
       };
     } else {
-      footer.innerHTML = '<button id="modal-close" style="margin-top:10px">返回地图</button>';
+      footer.innerHTML = '<button class="pixel-btn muted" id="modal-close">返回地图</button>';
       document.getElementById('modal-close').onclick = () => {
         document.getElementById('modal').classList.remove('show');
       };
@@ -2038,7 +2162,7 @@
 
   function setModalCloseFooter() {
     const footer = document.getElementById('modal-footer');
-    footer.innerHTML = '<button type="button" id="modal-close" style="margin-top:10px">关闭</button>';
+    footer.innerHTML = '<button class="pixel-btn muted" type="button" id="modal-close">关闭</button>';
     document.getElementById('modal-close').onclick = () => {
       document.getElementById('modal').classList.remove('show');
     };
