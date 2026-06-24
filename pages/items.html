@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniPlain 物品图鉴</title>
+  <style>
+    :root {
+      --bg: #8fc6cc;
+      --grass: #7da85b;
+      --soil: #6f4a34;
+      --panel: #fff4d8;
+      --card: #fff9e9;
+      --text: #2f2b26;
+      --muted: #66584c;
+      --line: #2f2b26;
+      --accent: #d65f43;
+      --accent-dark: #8e3528;
+      --shadow: #c69a52;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "SimHei", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(var(--bg) 0 64%, var(--grass) 64% 78%, var(--soil) 78%);
+      background-size: 18px 18px, 18px 18px, 100% 100%;
+      padding: 22px;
+    }
+
+    .wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--panel);
+      border: 4px solid var(--line);
+      box-shadow: 8px 8px 0 var(--shadow);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      text-shadow: 4px 4px 0 #efc477;
+    }
+
+    .lead {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 780px;
+    }
+
+    .btn {
+      display: inline-block;
+      color: #fff;
+      background: var(--accent);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 var(--accent-dark);
+      padding: 9px 12px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--accent-dark);
+    }
+
+    .category {
+      background: rgba(255, 244, 216, .92);
+      border: 4px solid var(--line);
+      box-shadow: 6px 6px 0 rgba(47, 43, 38, .22);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .category h2 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 10px;
+    }
+
+    .item {
+      min-height: 94px;
+      background: var(--card);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 #c9b072;
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px 6px;
+      font: inherit;
+      text-align: center;
+    }
+
+    .item:hover,
+    .item:focus-visible {
+      outline: none;
+      background: #ffe8b8;
+      transform: translate(1px, 1px);
+      box-shadow: 3px 3px 0 #a98745;
+    }
+
+    .emoji {
+      display: block;
+      font-size: 2rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .name {
+      display: block;
+      font-size: .82rem;
+      line-height: 1.25;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(37, 31, 26, .5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .modal-bg.show { display: flex; }
+
+    .modal {
+      width: min(560px, 100%);
+      max-height: 86vh;
+      overflow: auto;
+      background: var(--panel);
+      border: 4px solid var(--line);
+      box-shadow: 8px 8px 0 var(--shadow);
+      padding: 18px;
+    }
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      margin-bottom: 14px;
+    }
+
+    .modal-title .emoji { margin: 0; }
+
+    .section {
+      background: rgba(255, 249, 233, .85);
+      border-left: 6px solid var(--accent);
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+
+    .section h3 {
+      font-size: .95rem;
+      margin-bottom: 6px;
+    }
+
+    ul {
+      padding-left: 1.1em;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .close-row {
+      text-align: right;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      header, .category, .modal { box-shadow: 5px 5px 0 var(--shadow); }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
+      .item { min-height: 84px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="topbar">
+        <h1>物品图鉴</h1>
+        <div>
+          <a class="btn" href="../index.html">返回首页</a>
+          <a class="btn" href="../MiniPlain.html">进入 Demo</a>
+        </div>
+      </div>
+      <p class="lead">按类别展示当前 Demo 中已经可获取或可合成的物品。点击格子可查看获取途径、用途，以及它可以参与合成出的物品。</p>
+    </header>
+
+    <div id="content"></div>
+  </main>
+
+  <div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-title" id="modal-title"></div>
+      <div id="modal-body"></div>
+      <div class="close-row"><button class="btn" type="button" id="close">关闭</button></div>
+    </div>
+  </div>
+
+  <script>
+    const categories = [
+      '基础资源',
+      '食材与种植',
+      '动物产物',
+      '工具与装备',
+      '设施与建造',
+      '货币与任务',
+      '加工材料',
+      '料理',
+    ];
+
+    const items = [
+      { id: 'stone', cat: '基础资源', name: '石头', emoji: '🪨', obtain: ['凿开石头时随机获得。'], uses: ['工具箱制造打火石、建材、铸造台。', '铸造台铸造石斧、铁板、锤子。'], usedIn: ['铸造台', '打火石', '建材', '石斧', '铁板', '锤子'] },
+      { id: 'iron', cat: '基础资源', name: '铁块', emoji: '🔩', obtain: ['凿开石头时随机获得，前期有保底。'], uses: ['制造铸造台、烤箱。', '铸造铁剑、铁锅、铁板。', '配合锤子加工成铁片。'], usedIn: ['铸造台', '铁剑', '铁锅', '铁板', '烤箱', '铁片'] },
+      { id: 'silver', cat: '基础资源', name: '银块', emoji: '🥈', obtain: ['凿开石头时随机获得。'], uses: ['铸造台单格兑换 2 银币。', '配合锤子加工成银片。'], usedIn: ['银币×2', '银片'] },
+      { id: 'gold', cat: '基础资源', name: '金块', emoji: '🥇', obtain: ['凿开石头时低概率获得。'], uses: ['铸造台单格兑换 2 金币。'], usedIn: ['金币×2'] },
+      { id: 'wood', cat: '基础资源', name: '木材', emoji: '🪵', obtain: ['砍伐成树获得。', '破坏灌木获得。'], uses: ['制造箱子、篝火、建材。', '铸造石斧、铁剑。'], usedIn: ['箱子', '篝火', '建材', '石斧', '铁剑'] },
+      { id: 'flint', cat: '基础资源', name: '打火石', emoji: '🪔', obtain: ['工具箱：石头 + 石头。'], uses: ['与木材制造篝火。'], usedIn: ['篝火'] },
+
+      { id: 'fruit', cat: '食材与种植', name: '水果', emoji: '🍎', obtain: ['凿石发现水果植物后拾取。'], uses: ['直接食用回复 1 体力。', '与铁银片组合制造水果电池。'], usedIn: ['水果电池'] },
+      { id: 'veg', cat: '食材与种植', name: '蔬菜', emoji: '🥬', obtain: ['凿石发现蔬菜植物后拾取。'], uses: ['可在篝火旁烹饪。'], usedIn: ['烤蔬菜', '炖菜', '土豆炖菜', '胡萝卜炖菜', '蔬菜滑蛋', '鲜蔬炖鸡', '鲜蔬炖牛肉', '鲜蔬菜炖鱼'] },
+      { id: 'potato', cat: '食材与种植', name: '土豆', emoji: '🥔', obtain: ['纸袋可能开出。', '特定植物成熟后拾取。'], uses: ['可在篝火旁烹饪。'], usedIn: ['烤土豆', '土豆炖菜', '胡萝卜炖土豆', '薯角滑蛋', '土豆炖鸡', '土豆焖牛肉'] },
+      { id: 'carrot', cat: '食材与种植', name: '胡萝卜', emoji: '🥕', obtain: ['纸袋可能开出。', '特定植物成熟后拾取。'], uses: ['可在篝火旁烹饪。'], usedIn: ['烤胡萝卜', '胡萝卜炖菜', '胡萝卜炖土豆', '胡萝卜炒鸡蛋', '胡萝卜炒鸡肉', '胡萝卜焖牛肉'] },
+      { id: 'sapling', cat: '食材与种植', name: '树苗', emoji: '🌱', obtain: ['凿石发现树苗植物后拾取。', '砍伐成树时返还。'], uses: ['可种在水边，长成树后砍伐获得木材。'], usedIn: ['树木', '木材'] },
+      { id: 'wheat_seed', cat: '食材与种植', name: '麦种', emoji: '🌾', obtain: ['纸袋可能开出。', '收获成熟小麦时返还。'], uses: ['种在曾经种过树的格子上。'], usedIn: ['小麦'] },
+      { id: 'wheat', cat: '食材与种植', name: '小麦', emoji: '🌾', obtain: ['种植麦种，成熟后收获。'], uses: ['篝火旁可炒麦。', '靠近烤箱时两份小麦可烤面包。'], usedIn: ['炒麦', '面包'] },
+      { id: 'fish', cat: '食材与种植', name: '鱼', emoji: '🐟', obtain: ['在水池四邻格使用鱼竿钓鱼。'], uses: ['可在篝火旁烹饪。'], usedIn: ['烤鱼', '鲜蔬菜炖鱼'] },
+
+      { id: 'egg', cat: '动物产物', name: '鸡蛋', emoji: '🥚', obtain: ['鸡会随机下蛋。', '也可从地上收回正在孵化的鸡蛋。'], uses: ['可放在成熟小麦旁孵化小鸡。', '可在篝火旁烹饪。'], usedIn: ['荷包蛋', '炒鸡蛋', '"母子连心"', '蛋烧牛肉', '蔬菜滑蛋', '薯角滑蛋', '胡萝卜炒鸡蛋'] },
+      { id: 'chicken', cat: '动物产物', name: '鸡肉', emoji: '🍗', obtain: ['击杀鸡获得。'], uses: ['可在篝火旁烹饪。'], usedIn: ['熟鸡肉', '"母子连心"', '大盘鸡', '牛肉炖鸡', '鲜蔬炖鸡', '土豆炖鸡', '胡萝卜炒鸡肉'] },
+      { id: 'beef', cat: '动物产物', name: '牛肉', emoji: '🥩', obtain: ['持有铁剑或石斧时击杀牛获得。'], uses: ['可在篝火旁烹饪。'], usedIn: ['牛排（味道一般版）', '蛋烧牛肉', '牛肉炖鸡', '鲜蔬炖牛肉', '土豆焖牛肉', '胡萝卜焖牛肉'] },
+      { id: 'wolf_fur', cat: '动物产物', name: '狼皮', emoji: '🐺', obtain: ['持有铁剑时击杀狼获得。'], uses: ['当前暂无进一步用途。'], usedIn: [] },
+
+      { id: 'rod', cat: '工具与装备', name: '鱼竿', emoji: '🎣', obtain: ['木宝箱可能开出。', '神秘金色盒子可用金币兑换。'], uses: ['在水池四邻格钓鱼。'], usedIn: ['鱼'] },
+      { id: 'stone_axe', cat: '工具与装备', name: '石斧', emoji: '🪓', obtain: ['铸造台：木材 + 石头。', '木宝箱可能开出。', '神秘金色盒子可用金币兑换。'], uses: ['砍伐成树。', '可击杀牛。'], usedIn: ['木材', '牛肉'] },
+      { id: 'iron_sword', cat: '工具与装备', name: '铁剑', emoji: '⚔️', obtain: ['铸造台：木材 + 铁块。', '木宝箱可能开出。', '神秘金色盒子可用金币兑换。'], uses: ['可击杀牛和狼。'], usedIn: ['牛肉', '狼皮'] },
+      { id: 'hammer', cat: '工具与装备', name: '锤子', emoji: '🔨', obtain: ['铸造台：石头 + 石头。'], uses: ['工具箱中加工铁片或银片，使用后会回到背包。'], usedIn: ['铁片', '银片'] },
+      { id: 'iron_pot', cat: '工具与装备', name: '铁锅', emoji: '🍳', obtain: ['铸造台：铁块 + 铁块。'], uses: ['篝火烹饪的前置道具。'], usedIn: ['所有铁锅料理'] },
+
+      { id: 'forge', cat: '设施与建造', name: '铸造台', emoji: '⬜', obtain: ['工具箱：铁块 + 石头。'], uses: ['放置后可在四邻格铸造工具、锅具、铁板、锤子与货币。'], usedIn: ['石斧', '铁剑', '铁锅', '铁板', '锤子', '金币', '银币'] },
+      { id: 'chest', cat: '设施与建造', name: '箱子', emoji: '🧰', obtain: ['工具箱：木材 + 木材。'], uses: ['放置后可作为储物箱。'], usedIn: [] },
+      { id: 'campfire', cat: '设施与建造', name: '篝火', emoji: '🔥', obtain: ['工具箱：打火石 + 木材。'], uses: ['放置后照明，四邻格可使用铁锅烹饪。', '也可拖入合成栏，与铁块制造烤箱。'], usedIn: ['烤箱', '铁锅料理'] },
+      { id: 'oven', cat: '设施与建造', name: '烤箱', emoji: '🧱', obtain: ['工具箱：篝火 + 铁块。'], uses: ['放置后四邻格可用小麦 + 小麦烤面包。'], usedIn: ['面包'] },
+      { id: 'iron_plate', cat: '设施与建造', name: '铁板', emoji: '◼️', obtain: ['铸造台：铁块 + 石头。'], uses: ['可放置在篝火四邻格。', '角色站在铁板上时，铁板煎烤配方优先于篝火/铁锅配方。'], usedIn: ['烤蔬菜', '烤土豆', '烤胡萝卜', '荷包蛋', '炒鸡蛋', '熟鸡肉', '牛排（味道一般版）', '烤鱼', '炒麦'] },
+      { id: 'building', cat: '设施与建造', name: '建材', emoji: '🧱', obtain: ['工具箱：石头 + 木材。'], uses: ['8 级后消耗 4 份建材建造 2×2 庇护所。'], usedIn: ['庇护所'] },
+
+      { id: 'coin', cat: '货币与任务', name: '金币', emoji: '🪙', obtain: ['铸造台：单格金块 → 2 金币。', '木宝箱可能开出。'], uses: ['在神秘金色盒子兑换鱼竿、铁剑、石斧。'], usedIn: ['鱼竿', '铁剑', '石斧'] },
+      { id: 'silver_coin', cat: '货币与任务', name: '银币', emoji: '🔘', obtain: ['铸造台：单格银块 → 2 银币。', '纸袋可能开出。'], uses: ['在银色盒子购买料理。'], usedIn: ['蔬菜滑蛋', '炖菜', '大盘鸡'] },
+      { id: 'page', cat: '货币与任务', name: '遗落书页', emoji: '📜', obtain: ['凿石探索时随机发现。'], uses: ['提交给水晶球，集齐并提交 7 页后通关。'], usedIn: ['通关'] },
+
+      { id: 'iron_sheet', cat: '加工材料', name: '铁片', emoji: '▫️', obtain: ['工具箱：铁块 + 锤子，锤子返还。'], uses: ['与银片组合成铁银片组合。'], usedIn: ['铁银片组合'] },
+      { id: 'silver_sheet', cat: '加工材料', name: '银片', emoji: '◽', obtain: ['工具箱：银块 + 锤子，锤子返还。'], uses: ['与铁片组合成铁银片组合。'], usedIn: ['铁银片组合'] },
+      { id: 'iron_silver_sheet', cat: '加工材料', name: '铁银片组合', emoji: '🔳', obtain: ['工具箱：铁片 + 银片。'], uses: ['与水果制造水果电池。'], usedIn: ['水果电池'] },
+      { id: 'fruit_battery', cat: '加工材料', name: '水果电池', emoji: '🔋', obtain: ['工具箱：铁银片组合 + 水果。'], uses: ['当前暂无进一步用途。'], usedIn: [] },
+
+      { id: 'grilled_veg', cat: '料理', name: '烤蔬菜', emoji: '🥬', obtain: ['篝火旁：蔬菜。'], uses: ['食用回复 1 体力。'], usedIn: [] },
+      { id: 'roasted_potato', cat: '料理', name: '烤土豆', emoji: '🥔', obtain: ['篝火旁：土豆。', '篝火旁：土豆 + 土豆 → 2 个烤土豆。'], uses: ['食用回复 1 体力。'], usedIn: [] },
+      { id: 'roasted_carrot', cat: '料理', name: '烤胡萝卜', emoji: '🥕', obtain: ['篝火旁：胡萝卜。', '篝火旁：胡萝卜 + 胡萝卜 → 2 个烤胡萝卜。'], uses: ['食用回复 1 体力。'], usedIn: [] },
+      { id: 'fried_egg', cat: '料理', name: '荷包蛋', emoji: '🍽️', obtain: ['篝火旁：鸡蛋。'], uses: ['食用回复 1 体力。'], usedIn: [] },
+      { id: 'cooked_chicken', cat: '料理', name: '熟鸡肉', emoji: '🍗', obtain: ['篝火旁：鸡肉。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'plain_steak', cat: '料理', name: '牛排（味道一般版）', emoji: '🥩', obtain: ['篝火旁：牛肉。', '篝火旁：牛肉 + 牛肉 → 2 个牛排。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'grilled_fish', cat: '料理', name: '烤鱼', emoji: '🐠', obtain: ['篝火旁：鱼。', '篝火旁：鱼 + 鱼 → 2 个烤鱼。'], uses: ['食用回复 1~2 体力。'], usedIn: [] },
+      { id: 'stir_fried_wheat', cat: '料理', name: '炒麦', emoji: '🌾', obtain: ['篝火旁：小麦。', '篝火旁：小麦 + 小麦 → 2 份炒麦。'], uses: ['小零嘴，食用不回复体力。'], usedIn: [] },
+      { id: 'bread', cat: '料理', name: '面包', emoji: '🍞', obtain: ['烤箱旁：小麦 + 小麦。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'vegetable_stew', cat: '料理', name: '炖菜', emoji: '🥘', obtain: ['篝火旁：蔬菜 + 蔬菜。', '银色盒子可购买。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'potato_vegetable_stew', cat: '料理', name: '土豆炖菜', emoji: '🥘', obtain: ['篝火旁：蔬菜 + 土豆。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'carrot_vegetable_stew', cat: '料理', name: '胡萝卜炖菜', emoji: '🥘', obtain: ['篝火旁：蔬菜 + 胡萝卜。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'carrot_potato_stew', cat: '料理', name: '胡萝卜炖土豆', emoji: '🥘', obtain: ['篝火旁：土豆 + 胡萝卜。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'scrambled_eggs', cat: '料理', name: '炒鸡蛋', emoji: '🥣', obtain: ['篝火旁：鸡蛋 + 鸡蛋。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'chicken_egg_bowl', cat: '料理', name: '"母子连心"', emoji: '🍲', obtain: ['篝火旁：鸡蛋 + 鸡肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'beef_egg', cat: '料理', name: '蛋烧牛肉', emoji: '🍲', obtain: ['篝火旁：鸡蛋 + 牛肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'big_plate_chicken', cat: '料理', name: '大盘鸡', emoji: '🍗', obtain: ['篝火旁：鸡肉 + 鸡肉。', '银色盒子可购买。'], uses: ['食用回复 4 体力。'], usedIn: [] },
+      { id: 'chicken_beef_stew', cat: '料理', name: '牛肉炖鸡', emoji: '🥘', obtain: ['篝火旁：鸡肉 + 牛肉。'], uses: ['食用回复 4 体力。'], usedIn: [] },
+      { id: 'veg_egg', cat: '料理', name: '蔬菜滑蛋', emoji: '🥗', obtain: ['篝火旁：蔬菜 + 鸡蛋。', '银色盒子可购买。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'veg_chicken_stew', cat: '料理', name: '鲜蔬炖鸡', emoji: '🥘', obtain: ['篝火旁：蔬菜 + 鸡肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'veg_beef_stew', cat: '料理', name: '鲜蔬炖牛肉', emoji: '🥘', obtain: ['篝火旁：蔬菜 + 牛肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'potato_egg', cat: '料理', name: '薯角滑蛋', emoji: '🍟', obtain: ['篝火旁：土豆 + 鸡蛋。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'potato_chicken_stew', cat: '料理', name: '土豆炖鸡', emoji: '🥘', obtain: ['篝火旁：土豆 + 鸡肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'potato_beef_stew', cat: '料理', name: '土豆焖牛肉', emoji: '🥘', obtain: ['篝火旁：土豆 + 牛肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'carrot_egg', cat: '料理', name: '胡萝卜炒鸡蛋', emoji: '🍛', obtain: ['篝火旁：胡萝卜 + 鸡蛋。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+      { id: 'carrot_chicken', cat: '料理', name: '胡萝卜炒鸡肉', emoji: '🍲', obtain: ['篝火旁：胡萝卜 + 鸡肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'carrot_beef', cat: '料理', name: '胡萝卜焖牛肉', emoji: '🥘', obtain: ['篝火旁：胡萝卜 + 牛肉。'], uses: ['食用回复 3 体力。'], usedIn: [] },
+      { id: 'fish_vegetable_stew', cat: '料理', name: '鲜蔬菜炖鱼', emoji: '🍲', obtain: ['篝火旁：鱼 + 蔬菜。'], uses: ['食用回复 2 体力。'], usedIn: [] },
+    ];
+
+    const content = document.getElementById('content');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+
+    function listBlock(title, values) {
+      const list = values && values.length ? values : ['当前暂无。'];
+      return `<section class="section"><h3>${title}</h3><ul>${list.map(value => `<li>${value}</li>`).join('')}</ul></section>`;
+    }
+
+    function showItem(item) {
+      modalTitle.innerHTML = `<span class="emoji">${item.emoji}</span><span>${item.name}</span>`;
+      modalBody.innerHTML = [
+        listBlock('获取途径 / 合成配方', item.obtain),
+        listBlock('用途', item.uses),
+        listBlock('可用于合成 / 产出', item.usedIn),
+      ].join('');
+      modal.classList.add('show');
+    }
+
+    function render() {
+      content.innerHTML = categories.map(cat => {
+        const group = items.filter(item => item.cat === cat);
+        if (!group.length) return '';
+        return `<section class="category">
+          <h2>${cat}</h2>
+          <div class="grid">
+            ${group.map(item => `<button class="item" type="button" data-id="${item.id}">
+              <span class="emoji">${item.emoji}</span>
+              <span class="name">${item.name}</span>
+            </button>`).join('')}
+          </div>
+        </section>`;
+      }).join('');
+
+      content.querySelectorAll('[data-id]').forEach(button => {
+        const item = items.find(entry => entry.id === button.dataset.id);
+        button.addEventListener('click', () => showItem(item));
+      });
+    }
+
+    document.getElementById('close').addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', event => {
+      if (event.target === modal) modal.classList.remove('show');
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') modal.classList.remove('show');
+    });
+
+    render();
+  </script>
+</body>
+</html>
