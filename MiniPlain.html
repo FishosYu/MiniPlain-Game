@@ -25,6 +25,206 @@
       padding: 12px;
     }
     h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #5a5548; }
+    .screen-hidden { display: none !important; }
+    .main-menu,
+    .codex-screen {
+      min-height: calc(100vh - 24px);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .main-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu-panel,
+    .codex-panel {
+      background: #fff4d8;
+      border: 4px solid #3d3830;
+      border-radius: 0;
+      box-shadow: 8px 8px 0 #c69a52, 12px 12px 0 rgba(61, 56, 48, .22);
+      padding: 24px;
+    }
+    .menu-panel {
+      width: min(680px, 100%);
+      text-align: center;
+    }
+    .menu-title {
+      font-size: clamp(2.6rem, 9vw, 5.4rem);
+      line-height: .9;
+      margin: 4px 0 18px;
+      text-transform: uppercase;
+      color: #3d3830;
+      text-shadow: 4px 4px 0 #efc477;
+    }
+    .menu-lead {
+      color: #6a655c;
+      line-height: 1.8;
+      margin: 0 auto 22px;
+      max-width: 520px;
+      font-size: 0.95rem;
+    }
+    .menu-actions,
+    .game-top-actions,
+    .codex-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pixel-btn {
+      border: 3px solid #3d3830;
+      border-radius: 0;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 4px 4px 0 #4d6e42;
+      font-weight: 700;
+    }
+    .pixel-btn.secondary {
+      background: #d65f43;
+      box-shadow: 4px 4px 0 #8e3528;
+    }
+    .pixel-btn.muted {
+      background: #8a8578;
+      box-shadow: 4px 4px 0 #5a5548;
+    }
+    .pixel-btn:hover {
+      background: var(--accent-hover);
+      transform: translate(1px, 1px);
+      box-shadow: 3px 3px 0 #4d6e42;
+    }
+    .pixel-btn.secondary:hover {
+      background: #b84c34;
+      box-shadow: 3px 3px 0 #8e3528;
+    }
+    .pixel-btn.muted:hover {
+      background: #706b61;
+      box-shadow: 3px 3px 0 #5a5548;
+    }
+    .game-shell {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .game-top h1 { margin-bottom: 0; }
+    .codex-screen {
+      padding: 16px 0;
+    }
+    .codex-panel {
+      width: 100%;
+    }
+    .codex-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .codex-header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1;
+      color: #3d3830;
+      text-shadow: 3px 3px 0 #efc477;
+    }
+    .codex-lead {
+      color: #6a655c;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-top: 8px;
+      max-width: 620px;
+    }
+    .codex-progress {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 8px;
+      border: 2px solid #8e3528;
+      background: #ffe4ba;
+      color: #8e3528;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .codex-category {
+      background: #fff9e9;
+      border: 3px solid #3d3830;
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 12px;
+      margin-top: 14px;
+    }
+    .codex-category h2 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #5a5548;
+    }
+    .codex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+      gap: 10px;
+    }
+    .codex-item {
+      position: relative;
+      min-height: 86px;
+      border: 3px solid #3d3830;
+      border-radius: 0;
+      background: #fffef9;
+      color: #3d3830;
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 8px 5px;
+      text-align: center;
+    }
+    .codex-item.locked {
+      background:
+        linear-gradient(45deg, rgba(61,56,48,.08) 25%, transparent 25%, transparent 75%, rgba(61,56,48,.08) 75%),
+        #faf8f4;
+      background-size: 12px 12px;
+      color: rgba(61, 56, 48, .52);
+    }
+    .codex-icon {
+      display: block;
+      font-size: 1.9rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .codex-name {
+      display: block;
+      font-size: 0.72rem;
+      line-height: 1.25;
+    }
+    .codex-tip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      z-index: 20;
+      display: none;
+      width: min(240px, 78vw);
+      transform: translateX(-50%);
+      background: #2f2b26;
+      border: 3px solid #fff4d8;
+      box-shadow: 4px 4px 0 rgba(47, 43, 38, .35);
+      color: #fff9e9;
+      padding: 9px;
+      text-align: left;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .codex-tip strong,
+    .codex-tip span { display: block; }
+    .codex-tip .tip-cat {
+      color: #ffd46b;
+      margin: 3px 0;
+    }
+    .codex-item:hover .codex-tip,
+    .codex-item:focus-visible .codex-tip {
+      display: block;
+    }
     .layout {
       display: grid;
       grid-template-columns: 1fr 300px;
@@ -199,7 +399,6 @@
     .modal h3 { margin-bottom: 10px; font-size: 1rem; }
     .modal p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 8px; }
     .hint { font-size: 0.72rem; color: #8a8578; margin-top: 6px; }
-    .night-overlay body.night-mode .cell:not(.visible-night) { }
     body.night-mode #grid .cell:not(.visible-night):not(.player) {
       background: #3a3848 !important;
       color: transparent;
@@ -277,7 +476,47 @@
   </style>
 </head>
 <body>
-  <h1>🪨 MiniPlain 简易 Demo</h1>
+  <main class="main-menu" id="main-menu">
+    <section class="menu-panel" aria-labelledby="menu-title">
+      <div class="hint">轻探索 · 采集 · 制造 · 烹饪</div>
+      <h1 class="menu-title" id="menu-title">MiniPlain</h1>
+      <p class="menu-lead">
+        从一片被石头盖住的小小平原醒来，凿开道路，收集材料，点起篝火，
+        把荒地慢慢变成你的落脚处。
+      </p>
+      <div class="menu-actions">
+        <button class="pixel-btn" type="button" id="btn-start-game">进入游戏</button>
+        <button class="pixel-btn secondary" type="button" id="btn-open-codex">图鉴</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="codex-screen screen-hidden" id="codex-screen" aria-labelledby="codex-title">
+    <div class="codex-panel">
+      <div class="codex-header">
+        <div>
+          <h1 id="codex-title">物品图鉴</h1>
+          <p class="codex-lead">这是游戏内图鉴。只有亲手获得过的物品才会显示真名和描述；未发现的物品会保持未知。</p>
+          <span class="codex-progress" id="codex-progress">已发现 0/0</span>
+        </div>
+        <div class="codex-actions">
+          <button class="pixel-btn" type="button" id="btn-codex-start">进入游戏</button>
+          <button class="pixel-btn muted" type="button" id="btn-codex-back">返回主界面</button>
+        </div>
+      </div>
+      <div id="codex-content"></div>
+    </div>
+  </section>
+
+  <section class="game-shell screen-hidden" id="game-screen">
+    <header class="game-top">
+      <h1>🪨 MiniPlain 简易 Demo</h1>
+      <div class="game-top-actions">
+        <button class="pixel-btn secondary" type="button" id="btn-game-codex">图鉴</button>
+        <button class="pixel-btn muted" type="button" id="btn-game-menu">主界面</button>
+      </div>
+    </header>
+
   <aside class="dev-tools hidden" id="dev-tools" aria-label="开发者工具">
     <h2>开发者工具</h2>
     <label class="dev-row"><input type="checkbox" id="dev-stamina"> 关闭凿石体力限制</label>
@@ -286,6 +525,7 @@
     <label class="dev-row"><input type="checkbox" id="dev-daynight"> 关闭昼夜更替</label>
     <label class="dev-row"><input type="checkbox" id="dev-fast-mine"> 快速开采全屏石头</label>
     <label class="dev-row"><input type="checkbox" id="dev-all-tools"> 全工具模式</label>
+    <label class="dev-row"><input type="checkbox" id="dev-show-codex"> 显示所有图鉴</label>
     <div class="hint">快速获得物品：搜索后点击物品，每次加入 1 个。</div>
     <input type="text" id="dev-search" placeholder="搜索物品名称或 id">
     <div class="dev-item-list" id="dev-item-list"></div>
@@ -327,6 +567,7 @@
       <p class="hint" id="craft-hint">背包<strong>单击</strong>选材料 → <strong>单击</strong>左/右格放入（也可拖拽）。双击合成格退回。靠近🔧可制造。</p>
     </div>
   </div>
+  </section>
 
   <div class="modal-bg" id="modal">
     <div class="modal">
@@ -349,6 +590,7 @@
     </div>
   </div>
 
+<script src="./data/item-flavors.js"></script>
 <script>
 (function () {
   const SIZE = 11;
@@ -426,6 +668,177 @@
     bread: { name: '面包', emoji: '🍞', vol: 1, use: 'heal2' },
   };
 
+  const DISCOVERY_STORAGE_KEY = 'miniplain.discoveredItems';
+
+  function loadDiscoveredItems() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(DISCOVERY_STORAGE_KEY) || '[]');
+      return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch (err) {
+      return new Set();
+    }
+  }
+
+  const discoveredItems = loadDiscoveredItems();
+
+  function saveDiscoveredItems() {
+    try {
+      localStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify([...discoveredItems]));
+    } catch (err) {
+      // localStorage can fail in restricted browser contexts; gameplay should continue.
+    }
+  }
+
+  function discoverItem(id) {
+    if (!id || (!ITEMS[id] && id !== 'page') || discoveredItems.has(id)) return;
+    discoveredItems.add(id);
+    saveDiscoveredItems();
+  }
+
+  const CODEX_CATEGORIES = [
+    '基础资源',
+    '食材与种植',
+    '动物产物',
+    '工具与装备',
+    '设施与建造',
+    '货币与任务',
+    '加工材料',
+    '料理',
+  ];
+
+  const CODEX_ITEM_CATEGORIES = {
+    stone: '基础资源',
+    iron: '基础资源',
+    silver: '基础资源',
+    gold: '基础资源',
+    wood: '基础资源',
+    flint: '基础资源',
+    fruit: '食材与种植',
+    veg: '食材与种植',
+    potato: '食材与种植',
+    carrot: '食材与种植',
+    sapling: '食材与种植',
+    wheat_seed: '食材与种植',
+    wheat: '食材与种植',
+    fish: '食材与种植',
+    egg: '动物产物',
+    chicken: '动物产物',
+    beef: '动物产物',
+    milk: '动物产物',
+    wolf_fur: '动物产物',
+    rod: '工具与装备',
+    stone_axe: '工具与装备',
+    iron_sword: '工具与装备',
+    hammer: '工具与装备',
+    iron_pot: '工具与装备',
+    iron_bucket: '工具与装备',
+    toolbox: '设施与建造',
+    forge: '设施与建造',
+    chest: '设施与建造',
+    campfire: '设施与建造',
+    oven: '设施与建造',
+    iron_plate: '设施与建造',
+    building: '设施与建造',
+    coin: '货币与任务',
+    silver_coin: '货币与任务',
+    page: '货币与任务',
+    iron_sheet: '加工材料',
+    silver_sheet: '加工材料',
+    iron_silver_sheet: '加工材料',
+    fruit_battery: '加工材料',
+    grilled_veg: '料理',
+    roasted_potato: '料理',
+    roasted_carrot: '料理',
+    fried_egg: '料理',
+    cooked_chicken: '料理',
+    plain_steak: '料理',
+    grilled_fish: '料理',
+    stir_fried_wheat: '料理',
+    bread: '料理',
+    vegetable_stew: '料理',
+    potato_vegetable_stew: '料理',
+    carrot_vegetable_stew: '料理',
+    carrot_potato_stew: '料理',
+    scrambled_eggs: '料理',
+    chicken_egg_bowl: '料理',
+    beef_egg: '料理',
+    big_plate_chicken: '料理',
+    chicken_beef_stew: '料理',
+    veg_egg: '料理',
+    veg_chicken_stew: '料理',
+    veg_beef_stew: '料理',
+    potato_egg: '料理',
+    potato_chicken_stew: '料理',
+    potato_beef_stew: '料理',
+    carrot_egg: '料理',
+    carrot_chicken: '料理',
+    carrot_beef: '料理',
+    fish_vegetable_stew: '料理',
+  };
+
+  const itemFlavorMap = new Map((window.MINIPLAIN_ITEM_FLAVORS || []).map(row => [row[0], { name: row[1], desc: row[2] }]));
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function codexEntry(id) {
+    const def = ITEMS[id] || (id === 'page' ? { name: '遗落书页', emoji: '📜' } : { name: id, emoji: '📦' });
+    const flavor = itemFlavorMap.get(id) || {};
+    return {
+      id,
+      cat: CODEX_ITEM_CATEGORIES[id],
+      name: flavor.name || def.name,
+      emoji: def.emoji || '📦',
+      desc: flavor.desc || '等待你在平原上发现它。',
+    };
+  }
+
+  function renderCodex() {
+    const allEntries = Object.keys(CODEX_ITEM_CATEGORIES).map(codexEntry);
+    const discoveredCount = allEntries.filter(entry => discoveredItems.has(entry.id)).length;
+    document.getElementById('codex-progress').textContent = devShowAllCodex
+      ? `开发者显示全部 · 实际发现 ${discoveredCount}/${allEntries.length}`
+      : `已发现 ${discoveredCount}/${allEntries.length}`;
+    document.getElementById('codex-content').innerHTML = CODEX_CATEGORIES.map(cat => {
+      const group = allEntries.filter(entry => entry.cat === cat);
+      if (!group.length) return '';
+      return `<section class="codex-category">
+        <h2>${escapeHtml(cat)}</h2>
+        <div class="codex-grid">
+          ${group.map(entry => {
+            const found = devShowAllCodex || discoveredItems.has(entry.id);
+            const name = found ? entry.name : '未发现';
+            const emoji = found ? entry.emoji : '?';
+            const desc = found ? entry.desc : '?';
+            const title = `${name} / 分类：${found ? entry.cat : '?'} / ${desc}`;
+            return `<button class="codex-item ${found ? '' : 'locked'}" type="button" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
+              <span class="codex-icon">${escapeHtml(emoji)}</span>
+              <span class="codex-name">${escapeHtml(name)}</span>
+              <span class="codex-tip" role="tooltip">
+                <strong>${escapeHtml(name)}</strong>
+                <span class="tip-cat">分类：${escapeHtml(found ? entry.cat : '?')}</span>
+                <span>${escapeHtml(desc)}</span>
+              </span>
+            </button>`;
+          }).join('')}
+        </div>
+      </section>`;
+    }).join('');
+  }
+
+  function showScreen(screen) {
+    document.getElementById('main-menu').classList.toggle('screen-hidden', screen !== 'menu');
+    document.getElementById('codex-screen').classList.toggle('screen-hidden', screen !== 'codex');
+    document.getElementById('game-screen').classList.toggle('screen-hidden', screen !== 'game');
+    if (screen === 'codex') renderCodex();
+  }
+
   const PAGE_NUMS = ['一', '二', '三', '四', '五', '六', '七'];
   const PAGE_TOTAL = 7;
   /** 每凿开约这么多块石头，至少应再多收集 1 张书页（保底追赶） */
@@ -472,6 +885,7 @@
   let devDisableDayNight = false;
   let devFastMine = false;
   let devAllTools = false;
+  let devShowAllCodex = false;
   let devItemSearch = '';
 
   const guarantees = {
@@ -530,6 +944,7 @@
     c.hidden = { type: 'toolbox' };
     c.structure = 'toolbox';
     c.spawn = true;
+    discoverItem('toolbox');
   }
 
   function isNight() {
@@ -729,6 +1144,7 @@
       const slot = list.find(i => i.id === id);
       if (slot) slot.count += n;
       else list.push({ id, count: n });
+      discoverItem(id);
       return true;
     }
     const currentVol = containerVolume(list);
@@ -743,6 +1159,7 @@
     const slot = list.find(i => i.id === id);
     if (slot) slot.count += n;
     else list.push({ id, count: n });
+    if (list === inventory) discoverItem(id);
     return true;
   }
 
@@ -950,6 +1367,7 @@
       case 'toolbox':
         c.structure = 'toolbox';
         c.ground = 'normal';
+        discoverItem('toolbox');
         addLog('发现破旧工具箱！可在其四格内制造。');
         break;
       case 'water':
@@ -994,6 +1412,7 @@
           collectedPages.push(hidden.idx);
           pageCount = collectedPages.length;
           player.exp += player.level;
+          discoverItem('page');
           addLog(`获得书页（${PAGE_NUMS[hidden.idx]}）+${player.level}经验`);
           checkLevel();
         }
@@ -1572,6 +1991,7 @@
     devDisableDayNight = false;
     devFastMine = false;
     devAllTools = false;
+    devShowAllCodex = false;
     devItemSearch = '';
     Object.assign(guarantees, {
       firstBreak: false, pool: false, bush: false, stone2: 0, iron2: 0,
@@ -2588,6 +3008,7 @@
     document.getElementById('dev-daynight').checked = devDisableDayNight;
     document.getElementById('dev-fast-mine').checked = devFastMine;
     document.getElementById('dev-all-tools').checked = devAllTools;
+    document.getElementById('dev-show-codex').checked = devShowAllCodex;
     const search = document.getElementById('dev-search');
     if (document.activeElement !== search) search.value = devItemSearch;
 
@@ -2612,11 +3033,13 @@
     devDisableDayNight = false;
     devFastMine = false;
     devAllTools = false;
+    devShowAllCodex = false;
     devItemSearch = '';
     addLog('开发者工具已关闭，非正常功能已恢复');
     renderDevTools();
     render();
     renderInv();
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
   }
 
   function toggleDevTools() {
@@ -2751,6 +3174,12 @@
     addLog(devAllTools ? '开发者：全工具模式已开启' : '开发者：全工具模式已关闭');
     render();
   });
+  document.getElementById('dev-show-codex').addEventListener('change', e => {
+    devShowAllCodex = e.target.checked;
+    addLog(devShowAllCodex ? '开发者：图鉴显示全部' : '开发者：图鉴恢复发现限制');
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+    renderDevTools();
+  });
   document.getElementById('dev-search').addEventListener('input', e => {
     devItemSearch = e.target.value;
     renderDevTools();
@@ -2770,6 +3199,12 @@
   document.getElementById('btn-victory-map').onclick = () => {
     document.getElementById('victory-modal').classList.remove('show');
   };
+  document.getElementById('btn-start-game').onclick = () => showScreen('game');
+  document.getElementById('btn-open-codex').onclick = () => showScreen('codex');
+  document.getElementById('btn-codex-start').onclick = () => showScreen('game');
+  document.getElementById('btn-codex-back').onclick = () => showScreen('menu');
+  document.getElementById('btn-game-codex').onclick = () => showScreen('codex');
+  document.getElementById('btn-game-menu').onclick = () => showScreen('menu');
 
   document.addEventListener('keydown', e => {
     if (e.key === '`') {
@@ -2778,6 +3213,7 @@
       return;
     }
     if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    if (document.getElementById('game-screen').classList.contains('screen-hidden')) return;
     const k = e.key.toLowerCase();
     const map = { w: [0,-1], s: [0,1], a: [-1,0], d: [1,0], arrowup: [0,-1], arrowdown: [0,1], arrowleft: [-1,0], arrowright: [1,0] };
     if (map[k]) { e.preventDefault(); move(...map[k]); }
@@ -2786,6 +3222,7 @@
   initGrid();
   addLog('体力10。起点🚩在地图中央，脚下有工具箱可制造。');
   render();
+  showScreen('menu');
 })();
 </script>
 </body>
