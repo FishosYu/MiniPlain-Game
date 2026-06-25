@@ -12,22 +12,29 @@
       --soil: #6f4a34;
       --stone: #5f6270;
       --panel: #fff4d8;
+      --panel-light: #fff9e9;
       --panel-shadow: #d2a85e;
       --text: #2f2b26;
       --muted: #66584c;
       --accent: #d65f43;
       --accent-dark: #8e3528;
-      --cream: #fff9e9;
+      --green: #5f8f57;
+      --green-dark: #37613a;
+      --water: #5aa5c5;
+      --purple: #a78bdc;
+      --line: #2f2b26;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html {
+      scroll-behavior: smooth;
       min-height: 100%;
+      scroll-snap-type: y mandatory;
       background:
-        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(var(--sky) 0 68%, var(--grass) 68% 82%, var(--soil) 82%);
+        linear-gradient(90deg, rgba(255,255,255,.09) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.09) 1px, transparent 1px),
+        linear-gradient(var(--sky) 0 58%, var(--grass) 58% 76%, var(--soil) 76%);
       background-size: 18px 18px, 18px 18px, 100% 100%;
     }
 
@@ -35,53 +42,96 @@
       min-height: 100vh;
       font-family: "Microsoft YaHei", "SimHei", "Segoe UI", sans-serif;
       color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
       image-rendering: pixelated;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
     }
 
-    .scene {
-      width: min(980px, 100%);
+    a { color: inherit; }
+
+    .page {
+      min-height: 100vh;
+      min-height: 100svh;
       position: relative;
-      padding-top: 42px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      overflow: hidden;
     }
 
-    .sun {
+    .page::before {
+      content: "";
       position: absolute;
-      top: 0;
-      right: 8%;
-      width: 74px;
-      height: 74px;
+      inset: auto 0 0;
+      height: 22vh;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(var(--grass) 0 48%, var(--soil) 48%);
+      background-size: 18px 18px, 18px 18px, 100% 100%;
+      z-index: -2;
+    }
+
+    .page::after {
+      content: "";
+      position: absolute;
+      right: 7%;
+      top: 8%;
+      width: 72px;
+      height: 72px;
       background: var(--sun);
+      border: 4px solid rgba(47, 43, 38, .18);
       box-shadow: 0 0 0 8px rgba(255, 212, 107, .28);
+      animation: sun-bob 4s steps(4, end) infinite;
+      z-index: -1;
+    }
+
+    .content {
+      width: min(1080px, 100%);
+      position: relative;
     }
 
     .cloud {
       position: absolute;
-      top: 36px;
-      left: 4%;
+      top: 12%;
+      left: 7%;
       width: 126px;
       height: 36px;
-      background: var(--cream);
-      box-shadow: 36px -18px 0 var(--cream), 72px 0 0 var(--cream), 18px 18px 0 rgba(255,255,255,.45);
-      opacity: .9;
+      background: var(--panel-light);
+      box-shadow: 36px -18px 0 var(--panel-light), 72px 0 0 var(--panel-light), 18px 18px 0 rgba(255,255,255,.45);
+      opacity: .86;
+      animation: cloud-drift 12s steps(6, end) infinite;
+      z-index: -1;
+    }
+
+    .cloud.right {
+      left: auto;
+      right: 18%;
+      top: 18%;
+      transform: scale(.75);
+      animation-delay: -3s;
     }
 
     .hero {
-      position: relative;
+      width: min(960px, 100%);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 22px;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 24px;
       align-items: stretch;
       background: var(--panel);
-      border: 4px solid var(--text);
+      border: 4px solid var(--line);
       box-shadow: 8px 8px 0 var(--panel-shadow), 12px 12px 0 rgba(47, 43, 38, .25);
-      padding: 28px;
+      padding: clamp(20px, 4vw, 32px);
     }
 
-    .eyebrow {
+    .eyebrow,
+    .section-label {
       display: inline-block;
       font-size: .82rem;
       letter-spacing: .12em;
@@ -90,21 +140,37 @@
       border: 2px solid var(--accent-dark);
       padding: 5px 8px;
       margin-bottom: 14px;
+      font-weight: 700;
     }
 
     h1 {
-      font-size: clamp(2.6rem, 9vw, 5.8rem);
-      line-height: .9;
+      font-size: clamp(2.8rem, 9vw, 6.4rem);
+      line-height: .88;
       text-transform: uppercase;
       text-shadow: 4px 4px 0 #efc477;
       margin-bottom: 18px;
     }
 
-    .lead {
-      max-width: 560px;
-      font-size: 1.05rem;
-      line-height: 1.8;
+    h2 {
+      font-size: clamp(1.65rem, 4vw, 2.7rem);
+      line-height: 1.05;
+      text-shadow: 3px 3px 0 #efc477;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      margin-bottom: 8px;
+    }
+
+    p {
       color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .lead {
+      max-width: 610px;
+      font-size: 1.07rem;
       margin-bottom: 22px;
     }
 
@@ -113,6 +179,7 @@
       gap: 12px;
       flex-wrap: wrap;
       align-items: center;
+      margin-bottom: 16px;
     }
 
     .btn {
@@ -120,62 +187,243 @@
       text-decoration: none;
       color: #fff;
       background: var(--accent);
-      border: 3px solid var(--text);
+      border: 3px solid var(--line);
       padding: 12px 18px;
       font-weight: 700;
       box-shadow: 5px 5px 0 var(--accent-dark);
-      transition: transform .12s ease, box-shadow .12s ease;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      cursor: pointer;
+      font: inherit;
     }
 
     .btn:hover,
     .btn:focus-visible {
       transform: translate(2px, 2px);
       box-shadow: 3px 3px 0 var(--accent-dark);
+      outline: none;
     }
 
     .btn.secondary {
-      background: #5f8f57;
-      box-shadow: 5px 5px 0 #37613a;
+      background: var(--green);
+      box-shadow: 5px 5px 0 var(--green-dark);
     }
 
     .btn.secondary:hover,
     .btn.secondary:focus-visible {
-      box-shadow: 3px 3px 0 #37613a;
+      box-shadow: 3px 3px 0 var(--green-dark);
+    }
+
+    .btn.cream {
+      color: var(--text);
+      background: var(--panel-light);
+      box-shadow: 5px 5px 0 #c9b072;
+    }
+
+    .btn.cream:hover,
+    .btn.cream:focus-visible {
+      box-shadow: 3px 3px 0 #c9b072;
     }
 
     .note {
       color: var(--muted);
-      font-size: .86rem;
+      font-size: .88rem;
+    }
+
+    .section-card {
+      width: min(1080px, 100%);
+      background: rgba(255, 244, 216, .94);
+      border: 4px solid var(--line);
+      box-shadow: 8px 8px 0 rgba(47, 43, 38, .22);
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 22px;
+    }
+
+    .creator-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .creator-card {
+      display: grid;
+      grid-template-columns: 116px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      color: var(--text);
+      background: var(--panel-light);
+      border: 3px solid var(--line);
+      box-shadow: 5px 5px 0 #c9b072;
+      padding: 18px;
+      text-decoration: none;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .creator-card:hover,
+    .creator-card:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 #a98745;
+      outline: none;
+    }
+
+    .creator-card img {
+      width: 116px;
+      height: 116px;
+      object-fit: cover;
+      border: 3px solid var(--line);
+      background: var(--panel-light);
+      image-rendering: auto;
+    }
+
+    .creator-card small,
+    .creator-card strong,
+    .creator-card span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .creator-card small {
+      color: var(--accent-dark);
+      font-weight: 700;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    .creator-card strong {
+      font-size: 1.35rem;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .creator-card span {
+      color: var(--muted);
+      line-height: 1.65;
     }
 
     .card {
-      background: #fff9e9;
-      border: 3px solid var(--text);
+      background: var(--panel-light);
+      border: 3px solid var(--line);
       box-shadow: 5px 5px 0 #c9b072;
       padding: 18px;
     }
 
+    .map-card {
+      display: grid;
+      align-content: center;
+      gap: 16px;
+      min-height: 100%;
+      width: 250px;
+      justify-self: end;
+    }
+
     .map {
       display: grid;
-      grid-template-columns: repeat(7, 28px);
-      gap: 4px;
+      grid-template-columns: repeat(7, 24px);
+      gap: 3px;
       justify-content: center;
-      margin-bottom: 18px;
     }
 
     .tile {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       border: 2px solid rgba(47, 43, 38, .42);
       background: #ddd1bd;
+      box-shadow: inset -3px -3px 0 rgba(0, 0, 0, .09), inset 3px 3px 0 rgba(255, 255, 255, .18);
+      animation: tile-pop 3.2s steps(3, end) infinite;
+      animation-delay: calc(var(--i, 0) * .07s);
     }
 
     .tile.grass { background: #89b65f; }
     .tile.stone { background: var(--stone); }
-    .tile.water { background: #5aa5c5; }
+    .tile.water { background: var(--water); }
     .tile.fire { background: #ef7e42; }
     .tile.player { background: #f7e07e; }
-    .tile.crystal { background: #a78bdc; }
+    .tile.crystal { background: var(--purple); }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      list-style: none;
+      text-align: center;
+    }
+
+    .mini-stats li {
+      background: #ffe4ba;
+      border: 2px solid var(--line);
+      padding: 8px 6px;
+      box-shadow: 3px 3px 0 rgba(47, 43, 38, .22);
+    }
+
+    .mini-stats strong {
+      display: block;
+      font-size: 1.2rem;
+    }
+
+    .mini-stats span {
+      display: block;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .info-grid,
+    .fun-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .info-card,
+    .fun-card,
+    .loop-card {
+      background: var(--panel-light);
+      border: 3px solid var(--line);
+      box-shadow: 5px 5px 0 #c9b072;
+      padding: 14px;
+    }
+
+    .info-card p,
+    .fun-card p,
+    .loop-card p {
+      font-size: .94rem;
+    }
+
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+      counter-reset: step;
+    }
+
+    .loop-card {
+      position: relative;
+      min-height: 138px;
+    }
+
+    .loop-card::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: inline-block;
+      color: #fff;
+      background: var(--accent);
+      border: 2px solid var(--line);
+      box-shadow: 3px 3px 0 var(--accent-dark);
+      padding: 3px 6px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
 
     .features {
       display: grid;
@@ -183,69 +431,257 @@
       list-style: none;
       color: var(--muted);
       line-height: 1.6;
-      font-size: .95rem;
+      font-size: .96rem;
+      margin-top: 16px;
     }
 
     .features li {
       border-left: 6px solid #89b65f;
-      padding-left: 10px;
-      background: rgba(255, 228, 186, .45);
+      padding: 10px 12px;
+      background: rgba(255, 228, 186, .6);
     }
 
-    .footer {
-      margin-top: 18px;
-      text-align: center;
-      color: rgba(47, 43, 38, .7);
-      font-size: .82rem;
+    .milestones {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
     }
 
-    @media (max-width: 780px) {
-      body { padding: 14px; align-items: flex-start; }
-      .scene { padding-top: 26px; }
-      .hero { grid-template-columns: 1fr; padding: 20px; }
-      .sun { width: 48px; height: 48px; right: 4%; }
-      .cloud { transform: scale(.75); transform-origin: left top; }
+    .milestone {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: var(--panel-light);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 12px;
+    }
+
+    .milestone strong {
+      color: var(--accent-dark);
+    }
+
+    @keyframes sun-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    @keyframes cloud-drift {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(28px); }
+    }
+
+    @keyframes tile-pop {
+      0%, 88%, 100% { transform: translateY(0); }
+      92% { transform: translateY(-3px); }
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: 18px 14px;
+        overflow: visible;
+      }
+      .hero {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+      }
+      .hero,
+      .split,
+      .loop { grid-template-columns: 1fr; }
+      .info-grid,
+      .fun-grid { grid-template-columns: 1fr; }
+      .map-card {
+        width: min(250px, 100%);
+        justify-self: center;
+      }
+      .creator-grid { grid-template-columns: 1fr; }
+      .creator-card { grid-template-columns: 88px minmax(0, 1fr); }
+      .creator-card img { width: 88px; height: 88px; }
+      .milestone { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .map { grid-template-columns: repeat(7, 22px); }
+      .tile { width: 22px; height: 22px; }
+      .mini-stats { grid-template-columns: 1fr; }
+      .page { padding: 14px 10px; }
+      .section-card { padding: 18px 14px; }
+      .creator-card { grid-template-columns: 1fr; }
+      .creator-card img { width: 96px; height: 96px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="scene">
+  <main>
     <div class="cloud" aria-hidden="true"></div>
-    <div class="sun" aria-hidden="true"></div>
+    <div class="cloud right" aria-hidden="true"></div>
 
-    <section class="hero" aria-labelledby="title">
-      <div>
-        <span class="eyebrow">轻探索 · 采集 · 制造 · 烹饪</span>
-        <h1 id="title">MiniPlain</h1>
-        <p class="lead">
-          掉进一片被石头盖住的小小平原，从中心格开始一点点凿开道路。
-          收集矿物和食材，搭起篝火，做出料理，读完遗落书页，让荒地慢慢露出它原本的样子。
-        </p>
-        <div class="actions">
-          <a class="btn" href="./MiniPlain.html">进入 Demo</a>
-          <a class="btn secondary" href="./pages/items.html">查看物品一览</a>
-          <span class="note">纯前端原型，打开即可游玩。</span>
+    <section class="page home" aria-labelledby="title">
+      <div class="content">
+        <div class="hero">
+          <div>
+            <span class="eyebrow">轻探索 · 采集 · 制造 · 烹饪</span>
+            <h1 id="title">MiniPlain</h1>
+            <p class="lead">
+              掉进一片被石头盖住的小小平原，从中心格开始一点点凿开道路。
+              收集矿物和食材，搭起篝火，做出料理，读完遗落书页，让荒地慢慢露出它原本的样子。
+            </p>
+            <div class="actions">
+              <a class="btn" href="./MiniPlain.html">进入 Demo</a>
+              <a class="btn secondary" href="./pages/items.html">查看物品图鉴</a>
+              <span class="note">纯前端原型，打开即可游玩。</span>
+            </div>
+          </div>
+
+          <aside class="card map-card" aria-label="MiniPlain 小地图装饰">
+            <div class="map" aria-hidden="true">
+              <span class="tile stone" style="--i:1"></span><span class="tile stone" style="--i:2"></span><span class="tile grass" style="--i:3"></span><span class="tile stone" style="--i:4"></span><span class="tile water" style="--i:5"></span><span class="tile stone" style="--i:6"></span><span class="tile stone" style="--i:7"></span>
+              <span class="tile stone" style="--i:8"></span><span class="tile grass" style="--i:9"></span><span class="tile grass" style="--i:10"></span><span class="tile grass" style="--i:11"></span><span class="tile water" style="--i:12"></span><span class="tile water" style="--i:13"></span><span class="tile stone" style="--i:14"></span>
+              <span class="tile stone" style="--i:15"></span><span class="tile grass" style="--i:16"></span><span class="tile player" style="--i:17"></span><span class="tile grass" style="--i:18"></span><span class="tile grass" style="--i:19"></span><span class="tile stone" style="--i:20"></span><span class="tile stone" style="--i:21"></span>
+              <span class="tile grass" style="--i:22"></span><span class="tile grass" style="--i:23"></span><span class="tile grass" style="--i:24"></span><span class="tile fire" style="--i:25"></span><span class="tile grass" style="--i:26"></span><span class="tile stone" style="--i:27"></span><span class="tile crystal" style="--i:28"></span>
+              <span class="tile stone" style="--i:29"></span><span class="tile grass" style="--i:30"></span><span class="tile stone" style="--i:31"></span><span class="tile grass" style="--i:32"></span><span class="tile grass" style="--i:33"></span><span class="tile grass" style="--i:34"></span><span class="tile stone" style="--i:35"></span>
+            </div>
+            <ul class="mini-stats" aria-label="当前 Demo 概览">
+              <li><strong>探索</strong></li>
+              <li><strong>休闲</strong></li>
+            </ul>
+          </aside>
         </div>
       </div>
-
-      <aside class="card" aria-label="游戏特点">
-        <div class="map" aria-hidden="true">
-          <span class="tile stone"></span><span class="tile stone"></span><span class="tile grass"></span><span class="tile stone"></span><span class="tile water"></span><span class="tile stone"></span><span class="tile stone"></span>
-          <span class="tile stone"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile water"></span><span class="tile water"></span><span class="tile stone"></span>
-          <span class="tile stone"></span><span class="tile grass"></span><span class="tile player"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile stone"></span><span class="tile stone"></span>
-          <span class="tile grass"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile fire"></span><span class="tile grass"></span><span class="tile stone"></span><span class="tile crystal"></span>
-          <span class="tile stone"></span><span class="tile grass"></span><span class="tile stone"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile grass"></span><span class="tile stone"></span>
-        </div>
-        <ul class="features">
-          <li>凿石消耗体力，也会发现新的资源、动物、植物和事件。</li>
-          <li>用工具箱、铸造台和篝火，把材料变成装备、设施和料理。</li>
-          <li>夜晚会缩小视野，篝火和水晶球能照亮身边的格子。</li>
-          <li>当前目标是收集 7 页遗落书页，并把它们交给水晶球。</li>
-        </ul>
-      </aside>
     </section>
 
-    <p class="footer">WASD / 方向键移动，点击高亮格凿开石头。</p>
+    <section class="page" aria-labelledby="creators-title">
+      <div class="section-card">
+        <div class="section-title">
+          <span class="section-label">CREATORS</span>
+          <h2 id="creators-title">制作者</h2>
+          <p>策划和美术分别来自两位创作者。点击卡片可以打开对应 GitHub 主页。</p>
+        </div>
+        <div class="creator-grid">
+          <a class="creator-card" href="https://github.com/FishosYu" target="_blank" rel="noopener noreferrer">
+            <img src="https://github.com/FishosYu/FishosYu.github.io/blob/main/assets/images/icon.png?raw=true" alt="FishosYu 头像">
+            <span>
+              <small>游戏策划</small>
+              <strong>FishosYu / Ximing Yu</strong>
+              <span>GitHub: https://github.com/FishosYu</span>
+            </span>
+          </a>
+          <a class="creator-card" href="https://github.com/haoccy0u" target="_blank" rel="noopener noreferrer">
+            <img src="https://github.com/haoccy0u.png?size=160" alt="haoccy0u 头像">
+            <span>
+              <small>游戏美术</small>
+              <strong>haoccy0u / Rong Chen</strong>
+              <span>GitHub: https://github.com/haoccy0u</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" aria-labelledby="gameplay-title">
+      <div class="section-card">
+        <div class="section-title">
+          <span class="section-label">GAMEPLAY</span>
+          <h2 id="gameplay-title">主要玩法</h2>
+          <p>
+            地图是 11×11 的格子地，玩家从中心开始探索。你会在有限体力里决定先挖哪里，
+            用挖到的材料制造工具和设施，再把新的工具带回探索循环里。
+          </p>
+        </div>
+        <div class="loop">
+          <article class="loop-card">
+            <h3>凿开石头</h3>
+            <p>凿石消耗 1 点体力，也会获得经验和随机矿物，并逐步显露地图里的植物、动物、事件与特殊设施。</p>
+          </article>
+          <article class="loop-card">
+            <h3>收集资源</h3>
+            <p>矿物、木材、食材、动物产物和货币会进入背包，成为制造、料理和建造的原料。</p>
+          </article>
+          <article class="loop-card">
+            <h3>制造设施</h3>
+            <p>用工具箱、铸造台、篝火、石磨、料理台等平台，把材料加工成工具、装备、设施和料理。</p>
+          </article>
+          <article class="loop-card">
+            <h3>继续探索</h3>
+            <p>料理回复体力，照明扩大夜晚视野，桥、庇护所和更多工具让玩家能处理越来越多的地图情况。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" aria-labelledby="fun-title">
+      <div class="section-card">
+        <div class="section-title">
+          <span class="section-label">FUN</span>
+          <h2 id="fun-title">核心乐趣</h2>
+          <p>MiniPlain 想保留探索游戏里“再点一格”的好奇心，但不要给玩家太强的失败压力。</p>
+        </div>
+        <div class="fun-grid">
+          <article class="fun-card">
+            <h3>一格一格打开未知</h3>
+            <p>石头遮住了地图，也遮住了下一次发现。每一次点击都可能改变接下来的路线和目标。</p>
+          </article>
+          <article class="fun-card">
+            <h3>资源变成新能力</h3>
+            <p>石头、铁块、木材、食材不是单纯堆在背包里，它们会变成斧子、锅、篝火、桥和料理。</p>
+          </article>
+          <article class="fun-card">
+            <h3>低压力的完成感</h3>
+            <p>没有死亡或失败惩罚，体力更多是在提醒玩家试试料理、种植和设施，而不是制造焦虑。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" aria-labelledby="overview-title">
+      <div class="section-card">
+        <div class="section-title">
+          <span class="section-label">CONTENT</span>
+          <h2 id="overview-title">内容概览</h2>
+          <p>当前 Demo 的内容围绕探索、制造、种植、烹饪和书页收集展开。完整物品图鉴仍然放在独立子页面。</p>
+        </div>
+        <div class="milestones">
+          <article class="milestone">
+            <strong>开局</strong>
+            <p>从中心格和破旧工具箱开始，凿开周围石头，收集基础矿物和木材。</p>
+          </article>
+          <article class="milestone">
+            <strong>中段</strong>
+            <p>制造铸造台、石斧、铁锅、篝火和箱子，开始处理动物、植物、烹饪与储物问题。</p>
+          </article>
+          <article class="milestone">
+            <strong>后段</strong>
+            <p>借助照明、庇护所、料理台、石磨和更多设施，把探索推进到遗落书页与水晶球目标。</p>
+          </article>
+        </div>
+        <ul class="features">
+          <li>凿开石头可能发现新的资源、动物、植物、宝箱、纸袋、特殊盒子、水池和事件。</li>
+          <li>玩家只能在已清开的普通地面移动，不能穿过石头或水池，探索路线会自然形成。</li>
+          <li>昼夜由凿石次数推进，夜晚会缩小视野；篝火和水晶球能照亮身边的格子。</li>
+          <li>当前目标是收集 7 页遗落书页，并把它们交给水晶球。</li>
+        </ul>
+        <div class="actions">
+          <a class="btn" href="./MiniPlain.html">进入 Demo</a>
+          <a class="btn cream" href="./pages/items.html">进入物品图鉴</a>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
