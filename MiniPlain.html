@@ -290,6 +290,96 @@
       gap: 3px;
       user-select: none;
     }
+    .mobile-controls {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      background: var(--pixel-panel);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 #d8c896;
+      text-align: center;
+      touch-action: none;
+    }
+    .mobile-controls-title {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 7px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      font-size: 0.72rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .mobile-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+    .mobile-move-btn {
+      width: 58px;
+      height: 52px;
+      padding: 0;
+      font-size: 1.25rem;
+      line-height: 1;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .mobile-move-btn.up { grid-column: 2; grid-row: 1; }
+    .mobile-move-btn.left { grid-column: 1; grid-row: 2; }
+    .mobile-move-btn.right { grid-column: 3; grid-row: 2; }
+    .mobile-move-btn.down { grid-column: 2; grid-row: 3; }
+    .orientation-tip {
+      display: none;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #ffe4ba;
+      border: 3px solid #8e3528;
+      color: #8e3528;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 4px 4px 0 #c9b072;
+    }
+    body.mobile-controls-enabled .mobile-controls { display: block; }
+    body.mobile-controls-enabled.mobile-landscape .orientation-tip { display: block; }
+    body.mobile-controls-enabled {
+      padding: 8px;
+      overscroll-behavior: none;
+    }
+    body.mobile-controls-enabled .game-shell,
+    body.mobile-controls-enabled .layout {
+      max-width: 560px;
+    }
+    body.mobile-controls-enabled .layout {
+      grid-template-columns: 1fr;
+    }
+    body.mobile-controls-enabled .game-top {
+      margin-bottom: 10px;
+      padding: 8px 10px;
+    }
+    body.mobile-controls-enabled #grid-wrap {
+      overflow: visible;
+      padding: 6px;
+    }
+    body.mobile-controls-enabled #grid {
+      width: min(100%, 462px);
+      grid-template-columns: repeat(11, minmax(24px, 1fr));
+      gap: 2px;
+    }
+    body.mobile-controls-enabled .cell {
+      width: auto;
+      height: auto;
+      aspect-ratio: 1;
+      font-size: clamp(16px, 5vw, 22px);
+    }
+    body.mobile-controls-enabled .inv-grid {
+      max-height: none;
+    }
     .cell {
       width: 40px;
       height: 40px;
@@ -656,9 +746,20 @@
   </aside>
   <div class="layout">
     <div class="panel">
+      <div class="orientation-tip" id="orientation-tip">手机/平板建议竖屏游玩；请将设备转为竖屏。</div>
       <div class="stats" id="stats"></div>
       <div id="grid-wrap"><div id="grid"></div></div>
       <div class="log" id="log"></div>
+      <div class="mobile-controls" id="mobile-controls" aria-label="移动方向键">
+        <div class="mobile-controls-title">移动</div>
+        <div class="mobile-dpad">
+          <button class="mobile-move-btn up" type="button" data-move="0,-1" aria-label="向上移动">↑</button>
+          <button class="mobile-move-btn left" type="button" data-move="-1,0" aria-label="向左移动">←</button>
+          <button class="mobile-move-btn right" type="button" data-move="1,0" aria-label="向右移动">→</button>
+          <button class="mobile-move-btn down" type="button" data-move="0,1" aria-label="向下移动">↓</button>
+        </div>
+        <p class="hint">手机/平板：点击方向键移动，竖屏体验最佳。</p>
+      </div>
       <p class="hint">WASD / 方向键移动 · 点击高亮格清除石头(需相邻普通地面且消耗1体力) · 点击地面物品互动</p>
     </div>
     <div class="panel">
@@ -714,7 +815,9 @@
     </div>
   </div>
 
-<script src="./data/item-flavors.js"></script>
+<script src="./data/items.js"></script>
+<script src="./data/pages.js"></script>
+<script src="./data/recipes.js"></script>
 <script>
 (function () {
   const SIZE = 11;
@@ -723,74 +826,15 @@
   const INV_MAX = 30;
   const CHEST_MAX = 30;
 
-  const ITEMS = {
-    iron: { name: '铁块', emoji: '🔩', vol: 1 },
-    stone: { name: '石头', emoji: '🪨', vol: 1 },
-    silver: { name: '银块', emoji: '🥈', vol: 1 },
-    silver_coin: { name: '银币', emoji: '🔘', vol: 0 },
-    gold: { name: '金块', emoji: '🥇', vol: 1 },
-    fruit: { name: '水果', emoji: '🍎', vol: 1, use: 'heal1' },
-    veg: { name: '蔬菜', emoji: '🥬', vol: 1 },
-    potato: { name: '土豆', emoji: '🥔', vol: 1 },
-    carrot: { name: '胡萝卜', emoji: '🥕', vol: 1 },
-    sapling: { name: '树苗', emoji: '🌱', vol: 1, plant: true },
-    wood: { name: '木材', emoji: '🪵', vol: 1 },
-    chicken: { name: '鸡肉', emoji: '🍗', vol: 1 },
-    beef: { name: '牛肉', emoji: '🥩', vol: 1 },
-    egg: { name: '鸡蛋', emoji: '🥚', vol: 1 },
-    milk: { name: '牛奶', emoji: '🥛', vol: 1 },
-    wolf_fur: { name: '狼皮', emoji: '🐺', vol: 1 },
-    rod: { name: '鱼竿', emoji: '🎣', vol: 1 },
-    iron_sword: { name: '铁剑', emoji: '⚔️', vol: 1 },
-    stone_axe: { name: '石斧', emoji: '🪓', vol: 1 },
-    coin: { name: '金币', emoji: '🪙', vol: 0 },
-    wheat_seed: { name: '麦种', emoji: '🌾', vol: 1 },
-    wheat: { name: '小麦', emoji: '🌾', vol: 1 },
-    flint: { name: '打火石', emoji: '🪔', vol: 1 },
-    building: { name: '建材', emoji: '🧱', vol: 1 },
-    forge: { name: '铸造台', emoji: '⬜', vol: 1, place: 'forge' },
-    chest: { name: '箱子', emoji: '🧰', vol: 1, place: 'chest' },
-    toolbox: { name: '破旧工具箱', emoji: '🔧', vol: 0, place: 'toolbox' },
-    iron_pot: { name: '铁锅', emoji: '🍳', vol: 1 },
-    iron_bucket: { name: '铁桶', emoji: '🪣', vol: 1 },
-    campfire: { name: '篝火', emoji: '🔥', vol: 1, place: 'campfire' },
-    oven: { name: '烤箱', emoji: '🧱', vol: 1, place: 'oven' },
-    hammer: { name: '锤子', emoji: '🔨', vol: 1 },
-    iron_plate: { name: '铁板', emoji: '◼️', vol: 1, place: 'iron_plate' },
-    iron_sheet: { name: '铁片', emoji: '▫️', vol: 1 },
-    silver_sheet: { name: '银片', emoji: '◽', vol: 1 },
-    iron_silver_sheet: { name: '铁银片组合', emoji: '🔳', vol: 1 },
-    fruit_battery: { name: '水果电池', emoji: '🔋', vol: 1 },
-    grilled_veg: { name: '烤蔬菜', emoji: '🥬', vol: 1, use: 'heal1' },
-    roasted_potato: { name: '烤土豆', emoji: '🥔', vol: 1, use: 'heal1' },
-    roasted_carrot: { name: '烤胡萝卜', emoji: '🥕', vol: 1, use: 'heal1' },
-    fried_egg: { name: '荷包蛋', emoji: '🍽️', vol: 1, use: 'heal1' },
-    cooked_chicken: { name: '熟鸡肉', emoji: '🍗', vol: 1, use: 'heal2' },
-    plain_steak: { name: '牛排（味道一般版）', emoji: '🥩', vol: 1, use: 'heal2' },
-    stir_fried_wheat: { name: '炒麦', emoji: '🌾', vol: 1, use: 'snack' },
-    vegetable_stew: { name: '炖菜', emoji: '🥘', vol: 1, use: 'heal2' },
-    potato_vegetable_stew: { name: '土豆炖菜', emoji: '🥘', vol: 1, use: 'heal2' },
-    carrot_vegetable_stew: { name: '胡萝卜炖菜', emoji: '🥘', vol: 1, use: 'heal2' },
-    carrot_potato_stew: { name: '胡萝卜炖土豆', emoji: '🥘', vol: 1, use: 'heal2' },
-    scrambled_eggs: { name: '炒鸡蛋', emoji: '🥣', vol: 1, use: 'heal2' },
-    chicken_egg_bowl: { name: '"母子连心"', emoji: '🍲', vol: 1, use: 'heal3' },
-    beef_egg: { name: '蛋烧牛肉', emoji: '🍲', vol: 1, use: 'heal3' },
-    big_plate_chicken: { name: '大盘鸡', emoji: '🍗', vol: 1, use: 'heal4' },
-    chicken_beef_stew: { name: '牛肉炖鸡', emoji: '🥘', vol: 1, use: 'heal4' },
-    veg_egg: { name: '蔬菜滑蛋', emoji: '🥗', vol: 1, use: 'heal2' },
-    veg_chicken_stew: { name: '鲜蔬炖鸡', emoji: '🥘', vol: 1, use: 'heal3' },
-    veg_beef_stew: { name: '鲜蔬炖牛肉', emoji: '🥘', vol: 1, use: 'heal3' },
-    potato_egg: { name: '薯角滑蛋', emoji: '🍟', vol: 1, use: 'heal2' },
-    potato_chicken_stew: { name: '土豆炖鸡', emoji: '🥘', vol: 1, use: 'heal3' },
-    potato_beef_stew: { name: '土豆焖牛肉', emoji: '🥘', vol: 1, use: 'heal3' },
-    carrot_egg: { name: '胡萝卜炒鸡蛋', emoji: '🍛', vol: 1, use: 'heal2' },
-    carrot_chicken: { name: '胡萝卜炒鸡肉', emoji: '🍲', vol: 1, use: 'heal3' },
-    carrot_beef: { name: '胡萝卜焖牛肉', emoji: '🥘', vol: 1, use: 'heal3' },
-    fish_vegetable_stew: { name: '鲜蔬菜炖鱼', emoji: '🍲', vol: 1, use: 'heal2' },
-    fish: { name: '鱼', emoji: '🐟', vol: 1 },
-    grilled_fish: { name: '烤鱼', emoji: '🐠', vol: 1, use: 'heal_fish' },
-    bread: { name: '面包', emoji: '🍞', vol: 1, use: 'heal2' },
-  };
+  const ITEM_DATA = window.MINIPLAIN_ITEMS || {};
+  const ITEMS = Object.fromEntries(Object.entries(ITEM_DATA).map(([id, item]) => [id, {
+    name: item.name,
+    emoji: item.emoji,
+    vol: item.vol || 0,
+    use: item.use,
+    plant: item.plant,
+    place: item.place,
+  }]));
 
   const DISCOVERY_STORAGE_KEY = 'miniplain.discoveredItems';
 
@@ -819,88 +863,10 @@
     saveDiscoveredItems();
   }
 
-  const CODEX_CATEGORIES = [
-    '基础资源',
-    '食材与种植',
-    '动物产物',
-    '工具与装备',
-    '设施与建造',
-    '货币与任务',
-    '加工材料',
-    '料理',
-  ];
-
-  const CODEX_ITEM_CATEGORIES = {
-    stone: '基础资源',
-    iron: '基础资源',
-    silver: '基础资源',
-    gold: '基础资源',
-    wood: '基础资源',
-    flint: '基础资源',
-    fruit: '食材与种植',
-    veg: '食材与种植',
-    potato: '食材与种植',
-    carrot: '食材与种植',
-    sapling: '食材与种植',
-    wheat_seed: '食材与种植',
-    wheat: '食材与种植',
-    fish: '食材与种植',
-    egg: '动物产物',
-    chicken: '动物产物',
-    beef: '动物产物',
-    milk: '动物产物',
-    wolf_fur: '动物产物',
-    rod: '工具与装备',
-    stone_axe: '工具与装备',
-    iron_sword: '工具与装备',
-    hammer: '工具与装备',
-    iron_pot: '工具与装备',
-    iron_bucket: '工具与装备',
-    toolbox: '设施与建造',
-    forge: '设施与建造',
-    chest: '设施与建造',
-    campfire: '设施与建造',
-    oven: '设施与建造',
-    iron_plate: '设施与建造',
-    building: '设施与建造',
-    coin: '货币与任务',
-    silver_coin: '货币与任务',
-    page: '货币与任务',
-    iron_sheet: '加工材料',
-    silver_sheet: '加工材料',
-    iron_silver_sheet: '加工材料',
-    fruit_battery: '加工材料',
-    grilled_veg: '料理',
-    roasted_potato: '料理',
-    roasted_carrot: '料理',
-    fried_egg: '料理',
-    cooked_chicken: '料理',
-    plain_steak: '料理',
-    grilled_fish: '料理',
-    stir_fried_wheat: '料理',
-    bread: '料理',
-    vegetable_stew: '料理',
-    potato_vegetable_stew: '料理',
-    carrot_vegetable_stew: '料理',
-    carrot_potato_stew: '料理',
-    scrambled_eggs: '料理',
-    chicken_egg_bowl: '料理',
-    beef_egg: '料理',
-    big_plate_chicken: '料理',
-    chicken_beef_stew: '料理',
-    veg_egg: '料理',
-    veg_chicken_stew: '料理',
-    veg_beef_stew: '料理',
-    potato_egg: '料理',
-    potato_chicken_stew: '料理',
-    potato_beef_stew: '料理',
-    carrot_egg: '料理',
-    carrot_chicken: '料理',
-    carrot_beef: '料理',
-    fish_vegetable_stew: '料理',
-  };
-
-  const itemFlavorMap = new Map((window.MINIPLAIN_ITEM_FLAVORS || []).map(row => [row[0], { name: row[1], desc: row[2] }]));
+  const CODEX_CATEGORIES = window.MINIPLAIN_ITEM_CATEGORIES || [];
+  const CODEX_ITEM_CATEGORIES = Object.fromEntries(Object.entries(ITEM_DATA)
+    .filter(([, item]) => item.category)
+    .map(([id, item]) => [id, item.category]));
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -913,13 +879,14 @@
 
   function codexEntry(id) {
     const def = ITEMS[id] || (id === 'page' ? { name: '遗落书页', emoji: '📜' } : { name: id, emoji: '📦' });
-    const flavor = itemFlavorMap.get(id) || {};
+    const data = ITEM_DATA[id] || {};
+    const texts = data.texts || {};
     return {
       id,
       cat: CODEX_ITEM_CATEGORIES[id],
-      name: flavor.name || def.name,
+      name: data.name || def.name,
       emoji: def.emoji || '📦',
-      desc: flavor.desc || '等待你在平原上发现它。',
+      desc: texts.codex || texts.game || texts.overview || '等待你在平原上发现它。',
     };
   }
 
@@ -960,23 +927,65 @@
     document.getElementById('main-menu').classList.toggle('screen-hidden', screen !== 'menu');
     document.getElementById('codex-screen').classList.toggle('screen-hidden', screen !== 'codex');
     document.getElementById('game-screen').classList.toggle('screen-hidden', screen !== 'game');
+    updateDeviceMode();
+    if (screen === 'game') requestPortraitForGame();
+    else releasePortraitForGame();
     if (screen === 'codex') renderCodex();
   }
 
-  const PAGE_NUMS = ['一', '二', '三', '四', '五', '六', '七'];
-  const PAGE_TOTAL = 7;
+  const touchQuery = window.matchMedia?.('(hover: none), (pointer: coarse)');
+  const portraitQuery = window.matchMedia?.('(orientation: portrait)');
+  let mobileControlsActive = false;
+
+  function isMobileOrTablet() {
+    const ua = navigator.userAgent || '';
+    const mobileUa = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const iPadDesktopUa = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+    const coarseTouch = Boolean(touchQuery?.matches && navigator.maxTouchPoints > 0);
+    const tabletSizedViewport = Math.max(window.innerWidth, window.innerHeight) <= 1366;
+    return mobileUa || iPadDesktopUa || (coarseTouch && tabletSizedViewport);
+  }
+
+  function updateDeviceMode() {
+    mobileControlsActive = isMobileOrTablet();
+    const isPortrait = portraitQuery ? portraitQuery.matches : window.innerHeight >= window.innerWidth;
+    document.body.classList.toggle('mobile-controls-enabled', mobileControlsActive);
+    document.body.classList.toggle('mobile-landscape', mobileControlsActive && !isPortrait);
+  }
+
+  function requestPortraitForGame() {
+    if (!mobileControlsActive || !window.screen?.orientation?.lock) return;
+    window.screen.orientation.lock('portrait').catch(() => {
+      // Some browsers require fullscreen before locking orientation; the layout still guides portrait play.
+    });
+  }
+
+  function releasePortraitForGame() {
+    if (!window.screen?.orientation?.unlock) return;
+    try {
+      window.screen.orientation.unlock();
+    } catch (_) {}
+  }
+
+  function watchMedia(query, handler) {
+    if (!query) return;
+    if (query.addEventListener) query.addEventListener('change', handler);
+    else if (query.addListener) query.addListener(handler);
+  }
+
+  function initDeviceMode() {
+    updateDeviceMode();
+    watchMedia(touchQuery, updateDeviceMode);
+    watchMedia(portraitQuery, updateDeviceMode);
+    window.addEventListener('resize', updateDeviceMode);
+    window.addEventListener('orientationchange', updateDeviceMode);
+  }
+
+  const PAGE_NUMS = window.MINIPLAIN_PAGE_NUMS || ['一', '二', '三', '四', '五', '六', '七'];
+  const PAGES = (window.MINIPLAIN_PAGES || []).map(page => page.text);
+  const PAGE_TOTAL = PAGES.length || 7;
   /** 每凿开约这么多块石头，至少应再多收集 1 张书页（保底追赶） */
   const PAGE_PITY_EVERY = 12;
-
-  const PAGES = [
-    '（一）石落之地：你自高处坠下，碎石间唯有体力与意志相伴。',
-    '（二）凿石为路：每破一石，天地便多露一分真容。',
-    '（三）水火之间：池畔可栽，火边可炊，生灵循此而生。',
-    '（四）昼夜之循：二十凿而暮，五夜而复明。',
-    '（五）金盒之谜：金币可换利器，然各仅一次。',
-    '（六）庇护之所：八级方悟，四材成屋，可借时光休憩。',
-    '（七）末页留白：前路尚远，故事仍在你手中书写……',
-  ];
 
   let grid = [];
   let player = { x: CENTER, y: CENTER, stamina: 10, exp: 0, level: 0, breaks: 0 };
@@ -2249,86 +2258,44 @@
       }
   }
 
-  /* 键名须与 recipeKey() 一致（两材料按 id 字母序用 + 连接） */
-  const RECIPES_MAKE = {
-    'iron+stone': 'forge',
-    'stone+stone': 'flint',
-    'wood+wood': 'chest',
-    'stone+wood': 'building',
-    'flint+wood': 'campfire',
-    'campfire+iron': 'oven',
-    'hammer+iron': 'iron_sheet',
-    'hammer+silver': 'silver_sheet',
-    'iron_sheet+silver_sheet': 'iron_silver_sheet',
-    'fruit+iron_silver_sheet': 'fruit_battery',
-  };
-  const RECIPES_FORGE = {
-    'stone+wood': 'stone_axe',
-    'iron+wood': 'iron_sword',
-    'iron+iron': 'iron_pot',
-    'iron+stone': 'iron_plate',
-    'stone+stone': 'hammer',
-  };
-  const COOK_FOODS = ['veg', 'potato', 'carrot', 'egg', 'chicken', 'beef', 'fish', 'wheat'];
-  const RECIPES_COOK = {
-    veg: { id: 'grilled_veg' },
-    potato: { id: 'roasted_potato' },
-    carrot: { id: 'roasted_carrot' },
-    egg: { id: 'fried_egg' },
-    chicken: { id: 'cooked_chicken' },
-    beef: { id: 'plain_steak' },
-    fish: { id: 'grilled_fish' },
-    wheat: { id: 'stir_fried_wheat' },
-    'veg+veg': { id: 'vegetable_stew' },
-    'potato+veg': { id: 'potato_vegetable_stew' },
-    'carrot+veg': { id: 'carrot_vegetable_stew' },
-    'potato+potato': { id: 'roasted_potato', count: 2 },
-    'carrot+potato': { id: 'carrot_potato_stew' },
-    'carrot+carrot': { id: 'roasted_carrot', count: 2 },
-    'egg+egg': { id: 'scrambled_eggs' },
-    'chicken+egg': { id: 'chicken_egg_bowl' },
-    'beef+egg': { id: 'beef_egg' },
-    'chicken+chicken': { id: 'big_plate_chicken' },
-    'beef+chicken': { id: 'chicken_beef_stew' },
-    'beef+beef': { id: 'plain_steak', count: 2 },
-    'egg+veg': { id: 'veg_egg' },
-    'chicken+veg': { id: 'veg_chicken_stew' },
-    'beef+veg': { id: 'veg_beef_stew' },
-    'egg+potato': { id: 'potato_egg' },
-    'chicken+potato': { id: 'potato_chicken_stew' },
-    'beef+potato': { id: 'potato_beef_stew' },
-    'carrot+egg': { id: 'carrot_egg' },
-    'carrot+chicken': { id: 'carrot_chicken' },
-    'beef+carrot': { id: 'carrot_beef' },
-    'wheat+wheat': { id: 'stir_fried_wheat', count: 2 },
-    'fish+fish': { id: 'grilled_fish', count: 2 },
-    'fish+veg': { id: 'fish_vegetable_stew' },
-  };
-  const RECIPES_IRON_PLATE = {
-    veg: { id: 'grilled_veg' },
-    potato: { id: 'roasted_potato' },
-    carrot: { id: 'roasted_carrot' },
-    egg: { id: 'fried_egg' },
-    chicken: { id: 'cooked_chicken' },
-    beef: { id: 'plain_steak' },
-    fish: { id: 'grilled_fish' },
-    wheat: { id: 'stir_fried_wheat' },
-    'egg+egg': { id: 'scrambled_eggs' },
-    'potato+potato': { id: 'roasted_potato', count: 2 },
-    'carrot+carrot': { id: 'roasted_carrot', count: 2 },
-    'beef+beef': { id: 'plain_steak', count: 2 },
-    'fish+fish': { id: 'grilled_fish', count: 2 },
-    'wheat+wheat': { id: 'stir_fried_wheat', count: 2 },
-  };
-  const CRAFT_MATS = ['stone', 'iron', 'wood', 'silver', 'gold', 'flint', 'building', 'campfire', 'hammer', 'iron_sheet', 'silver_sheet', 'iron_silver_sheet'];
+  const RECIPES = (window.MINIPLAIN_RECIPES || []).map(recipe => ({
+    station: recipe.station,
+    inputs: [...(recipe.inputs || [])].filter(Boolean),
+    output: recipe.output,
+    count: recipe.count || 1,
+    returns: recipe.returns || [],
+  })).filter(recipe => recipe.station && recipe.inputs.length && recipe.output);
+
+  const COOK_STATIONS = new Set(['campfire', 'iron_plate', 'oven']);
+  const CRAFT_STATIONS = new Set(['toolbox', 'forge']);
+  const COOK_FOODS = [...new Set(RECIPES
+    .filter(recipe => COOK_STATIONS.has(recipe.station))
+    .flatMap(recipe => recipe.inputs))];
+  const CRAFT_MATS = [...new Set(RECIPES
+    .filter(recipe => CRAFT_STATIONS.has(recipe.station))
+    .flatMap(recipe => recipe.inputs))];
 
   function recipeKey(a, b) {
     const ids = [a, b].filter(Boolean).sort();
     return ids.join('+');
   }
 
+  function recipeInputKey(inputs) {
+    return [...inputs].filter(Boolean).sort().join('+');
+  }
+
+  const RECIPE_LOOKUP = RECIPES.reduce((lookup, recipe) => {
+    if (!lookup[recipe.station]) lookup[recipe.station] = {};
+    lookup[recipe.station][recipeInputKey(recipe.inputs)] = recipe;
+    return lookup;
+  }, {});
+
   function packResult(id, count = 1) {
     return count > 1 ? `${id}*${count}` : id;
+  }
+
+  function packRecipeResult(recipe) {
+    return recipe ? packResult(recipe.output, recipe.count || 1) : '';
   }
 
   function unpackResult(result) {
@@ -2379,30 +2346,27 @@
     return null;
   }
 
-  function resolveCookRecipe(a, b) {
-    const ironPlateRecipe = canUseIronPlateHere() ? RECIPES_IRON_PLATE[recipeKey(a, b)] : null;
-    if (ironPlateRecipe) return packResult(ironPlateRecipe.id, ironPlateRecipe.count || 1);
-    if (recipeKey(a, b) === 'wheat+wheat' && canBakeHere()) return 'bread';
-    const recipe = RECIPES_COOK[recipeKey(a, b)];
-    return recipe ? packResult(recipe.id, recipe.count || 1) : '';
+  function recipeForStation(station, a, b) {
+    return RECIPE_LOOKUP[station]?.[recipeKey(a, b)] || null;
+  }
+
+  function resolveCookRecipeEntry(a, b) {
+    return (canUseIronPlateHere() && recipeForStation('iron_plate', a, b))
+      || (canBakeHere() && recipeForStation('oven', a, b))
+      || (canCookHere() && recipeForStation('campfire', a, b))
+      || null;
+  }
+
+  function resolveRecipeEntry(a, b, mode) {
+    if (!mode) return null;
+    if (mode === 'make') return recipeForStation('toolbox', a, b);
+    if (mode === 'forge') return recipeForStation('forge', a, b);
+    if (mode === 'cook') return resolveCookRecipeEntry(a, b);
+    return null;
   }
 
   function resolveRecipe(a, b, mode) {
-    if (!mode) return '';
-    if (mode === 'make') {
-      if (!a || !b) return '';
-      return RECIPES_MAKE[recipeKey(a, b)] || '';
-    }
-    if (mode === 'forge') {
-      if ((a === 'gold' && !b) || (b === 'gold' && !a)) return 'coin_x2';
-      if ((a === 'silver' && !b) || (b === 'silver' && !a)) return 'silver_coin_x2';
-      if (!a || !b) return '';
-      return RECIPES_FORGE[recipeKey(a, b)] || '';
-    }
-    if (mode === 'cook') {
-      return resolveCookRecipe(a, b);
-    }
-    return '';
+    return packRecipeResult(resolveRecipeEntry(a, b, mode));
   }
 
   function returnCraftSlot(slotIndex) {
@@ -2597,13 +2561,7 @@
     const r3 = document.getElementById('c3');
     const r3Emoji = document.getElementById('c3-emoji');
     const r3Name = document.getElementById('c3-name');
-    if (result === 'coin_x2') {
-      r3Emoji.textContent = '🪙';
-      r3Name.textContent = '金币×2';
-    } else if (result === 'silver_coin_x2') {
-      r3Emoji.textContent = '🔘';
-      r3Name.textContent = '银币×2';
-    } else if (result) {
+    if (result) {
       const { id, count } = unpackResult(result);
       r3Emoji.textContent = ITEMS[id]?.emoji || '?';
       r3Name.textContent = (ITEMS[id]?.name || '') + (count > 1 ? `×${count}` : '');
@@ -2627,55 +2585,30 @@
       return;
     }
 
-    let [a, b] = [...craftSlots];
-    if (result === 'coin_x2') {
-      if (a !== 'gold' && b !== 'gold') return;
-      craftSlots = [null, null];
-      if (!addItem('coin', 2)) {
-        craftSlots[a === 'gold' ? 0 : 1] = 'gold';
-        addLog('背包已满');
-        updateCraft();
-        renderInv();
-        return;
-      }
-    } else if (result === 'silver_coin_x2') {
-      if (a !== 'silver' && b !== 'silver') return;
-      craftSlots = [null, null];
-      if (!addItem('silver_coin', 2)) {
-        craftSlots[a === 'silver' ? 0 : 1] = 'silver';
-        addLog('背包已满');
-        updateCraft();
-        renderInv();
-        return;
-      }
-      addLog('铸造获得银币×2');
-    } else {
-      const { id: productId, count: productCount } = unpackResult(result);
-      const isSingleIngredientCook = mode === 'cook' && (!!a !== !!b);
-      if ((!a || !b) && !isSingleIngredientCook) {
-        addLog('需要两个材料格都有物品（单食材料理只需放一格）');
-        return;
-      }
-      craftSlots = [null, null];
-      if (!addItem(productId, productCount)) {
-        craftSlots = [a, b];
-        addLog('背包已满，合成取消');
-        updateCraft();
-        renderInv();
-        return;
-      }
-      if (mode === 'make' && productCount === 1 && (productId === 'iron_sheet' || productId === 'silver_sheet') && (a === 'hammer' || b === 'hammer')) {
-        addItem('hammer');
-      }
+    const [a, b] = [...craftSlots];
+    const recipe = resolveRecipeEntry(a, b, mode);
+    const { id: productId, count: productCount } = unpackResult(result);
+    const isSingleIngredientRecipe = recipe?.inputs.length === 1;
+    if ((!a || !b) && !isSingleIngredientRecipe) {
+      addLog('需要两个材料格都有物品（单食材料理只需放一格）');
+      return;
     }
+    craftSlots = [null, null];
+    if (!addItem(productId, productCount)) {
+      craftSlots = [a, b];
+      addLog('背包已满，合成取消');
+      updateCraft();
+      renderInv();
+      return;
+    }
+    (recipe?.returns || []).forEach(item => {
+      addItem(item.id, item.count || 1);
+    });
 
-    if (isPlaceableItem(result)) {
-      addLog(`制成${ITEMS[result].name}，请单击背包中的该物品，再点地图空地放置`);
-    } else if (result === 'coin_x2') {
-      addLog('铸造获得金币×2');
+    if (isPlaceableItem(productId)) {
+      addLog(`制成${ITEMS[productId].name}，请单击背包中的该物品，再点地图空地放置`);
     } else {
-      const { id, count } = unpackResult(result);
-      addLog(`制成${ITEMS[id]?.name || id}${count > 1 ? '×' + count : ''}`);
+      addLog(`制成${ITEMS[productId]?.name || productId}${productCount > 1 ? '×' + productCount : ''}`);
     }
 
     updateCraft();
@@ -3264,6 +3197,21 @@
     document.getElementById('modal').classList.add('show');
   }
 
+  function bindMobileControls() {
+    const controls = document.getElementById('mobile-controls');
+    controls.querySelectorAll('.mobile-move-btn[data-move]').forEach(button => {
+      const [dx, dy] = button.dataset.move.split(',').map(Number);
+      const handleMove = e => {
+        e.preventDefault();
+        if (!mobileControlsActive) return;
+        if (document.getElementById('game-screen').classList.contains('screen-hidden')) return;
+        move(dx, dy);
+      };
+      button.addEventListener(window.PointerEvent ? 'pointerdown' : 'touchstart', handleMove, { passive: false });
+      button.addEventListener('click', e => e.preventDefault());
+    });
+  }
+
   document.getElementById('craft-btn').onclick = doCraft;
   document.querySelector('.craft-result-wrap').addEventListener('click', () => {
     if (document.getElementById('c3').dataset.result) doCraft();
@@ -3343,6 +3291,8 @@
     if (map[k]) { e.preventDefault(); move(...map[k]); }
   });
 
+  initDeviceMode();
+  bindMobileControls();
   initGrid();
   addLog('体力10。起点🚩在地图中央，脚下有工具箱可制造。');
   render();

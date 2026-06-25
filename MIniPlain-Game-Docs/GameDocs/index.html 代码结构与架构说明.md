@@ -215,11 +215,11 @@ render()
 
 | 模式 | 触发条件 | 配方来源 |
 |------|---------|---------|
-| make（制造） | 靠近工具箱 | `RECIPES_MAKE` 对象 |
-| forge（铸造） | 靠近铸造台 | `RECIPES_FORGE` 对象 + 金银单格铸造 |
-| cook（烹饪） | 靠近篝火 + 有铁锅 | `resolveCookRecipe()` 函数 |
+| make（制造） | 靠近工具箱 | `data/recipes.js` 中 `station: 'toolbox'` 的配方 |
+| forge（铸造） | 靠近铸造台 | `data/recipes.js` 中 `station: 'forge'` 的配方 |
+| cook（烹饪） | 靠近篝火 + 有铁锅 / 站在铁板上 / 靠近烤箱 | `data/recipes.js` 中 `station: 'campfire'`、`'iron_plate'`、`'oven'` 的配方 |
 
-配方匹配函数 `recipeKey(a, b)` 将两个材料 ID 按字母序排序后拼接成 `"iron+stone"` 格式的 key。
+配方统一在 `MINIPLAIN_RECIPES` 表里维护，结构是“平台 + 原料列表 + 产物 + 数量”。运行时会按 `station` 建索引，配方匹配函数 `recipeKey(a, b)` 将材料 ID 按字母序排序后拼接成 `"iron+stone"` 格式的 key；单材料配方只保留一个材料 ID。
 
 ### 4.7 昼夜系统
 
