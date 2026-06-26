@@ -163,7 +163,7 @@
       box-shadow: 3px 3px 0 #a98745;
     }
 
-    .emoji {
+    .fallback-icon {
       display: block;
       font-size: 2rem;
       line-height: 1.1;
@@ -216,7 +216,7 @@
       margin-bottom: 14px;
     }
 
-    .modal-title .emoji,
+    .modal-title .fallback-icon,
     .modal-title .item-icon {
       margin: 0;
     }
@@ -320,7 +320,7 @@
       if (item.icon) {
         return `<img class="${className}" src="${escapeHtml(itemIconRoot + item.icon)}" alt="${escapeHtml(item.name)}" loading="lazy">`;
       }
-      return `<span class="emoji">${escapeHtml(item.emoji || '?')}</span>`;
+      return '<span class="fallback-icon">?</span>';
     }
 
     function buildItems() {
@@ -330,7 +330,6 @@
           id,
           cat: item.category,
           name: I18N.itemName(id),
-          emoji: item.emoji,
           icon: item.icon,
           overview: I18N.itemText(id, 'overview', texts.overview || texts.codex || t('itemsPage.fallbackOverview', {}, 'Waiting for details.')),
           obtain: I18N.itemTextList(id, 'obtain', texts.obtain || []),

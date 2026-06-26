@@ -29,6 +29,57 @@
     ));
   }
 
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function assetRoot() {
+    const script = document.currentScript || document.querySelector('script[src$="data/i18n.js"]');
+    if (!script?.src) return '';
+    return new URL('../', script.src).href;
+  }
+
+  function iconInfo(kind, id) {
+    if (kind === 'item') {
+      const item = (window.MINIPLAIN_ITEMS || {})[id] || {};
+      return {
+        src: item.icon || `assets/2D/items/${id}.png`,
+        alt: item.name || id,
+      };
+    }
+    if (kind === 'entity') {
+      return {
+        src: `assets/2D/entities/${id}.png`,
+        alt: id.replaceAll('_', ' '),
+      };
+    }
+    if (kind === 'terrain') {
+      return {
+        src: `assets/2D/tiles/terrain/${id}.png`,
+        alt: id.replaceAll('-', ' '),
+      };
+    }
+    return null;
+  }
+
+  function richText(value) {
+    return String(value ?? '').replace(/\{icon:(item|entity|terrain):([a-z0-9_-]+)\}/g, '\0$1:$2\0')
+      .split('\0')
+      .map(part => {
+        const match = /^(item|entity|terrain):([a-z0-9_-]+)$/.exec(part);
+        if (!match) return escapeHtml(part);
+        const icon = iconInfo(match[1], match[2]);
+        if (!icon) return '';
+        return `<img class="inline-icon inline-icon-${escapeHtml(match[1])}" src="${escapeHtml(assetRoot() + icon.src)}" alt="${escapeHtml(icon.alt)}" loading="lazy">`;
+      })
+      .join('');
+  }
+
   function lookup(key) {
     const active = dictionaries[currentLocale] || {};
     const fallback = dictionaries[DEFAULT_LOCALE] || {};
@@ -106,7 +157,7 @@
   function applyStatic(root = document) {
     document.documentElement.lang = t('meta.lang', {}, currentLocale);
     root.querySelectorAll('[data-i18n]').forEach(el => {
-      el.textContent = t(el.dataset.i18n, {}, el.textContent);
+      el.innerHTML = richText(t(el.dataset.i18n, {}, el.textContent));
     });
     root.querySelectorAll('[data-i18n-html]').forEach(el => {
       el.innerHTML = t(el.dataset.i18nHtml, {}, el.innerHTML);
@@ -140,6 +191,7 @@
     itemText,
     itemTextList,
     categoryName,
+    richText,
     applyStatic,
   };
 })();

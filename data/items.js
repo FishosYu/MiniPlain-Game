@@ -12,7 +12,6 @@ window.MINIPLAIN_ITEM_CATEGORIES = [
 window.MINIPLAIN_ITEMS = {
   stone: {
     name: '石头',
-    emoji: '🪨',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -26,7 +25,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron: {
     name: '铁块',
-    emoji: '🔩',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -40,7 +38,6 @@ window.MINIPLAIN_ITEMS = {
   },
   silver: {
     name: '银块',
-    emoji: '🥈',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -54,7 +51,6 @@ window.MINIPLAIN_ITEMS = {
   },
   gold: {
     name: '金块',
-    emoji: '🥇',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -68,7 +64,6 @@ window.MINIPLAIN_ITEMS = {
   },
   wood: {
     name: '木材',
-    emoji: '🪵',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -82,7 +77,6 @@ window.MINIPLAIN_ITEMS = {
   },
   flint: {
     name: '打火石',
-    emoji: '🪔',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -96,7 +90,6 @@ window.MINIPLAIN_ITEMS = {
   },
   fruit: {
     name: '水果',
-    emoji: '🍎',
     vol: 1,
     use: 'heal1',
     category: '食材与种植',
@@ -111,7 +104,6 @@ window.MINIPLAIN_ITEMS = {
   },
   veg: {
     name: '蔬菜',
-    emoji: '🥬',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -125,7 +117,6 @@ window.MINIPLAIN_ITEMS = {
   },
   potato: {
     name: '土豆',
-    emoji: '🥔',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -139,7 +130,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot: {
     name: '胡萝卜',
-    emoji: '🥕',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -153,7 +143,6 @@ window.MINIPLAIN_ITEMS = {
   },
   sapling: {
     name: '树苗',
-    emoji: '🌱',
     vol: 1,
     plant: true,
     category: '食材与种植',
@@ -168,7 +157,6 @@ window.MINIPLAIN_ITEMS = {
   },
   wheat_seed: {
     name: '麦种',
-    emoji: '🌾',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -182,7 +170,6 @@ window.MINIPLAIN_ITEMS = {
   },
   wheat: {
     name: '小麦',
-    emoji: '🌾',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -196,7 +183,6 @@ window.MINIPLAIN_ITEMS = {
   },
   fish: {
     name: '鱼',
-    emoji: '🐟',
     vol: 1,
     category: '食材与种植',
     texts: {
@@ -210,7 +196,6 @@ window.MINIPLAIN_ITEMS = {
   },
   egg: {
     name: '鸡蛋',
-    emoji: '🥚',
     vol: 1,
     category: '动物产物',
     texts: {
@@ -224,7 +209,6 @@ window.MINIPLAIN_ITEMS = {
   },
   chicken: {
     name: '鸡肉',
-    emoji: '🍗',
     vol: 1,
     category: '动物产物',
     texts: {
@@ -238,7 +222,6 @@ window.MINIPLAIN_ITEMS = {
   },
   beef: {
     name: '牛肉',
-    emoji: '🥩',
     vol: 1,
     category: '动物产物',
     texts: {
@@ -252,7 +235,6 @@ window.MINIPLAIN_ITEMS = {
   },
   milk: {
     name: '牛奶',
-    emoji: '🥛',
     vol: 1,
     category: '动物产物',
     texts: {
@@ -266,7 +248,6 @@ window.MINIPLAIN_ITEMS = {
   },
   wolf_fur: {
     name: '狼皮',
-    emoji: '🐺',
     vol: 1,
     category: '动物产物',
     texts: {
@@ -280,7 +261,6 @@ window.MINIPLAIN_ITEMS = {
   },
   rod: {
     name: '鱼竿',
-    emoji: '🎣',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -294,7 +274,6 @@ window.MINIPLAIN_ITEMS = {
   },
   stone_axe: {
     name: '石斧',
-    emoji: '🪓',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -308,7 +287,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_sword: {
     name: '铁剑',
-    emoji: '⚔️',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -322,7 +300,6 @@ window.MINIPLAIN_ITEMS = {
   },
   hammer: {
     name: '锤子',
-    emoji: '🔨',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -336,7 +313,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_pot: {
     name: '铁锅',
-    emoji: '🍳',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -350,7 +326,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_bucket: {
     name: '铁桶',
-    emoji: '🪣',
     vol: 1,
     category: '工具与装备',
     texts: {
@@ -364,7 +339,6 @@ window.MINIPLAIN_ITEMS = {
   },
   toolbox: {
     name: '破旧工具箱',
-    emoji: '🔧',
     vol: 0,
     place: 'toolbox',
     category: '设施与建造',
@@ -379,7 +353,6 @@ window.MINIPLAIN_ITEMS = {
   },
   forge: {
     name: '铸造台',
-    emoji: '⬜',
     vol: 1,
     place: 'forge',
     category: '设施与建造',
@@ -394,7 +367,6 @@ window.MINIPLAIN_ITEMS = {
   },
   chest: {
     name: '箱子',
-    emoji: '🧰',
     vol: 1,
     place: 'chest',
     category: '设施与建造',
@@ -409,7 +381,6 @@ window.MINIPLAIN_ITEMS = {
   },
   campfire: {
     name: '篝火',
-    emoji: '🔥',
     vol: 1,
     place: 'campfire',
     category: '设施与建造',
@@ -424,7 +395,6 @@ window.MINIPLAIN_ITEMS = {
   },
   oven: {
     name: '烤箱',
-    emoji: '🕋',
     vol: 1,
     place: 'oven',
     category: '设施与建造',
@@ -439,7 +409,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_plate: {
     name: '铁板',
-    emoji: '◼️',
     vol: 1,
     place: 'iron_plate',
     category: '设施与建造',
@@ -454,7 +423,6 @@ window.MINIPLAIN_ITEMS = {
   },
   building: {
     name: '建材',
-    emoji: '🧱',
     vol: 1,
     category: '设施与建造',
     texts: {
@@ -468,7 +436,6 @@ window.MINIPLAIN_ITEMS = {
   },
   coin: {
     name: '金币',
-    emoji: '🪙',
     vol: 0,
     category: '货币与任务',
     texts: {
@@ -482,7 +449,6 @@ window.MINIPLAIN_ITEMS = {
   },
   silver_coin: {
     name: '银币',
-    emoji: '🔘',
     vol: 0,
     category: '货币与任务',
     texts: {
@@ -496,7 +462,6 @@ window.MINIPLAIN_ITEMS = {
   },
   page: {
     name: '遗落书页',
-    emoji: '📜',
     vol: 0,
     category: '货币与任务',
     texts: {
@@ -510,7 +475,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_sheet: {
     name: '铁片',
-    emoji: '▫️',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -524,7 +488,6 @@ window.MINIPLAIN_ITEMS = {
   },
   silver_sheet: {
     name: '银片',
-    emoji: '◽',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -538,7 +501,6 @@ window.MINIPLAIN_ITEMS = {
   },
   iron_silver_sheet: {
     name: '铁银片组合',
-    emoji: '🔳',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -552,7 +514,6 @@ window.MINIPLAIN_ITEMS = {
   },
   fruit_battery: {
     name: '水果电池',
-    emoji: '🔋',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -566,7 +527,6 @@ window.MINIPLAIN_ITEMS = {
   },
   grilled_veg: {
     name: '烤蔬菜',
-    emoji: '🥬',
     vol: 1,
     use: 'heal1',
     category: '料理',
@@ -581,7 +541,6 @@ window.MINIPLAIN_ITEMS = {
   },
   roasted_potato: {
     name: '烤土豆',
-    emoji: '🥔',
     vol: 1,
     use: 'heal1',
     category: '料理',
@@ -596,7 +555,6 @@ window.MINIPLAIN_ITEMS = {
   },
   roasted_carrot: {
     name: '烤胡萝卜',
-    emoji: '🥕',
     vol: 1,
     use: 'heal1',
     category: '料理',
@@ -611,7 +569,6 @@ window.MINIPLAIN_ITEMS = {
   },
   fried_egg: {
     name: '荷包蛋',
-    emoji: '🍽️',
     vol: 1,
     use: 'heal1',
     category: '料理',
@@ -626,7 +583,6 @@ window.MINIPLAIN_ITEMS = {
   },
   cooked_chicken: {
     name: '熟鸡肉',
-    emoji: '🍗',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -641,7 +597,6 @@ window.MINIPLAIN_ITEMS = {
   },
   cooked_beef: {
     name: '熟牛肉',
-    emoji: '🍖',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -656,7 +611,6 @@ window.MINIPLAIN_ITEMS = {
   },
   plain_steak: {
     name: '牛排',
-    emoji: '🥩',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -671,7 +625,6 @@ window.MINIPLAIN_ITEMS = {
   },
   grilled_fish: {
     name: '烤鱼',
-    emoji: '🐠',
     vol: 1,
     use: 'heal_fish',
     category: '料理',
@@ -686,7 +639,6 @@ window.MINIPLAIN_ITEMS = {
   },
   stir_fried_wheat: {
     name: '炒麦',
-    emoji: '🌾',
     vol: 1,
     use: 'snack',
     category: '料理',
@@ -701,7 +653,6 @@ window.MINIPLAIN_ITEMS = {
   },
   bread: {
     name: '面包',
-    emoji: '🍞',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -716,7 +667,6 @@ window.MINIPLAIN_ITEMS = {
   },
   vegetable_stew: {
     name: '炖菜',
-    emoji: '🥘',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -731,7 +681,6 @@ window.MINIPLAIN_ITEMS = {
   },
   potato_vegetable_stew: {
     name: '土豆炖菜',
-    emoji: '🥘',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -746,7 +695,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot_vegetable_stew: {
     name: '胡萝卜炖菜',
-    emoji: '🥘',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -761,7 +709,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot_potato_stew: {
     name: '胡萝卜炖土豆',
-    emoji: '🥘',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -776,7 +723,6 @@ window.MINIPLAIN_ITEMS = {
   },
   scrambled_eggs: {
     name: '炒鸡蛋',
-    emoji: '🥣',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -791,7 +737,6 @@ window.MINIPLAIN_ITEMS = {
   },
   chicken_egg_bowl: {
     name: '"母子连心"',
-    emoji: '🍲',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -806,7 +751,6 @@ window.MINIPLAIN_ITEMS = {
   },
   beef_egg: {
     name: '蛋烧牛肉',
-    emoji: '🍲',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -821,7 +765,6 @@ window.MINIPLAIN_ITEMS = {
   },
   big_plate_chicken: {
     name: '大盘鸡',
-    emoji: '🍗',
     vol: 1,
     use: 'heal4',
     category: '料理',
@@ -836,7 +779,6 @@ window.MINIPLAIN_ITEMS = {
   },
   chicken_beef_stew: {
     name: '牛肉炖鸡',
-    emoji: '🥘',
     vol: 1,
     use: 'heal4',
     category: '料理',
@@ -851,7 +793,6 @@ window.MINIPLAIN_ITEMS = {
   },
   veg_egg: {
     name: '蔬菜滑蛋',
-    emoji: '🥗',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -866,7 +807,6 @@ window.MINIPLAIN_ITEMS = {
   },
   veg_chicken_stew: {
     name: '鲜蔬炖鸡',
-    emoji: '🥘',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -881,7 +821,6 @@ window.MINIPLAIN_ITEMS = {
   },
   veg_beef_stew: {
     name: '鲜蔬炖牛肉',
-    emoji: '🥘',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -896,7 +835,6 @@ window.MINIPLAIN_ITEMS = {
   },
   potato_egg: {
     name: '薯角滑蛋',
-    emoji: '🍟',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -911,7 +849,6 @@ window.MINIPLAIN_ITEMS = {
   },
   potato_chicken_stew: {
     name: '土豆炖鸡',
-    emoji: '🥘',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -926,7 +863,6 @@ window.MINIPLAIN_ITEMS = {
   },
   potato_beef_stew: {
     name: '土豆焖牛肉',
-    emoji: '🥘',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -941,7 +877,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot_egg: {
     name: '胡萝卜炒鸡蛋',
-    emoji: '🍛',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -956,7 +891,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot_chicken: {
     name: '胡萝卜炒鸡肉',
-    emoji: '🍲',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -971,7 +905,6 @@ window.MINIPLAIN_ITEMS = {
   },
   carrot_beef: {
     name: '胡萝卜焖牛肉',
-    emoji: '🥘',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -986,7 +919,6 @@ window.MINIPLAIN_ITEMS = {
   },
   fish_vegetable_stew: {
     name: '鲜蔬菜炖鱼',
-    emoji: '🍲',
     vol: 1,
     use: 'heal2',
     category: '料理',
@@ -1001,7 +933,6 @@ window.MINIPLAIN_ITEMS = {
   },
   water: {
     name: '水',
-    emoji: '💧',
     vol: 1,
     category: '基础资源',
     texts: {
@@ -1015,7 +946,6 @@ window.MINIPLAIN_ITEMS = {
   },
   wood_plank: {
     name: '木板',
-    emoji: '🪵',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1029,7 +959,6 @@ window.MINIPLAIN_ITEMS = {
   },
   stone_slab: {
     name: '石板',
-    emoji: '🪨',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1043,7 +972,6 @@ window.MINIPLAIN_ITEMS = {
   },
   flour: {
     name: '面粉',
-    emoji: '🌫️',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1057,7 +985,6 @@ window.MINIPLAIN_ITEMS = {
   },
   dough: {
     name: '面团',
-    emoji: '🥟',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1071,7 +998,6 @@ window.MINIPLAIN_ITEMS = {
   },
   rich_dough: {
     name: '奶香面团？',
-    emoji: '🥛',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1085,7 +1011,6 @@ window.MINIPLAIN_ITEMS = {
   },
   cake_base: {
     name: '蛋糕胚',
-    emoji: '🍥',
     vol: 1,
     category: '加工材料',
     texts: {
@@ -1099,7 +1024,6 @@ window.MINIPLAIN_ITEMS = {
   },
   bridge: {
     name: '桥',
-    emoji: '🌉',
     vol: 1,
     place: 'bridge',
     category: '设施与建造',
@@ -1114,7 +1038,6 @@ window.MINIPLAIN_ITEMS = {
   },
   mill: {
     name: '石磨',
-    emoji: '🌀',
     vol: 1,
     place: 'mill',
     category: '设施与建造',
@@ -1129,7 +1052,6 @@ window.MINIPLAIN_ITEMS = {
   },
   prep_table: {
     name: '料理台',
-    emoji: '🍽️',
     vol: 1,
     place: 'prep_table',
     category: '设施与建造',
@@ -1144,7 +1066,6 @@ window.MINIPLAIN_ITEMS = {
   },
   steamed_bun: {
     name: '馒头',
-    emoji: '🥯',
     vol: 1,
     use: 'heal1',
     category: '料理',
@@ -1159,7 +1080,6 @@ window.MINIPLAIN_ITEMS = {
   },
   meat_bun: {
     name: '肉包子',
-    emoji: '🥟',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -1174,7 +1094,6 @@ window.MINIPLAIN_ITEMS = {
   },
   cake: {
     name: '蛋糕',
-    emoji: '🍰',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -1189,7 +1108,6 @@ window.MINIPLAIN_ITEMS = {
   },
   original_chicken: {
     name: '吮指原味鸡',
-    emoji: '🍗',
     vol: 1,
     use: 'heal3',
     category: '料理',
@@ -1204,7 +1122,6 @@ window.MINIPLAIN_ITEMS = {
   },
   chicken_burger: {
     name: '鸡肉汉堡',
-    emoji: '🍔',
     vol: 1,
     use: 'heal5',
     category: '料理',
@@ -1219,7 +1136,6 @@ window.MINIPLAIN_ITEMS = {
   },
   beef_burger: {
     name: '牛肉汉堡',
-    emoji: '🍔',
     vol: 1,
     use: 'heal5',
     category: '料理',

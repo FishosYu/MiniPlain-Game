@@ -77,7 +77,7 @@ const CHEST_MAX = 30;     // 箱子容量上限
 ```javascript
 {
   name: '铁块',       // 显示名称
-  emoji: '🔩',        // 显示图标（当前用 emoji 占位）
+  icon: 'assets/2D/items/iron.png', // 显示贴图
   vol: 1,             // 体积（0 表示不占空间）
   use: 'heal1',       // 使用效果（可选）：heal1/2/3/heal_fish
   plant: true,        // 可栽种（可选，用于树苗）
@@ -203,7 +203,7 @@ render()
   │   ├── 标记玩家位置
   │   ├── 标记可凿石/可放置
   │   ├── 标记特殊结构样式
-  │   ├── 设置 emoji 内容
+  │   ├── 设置贴图内容
   │   └── 绑定 onclick
   ├── 更新状态栏 HTML
   └── 调用 renderInv() + renderChest() + updateCraft()
@@ -338,7 +338,7 @@ doCraft()
 
 ```
 ITEMS 表                    grid[][]                   inventory[]
-[id] → {name,emoji,vol,use,place}    [y][x] → cell对象          [{id,count}, ...]
+[id] → {name,icon,vol,use,place}     [y][x] → cell对象          [{id,count}, ...]
          ↑                                ↑                            ↑
     显示/规则参考                      地图状态                     背包状态
          ↓                                ↓                            ↓

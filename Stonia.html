@@ -394,6 +394,16 @@
       object-fit: contain;
       image-rendering: pixelated;
     }
+
+    .inline-icon {
+      display: inline-block;
+      width: 1.25em;
+      height: 1.25em;
+      object-fit: contain;
+      image-rendering: pixelated;
+      vertical-align: -0.25em;
+      margin: 0 0.12em;
+    }
     .codex-icon .item-icon {
       width: 34px;
       height: 34px;
@@ -795,14 +805,14 @@
       -webkit-user-select: none;
       user-select: none;
     }
-    .craft-box .slot-emoji {
+    .craft-box .slot-icon {
       pointer-events: none;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 28px;
     }
-    .craft-box .slot-emoji .item-icon { width: 30px; height: 30px; }
+    .craft-box .slot-icon .item-icon { width: 30px; height: 30px; }
     .craft-box.filled { border-style: solid; border-color: #4d6e42; background: #e0edd8; }
     .craft-box.result { border-style: solid; border-color: #c9a227; background: #fff9e6; cursor: pointer; }
     .craft-box.drag-over { background: #e0edd8; border-color: var(--accent); transform: translate(1px, 1px); }
@@ -950,7 +960,7 @@
       line-height: 1.2;
     }
     .dev-item:hover { background: var(--highlight); color: var(--text); }
-    .dev-item .emoji { display: block; font-size: 1.3rem; line-height: 1; margin-bottom: 3px; }
+    .dev-item .dev-item-icon { display: block; font-size: 1.3rem; line-height: 1; margin-bottom: 3px; }
     .dev-item .item-icon { width: 24px; height: 24px; margin: 0 auto 3px; }
   </style>
 </head>
@@ -1056,15 +1066,15 @@
         <strong id="craft-title" data-i18n="game.craftInitialTitle">Craft</strong>
         <div class="craft-row">
           <div class="craft-slot-wrap">
-            <div class="craft-box" id="c1" data-slot="0" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-emoji"></span></div>
+            <div class="craft-box" id="c1" data-slot="0" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-icon"></span></div>
           </div>
           <span>+</span>
           <div class="craft-slot-wrap">
-            <div class="craft-box" id="c2" data-slot="1" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-emoji"></span></div>
+            <div class="craft-box" id="c2" data-slot="1" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-icon"></span></div>
           </div>
           <span>=</span>
           <div class="craft-slot-wrap craft-result-wrap">
-            <div class="craft-box result" id="c3"><span class="slot-emoji" id="c3-emoji"></span></div>
+            <div class="craft-box result" id="c3"><span class="slot-icon" id="c3-icon"></span></div>
             <div class="craft-result-label" id="c3-name"></div>
           </div>
         </div>
@@ -1130,7 +1140,6 @@
   const ITEM_DATA = window.MINIPLAIN_ITEMS || {};
   const ITEMS = Object.fromEntries(Object.entries(ITEM_DATA).map(([id, item]) => [id, {
     name: I18N.itemName(id),
-    emoji: item.emoji,
     icon: item.icon,
     vol: item.vol || 0,
     use: item.use,
@@ -1151,14 +1160,10 @@
     sapling: 'sapling',
     wheat: 'wheat',
   };
-  const SPECIAL_STRUCTURE_EMOJIS = {
-    treasure_chest: '\u{1F4E6}',
-    bag: '\u{1F6CD}\uFE0F',
-    golden: '\u2728',
-    silver_box: '\u{1F4BF}',
-    crystal_ball: '\u{1F52E}',
-    shelter: '\u{1F3E0}',
-  };
+
+  function iconToken(kind, id) {
+    return `{icon:${kind}:${id}}`;
+  }
   const MAP_ICON_ROOT = './assets/2D/entities/';
   const MAP_ICONS = {
     player: { file: 'player.png', label: '??' },
@@ -1176,17 +1181,9 @@
     shelter: { file: 'shelter.png', label: '???' },
   };
 
-  function itemEmoji(id, fallback = '') {
-    return ITEMS[id]?.emoji || fallback;
-  }
-
   function itemDisplay(id) {
     const def = ITEMS[id];
-    return (def?.emoji || '') + (def?.name || id);
-  }
-
-  function plantEmoji(type, fallback = '') {
-    return itemEmoji(PLANT_ITEM_IDS[type], fallback);
+    return `${iconToken('item', id)}${def?.name || id}`;
   }
 
   const DISCOVERY_STORAGE_KEY = 'stonia.discoveredItems';
@@ -1230,16 +1227,25 @@
       .replaceAll("'", '&#39;');
   }
 
+  function richTextMarkup(value) {
+    return I18N.richText ? I18N.richText(value) : escapeHtml(value);
+  }
+
+  function setRichText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = richTextMarkup(value);
+  }
+
   function itemIconMarkup(id, className = 'item-icon', fallback = '') {
     const def = ITEMS[id];
     if (def?.icon) {
       return `<img class="${escapeHtml(className)}" src="${escapeHtml(ITEM_ICON_ROOT + def.icon)}" alt="${escapeHtml(def.name || id)}" loading="lazy">`;
     }
-    return escapeHtml(fallback || def?.emoji || '?');
+    return escapeHtml(fallback || '?');
   }
 
   function recipeHintIcon(id) {
-    return itemIconMarkup(id, 'hint-icon', ITEMS[id]?.emoji || '?');
+    return itemIconMarkup(id, 'hint-icon', '?');
   }
 
   function mapIconMarkup(id, fallback = '') {
@@ -1252,15 +1258,14 @@
 
   function codexEntry(id) {
     const def = ITEMS[id] || (id === 'page'
-      ? { name: t('pages.lostTitle', { num: '' }, 'Lost page'), emoji: '\u{1F4DC}' }
-      : { name: id, emoji: '\u{1F4E6}' });
+      ? { name: t('pages.lostTitle', { num: '' }, 'Lost page') }
+      : { name: id });
     const data = ITEM_DATA[id] || {};
     const texts = data.texts || {};
     return {
       id,
       cat: CODEX_ITEM_CATEGORIES[id],
       name: I18N.itemName(id) || data.name || def.name,
-      emoji: def.emoji || '\u{1F4E6}',
       desc: I18N.itemText(id, 'codex', texts.codex || texts.game || texts.overview || t('codex.fallbackDesc', {}, 'Waiting to be discovered.')),
     };
   }
@@ -1281,7 +1286,7 @@
           ${group.map(entry => {
             const found = devShowAllCodex || discoveredItems.has(entry.id);
             const name = found ? entry.name : t('common.undiscovered', {}, 'Undiscovered');
-            const icon = found ? itemIconMarkup(entry.id, 'item-icon', entry.emoji) : '?';
+            const icon = found ? itemIconMarkup(entry.id, 'item-icon', '?') : '?';
             const desc = found ? entry.desc : '?';
             const category = found ? I18N.categoryName(entry.cat) : '?';
             const title = t('codex.titleTemplate', { name, category, desc }, `${name} / Category: ${category} / ${desc}`);
@@ -1338,7 +1343,7 @@
     const label = bgmMuted
       ? t('game.unmuteBgm', {}, 'Unmute music')
       : t('game.muteBgm', {}, 'Mute music');
-    btn.textContent = bgmMuted ? '\u266A/' : '\u266A';
+    btn.textContent = bgmMuted ? 'BGM Off' : 'BGM';
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
@@ -1669,7 +1674,7 @@
   function addLog(msg) {
     logLines.unshift(msg);
     if (logLines.length > 12) logLines.pop();
-    document.getElementById('log').innerHTML = logLines.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+    document.getElementById('log').innerHTML = logLines.map(l => `<div>${richTextMarkup(l)}</div>`).join('');
   }
 
   function countItem(id) {
@@ -2079,7 +2084,10 @@
       case 'plant':
         c.plant = hidden.sub;
         c.ground = 'normal';
-        addLog(logT('revealPlant', { plant: t(`plantNames.${hidden.sub}`, {}, hidden.sub) }, `Found ${hidden.sub}.`));
+        addLog(logT('revealPlant', {
+          plant: t(`plantNames.${hidden.sub}`, {}, hidden.sub),
+          plantIcon: iconToken('item', PLANT_ITEM_IDS[hidden.sub] || hidden.sub),
+        }, `Found ${hidden.sub}.`));
         break;
       case 'chicken':
         addAnimalToCell(c, 'chicken');
@@ -2195,7 +2203,7 @@
     player.exp += 1;
     const mineral = randomMineral();
     const mdef = ITEMS[mineral];
-    addLog(logT('mineStone', { item: (mdef?.emoji || '') + (mdef?.name || mineral) }, `Mined stone +1 exp, got ${mdef?.name || mineral}`));
+    addLog(logT('mineStone', { item: itemDisplay(mineral) }, `Mined stone +1 exp, got ${mdef?.name || mineral}`));
 
     let hidden = rollReveal({ x, y });
     if (!guarantees.firstBreak) {
@@ -2288,36 +2296,36 @@
   }
 
   function animalIconMarkup(type) {
-    if (type === 'wolf') return mapIconMarkup('wolf', '\u{1F43A}');
-    if (type === 'chicken') return mapIconMarkup('chicken', '\u{1F414}');
-    if (type === 'cow') return mapIconMarkup('cow', '\u{1F42E}');
+    if (type === 'wolf') return mapIconMarkup('wolf');
+    if (type === 'chicken') return mapIconMarkup('chicken');
+    if (type === 'cow') return mapIconMarkup('cow');
     return '';
   }
 
   function cellIconMarkup(x, y) {
     const c = grid[y][x];
     if (c.stone) return '';
-    if (c.structure === 'bridge') return itemCellIconMarkup('bridge', SPECIAL_STRUCTURE_EMOJIS.bridge || '');
+    if (c.structure === 'bridge') return itemCellIconMarkup('bridge');
     if (c.ground === 'water') return '';
-    if (c.spawn) return mapIconMarkup('spawn', '\u{1F6A9}');
+    if (c.spawn) return mapIconMarkup('spawn');
     if (c.structure) {
       const itemId = STRUCTURE_ITEM_IDS[c.structure];
       return itemId
-        ? itemCellIconMarkup(itemId, SPECIAL_STRUCTURE_EMOJIS[c.structure] || '')
-        : mapIconMarkup(c.structure, SPECIAL_STRUCTURE_EMOJIS[c.structure] || '');
+        ? itemCellIconMarkup(itemId)
+        : mapIconMarkup(c.structure);
     }
-    if (c.plant === 'fruit') return itemCellIconMarkup('fruit', '\u{1F34E}');
-    if (c.plant === 'veg') return itemCellIconMarkup('veg', '\u{1F96C}');
-    if (c.plant === 'potato') return itemCellIconMarkup('potato', '\u{1F954}');
-    if (c.plant === 'carrot') return itemCellIconMarkup('carrot', '\u{1F955}');
-    if (c.plant === 'sapling') return c.treeHits >= 3 ? mapIconMarkup('tree', '\u{1F333}') : itemCellIconMarkup('sapling', '\u{1F331}');
-    if (c.plant === 'tree') return mapIconMarkup('tree', '\u{1F333}');
-    if (c.plant === 'bush') return mapIconMarkup('bush', '\u{1F33F}');
-    if (c.plant === 'wheat') return c.wheatHits >= 3 ? itemCellIconMarkup('wheat', '\u{1F33E}') : itemCellIconMarkup('wheat_seed', '\u{1F33E}');
+    if (c.plant === 'fruit') return itemCellIconMarkup('fruit');
+    if (c.plant === 'veg') return itemCellIconMarkup('veg');
+    if (c.plant === 'potato') return itemCellIconMarkup('potato');
+    if (c.plant === 'carrot') return itemCellIconMarkup('carrot');
+    if (c.plant === 'sapling') return c.treeHits >= 3 ? mapIconMarkup('tree') : itemCellIconMarkup('sapling');
+    if (c.plant === 'tree') return mapIconMarkup('tree');
+    if (c.plant === 'bush') return mapIconMarkup('bush');
+    if (c.plant === 'wheat') return c.wheatHits >= 3 ? itemCellIconMarkup('wheat') : itemCellIconMarkup('wheat_seed');
     if (c.groundLoot) {
-      return itemCellIconMarkup(c.groundLoot.id, '\u{1F4E6}');
+      return itemCellIconMarkup(c.groundLoot.id);
     }
-    if (c.incubatingEgg > 0) return itemCellIconMarkup('egg', '\u{1F95A}');
+    if (c.incubatingEgg > 0) return itemCellIconMarkup('egg');
     return '';
   }
 
@@ -2609,19 +2617,19 @@
   function openCrystalBallUI() {
     const body = document.getElementById('modal-body');
     const footer = document.getElementById('modal-footer');
-    document.getElementById('modal-title').textContent = t('crystal.title', {}, 'Crystal Ball');
-    let html = `<p>${escapeHtml(t('crystal.intro', {}, 'Submit lost pages.'))}</p>`;
-    html += `<p>${escapeHtml(t('crystal.progress', {
+    setRichText('modal-title', t('crystal.title', {}, 'Crystal Ball'));
+    let html = `<p>${richTextMarkup(t('crystal.intro', {}, 'Submit lost pages.'))}</p>`;
+    html += `<p>${richTextMarkup(t('crystal.progress', {
       collected: collectedPages.length,
       submitted: submittedPages.length,
       total: PAGE_TOTAL,
-    }, `Collected ${collectedPages.length}/${PAGE_TOTAL} ? Submitted ${submittedPages.length}/${PAGE_TOTAL}`))}</p>`;
+    }, `Collected ${collectedPages.length}/${PAGE_TOTAL} / Submitted ${submittedPages.length}/${PAGE_TOTAL}`))}</p>`;
 
     const pending = collectedPages.filter(i => !submittedPages.includes(i)).sort((a, b) => a - b);
     if (pending.length) {
       html += `<p><strong>${escapeHtml(t('crystal.pending', {}, 'Pending'))}</strong></p>`;
       pending.forEach(pi => {
-        html += `<div class="page-row"><span>\u{1F4DC} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
+        html += `<div class="page-row"><span>${itemIconMarkup('page', 'inline-icon')} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
           <button type="button" data-submit-page="${pi}">${escapeHtml(t('crystal.submit', {}, 'Submit'))}</button></div>`;
       });
     }
@@ -2630,13 +2638,13 @@
     if (done.length) {
       html += `<p><strong>${escapeHtml(t('crystal.submitted', {}, 'Submitted'))}</strong></p>`;
       done.forEach(pi => {
-        html += `<div class="page-row"><span>\u{1F4DC} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
+        html += `<div class="page-row"><span>${itemIconMarkup('page', 'inline-icon')} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
           <button type="button" data-view-page="${pi}">${escapeHtml(t('crystal.read', {}, 'Read'))}</button></div>`;
       });
     }
 
     if (!pending.length && !done.length) {
-      html += `<p>${escapeHtml(t('crystal.empty', {}, 'No pages discovered yet.'))}</p>`;
+      html += `<p>${richTextMarkup(t('crystal.empty', {}, 'No pages discovered yet.'))}</p>`;
     }
 
     body.innerHTML = html;
@@ -2722,12 +2730,12 @@
 
   function openGoldenMerchant() {
     const body = document.getElementById('modal-body');
-    document.getElementById('modal-title').textContent = t('merchant.goldenTitle', {}, 'Golden Box');
-    let html = `<p>${escapeHtml(t('merchant.goldenBalance', {
+    setRichText('modal-title', t('merchant.goldenTitle', {}, 'Golden Box'));
+    let html = `<p>${richTextMarkup(t('merchant.goldenBalance', {
       coins: countItem('coin'),
       spawned: goldenBoxSpawned,
       max: GOLDEN_BOX_MAX,
-    }, `Coins: ${countItem('coin')} ? Boxes ${goldenBoxSpawned}/${GOLDEN_BOX_MAX}`))}</p>`;
+    }, `Coins: ${countItem('coin')} / Boxes ${goldenBoxSpawned}/${GOLDEN_BOX_MAX}`))}</p>`;
     const opts = [
       { id: 'rod', key: 'rod', cost: 5, oneTime: true },
       { id: 'iron_sword', key: 'sword', cost: 5, oneTime: true },
@@ -2739,7 +2747,7 @@
     for (const o of opts) {
       const bought = o.oneTime && merchantBought[o.key];
       html += `<button class="merchant-item" data-buy="${o.id}" data-key="${o.key || ''}" data-one-time="${o.oneTime ? '1' : '0'}" data-cost="${o.cost}" data-currency="gold" ${bought || countItem('coin') < o.cost ? 'disabled' : ''}>
-        ${bought ? escapeHtml(t('merchant.bought', {}, 'Bought')) : ''} ${escapeHtml(t('merchant.goldCost', { cost: o.cost }, `${o.cost} gold`))} -> ${escapeHtml(itemDisplay(o.id))}
+        ${bought ? escapeHtml(t('merchant.bought', {}, 'Bought')) : ''} ${escapeHtml(t('merchant.goldCost', { cost: o.cost }, `${o.cost} gold`))} -> ${richTextMarkup(itemDisplay(o.id))}
       </button>`;
     }
     body.innerHTML = html;
@@ -2775,23 +2783,22 @@
 
   function openSilverMerchant() {
     const body = document.getElementById('modal-body');
-    document.getElementById('modal-title').textContent = t('merchant.silverTitle', {}, 'Silver Meal Shop');
+    setRichText('modal-title', t('merchant.silverTitle', {}, 'Silver Meal Shop'));
     const bal = getSilverBalance();
-    let html = `<p>${escapeHtml(t('merchant.silverBalance', {
+    let html = `<p>${richTextMarkup(t('merchant.silverBalance', {
       balance: bal,
       coins: countItem('silver_coin'),
       silver: countItem('silver'),
     }, `Silver balance: ${bal}`))}<br>
-      <small>${escapeHtml(t('merchant.silverHint', {}, 'Forge silver into silver coins.'))}</small></p>`;
+      <small>${richTextMarkup(t('merchant.silverHint', {}, 'Forge silver into silver coins.'))}</small></p>`;
     const meals = [
       { id: 'veg_egg', cost: 3 },
       { id: 'vegetable_stew', cost: 4 },
       { id: 'big_plate_chicken', cost: 5 },
     ];
     for (const m of meals) {
-      const def = ITEMS[m.id];
       html += `<button class="merchant-item" data-meal="${m.id}" data-cost="${m.cost}" ${bal < m.cost ? 'disabled' : ''}>
-        ${escapeHtml(t('merchant.silverCost', { cost: m.cost }, `${m.cost} silver coins`))} -> ${escapeHtml((def.emoji || '') + def.name)}
+        ${escapeHtml(t('merchant.silverCost', { cost: m.cost }, `${m.cost} silver coins`))} -> ${richTextMarkup(itemDisplay(m.id))}
       </button>`;
     }
     body.innerHTML = html;
@@ -3139,9 +3146,9 @@
   function syncCraftBoxUI() {
     ['c1', 'c2'].forEach((id, i) => {
       const el = document.getElementById(id);
-      const span = el.querySelector('.slot-emoji');
+      const span = el.querySelector('.slot-icon');
       const item = craftSlots[i];
-      const icon = item ? itemIconMarkup(item, 'item-icon', ITEMS[item]?.emoji || '?') : '';
+      const icon = item ? itemIconMarkup(item, 'item-icon', '?') : '';
       if (span) span.innerHTML = icon;
       else el.innerHTML = icon;
       el.classList.toggle('filled', !!item);
@@ -3216,10 +3223,10 @@
       craftBtn.textContent = title.textContent;
     } else {
       title.textContent = t('craft.combine', {}, 'Combine');
-      hint.textContent = t('craft.lockedHint', {}, 'Stand on a tool tile or near campfire with pot.');
+      hint.innerHTML = richTextMarkup(t('craft.lockedHint', {}, 'Stand on a tool tile or near campfire with pot.'));
       craftBtn.textContent = t('game.craftInitialButton', {}, 'Craft');
       if (playerNearStructure('campfire') && !countItem('iron_pot')) {
-        hint.textContent = t('craft.needPotHint', {}, 'Campfire cooking needs an iron pot.');
+        hint.innerHTML = richTextMarkup(t('craft.needPotHint', {}, 'Campfire cooking needs an iron pot.'));
       }
     }
 
@@ -3228,14 +3235,14 @@
     const result = resolveRecipe(a, b, mode);
 
     const r3 = document.getElementById('c3');
-    const r3Emoji = document.getElementById('c3-emoji');
+    const r3Icon = document.getElementById('c3-icon');
     const r3Name = document.getElementById('c3-name');
     if (result) {
       const { id, count } = unpackResult(result);
-      r3Emoji.innerHTML = itemIconMarkup(id, 'item-icon', ITEMS[id]?.emoji || '?');
+      r3Icon.innerHTML = itemIconMarkup(id, 'item-icon', '?');
       r3Name.textContent = (ITEMS[id]?.name || '') + countSuffix(count);
     } else {
-      r3Emoji.textContent = mode ? '?' : '';
+      r3Icon.textContent = mode ? '?' : '';
       r3Name.textContent = mode ? t('craft.unknownRecipe', {}, 'Unknown recipe') : '';
     }
     r3.dataset.result = result || '';
@@ -3718,7 +3725,7 @@
               const layer = 2 + (ANIMAL_LAYER_RANK[animal.type] || 0);
               return `<span class="cell-icon-layer cell-animal-layer" data-animal="${escapeHtml(animal.type)}" style="z-index:${layer}">${animalIcon}</span>`;
             }).join('');
-          const playerIcon = x === player.x && y === player.y ? mapIconMarkup('player', '\u{1F9D1}') : '';
+          const playerIcon = x === player.x && y === player.y ? mapIconMarkup('player') : '';
           if (cellIcon || animalIcons || playerIcon) {
             icon = [
               cellIcon ? `<span class="cell-icon-layer cell-content-layer">${cellIcon}</span>` : '',
@@ -3748,12 +3755,12 @@
     const nightPhase = isNight();
     const dayNightText = devDisableDayNight
       ? t('stats.dayNightDisabled', {}, 'Day/night off')
-      : `${isNight() ? t('stats.night', {}, 'Night') : t('stats.day', {}, 'Day')} ? ${t('stats.cycle', { current: cyclePos }, `Cycle ${cyclePos}/20`)}`;
+      : `${isNight() ? t('stats.night', {}, 'Night') : t('stats.day', {}, 'Day')} / ${t('stats.cycle', { current: cyclePos }, `Cycle ${cyclePos}/20`)}`;
     document.getElementById('stats').innerHTML = `
-      <span>\u2764\uFE0F ${player.stamina}/${STAMINA_MAX}</span>
-      <span>\u2B50 Lv.${player.level} (${player.exp}/${expToNext()})</span>
-      <span>\u26CF\uFE0F ${escapeHtml(t('stats.mining', { count: player.breaks }, `Mined ${player.breaks}`))}</span>
-      <span class="${nightPhase ? 'tag-night' : ''}">${dayNightText}</span>
+      <span>HP ${player.stamina}/${STAMINA_MAX}</span>
+      <span>Lv.${player.level} (${player.exp}/${expToNext()})</span>
+      <span>${escapeHtml(t('stats.mining', { count: player.breaks }, `Mined ${player.breaks}`))}</span>
+      <span class="${nightPhase ? 'tag-night' : ''}">${richTextMarkup(dayNightText)}</span>
     `;
     renderInv();
     renderChest();
@@ -3767,11 +3774,11 @@
       return;
     }
     container.innerHTML = list.map((it, i) => {
-      const def = ITEMS[it.id] || { emoji: '\u{1F4E6}', name: it.id };
+      const def = ITEMS[it.id] || { name: it.id };
       const countHtml = it.count > 1 ? `<div class="inv-cell-count">${countSuffix(it.count)}</div>` : '';
       const bulkTip = prefix === 'chest' ? t('tips.bulkTakeFromChest', {}, 'Long press or Shift+click to take stack') : t('tips.bulkStoreInChest', {}, 'Long press or Shift+click to store stack');
       return `<div class="inv-cell" draggable="true" data-id="${it.id}" data-i="${i}" data-from="${prefix}" title="${escapeHtml(t('tips.dragOne', {}, 'Drag one'))}; ${escapeHtml(bulkTip)}">
-        <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', def.emoji || '?')}</div>
+        <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', '?')}</div>
         <div class="inv-cell-name">${escapeHtml(def.name)}</div>${countHtml}</div>`;
     }).join('');
     container.querySelectorAll('.inv-cell[data-i]').forEach(el => {
@@ -3843,7 +3850,7 @@
     });
     document.getElementById('dev-item-list').innerHTML = entries.map(([id, def]) => `
       <button type="button" class="dev-item" data-id="${id}" title="${escapeHtml('Add ' + def.name)}">
-        <span class="emoji">${itemIconMarkup(id, 'item-icon', def.emoji || '?')}</span>
+        <span class="dev-item-icon">${itemIconMarkup(id, 'item-icon', '?')}</span>
         <span>${escapeHtml(def.name || id)}</span>
       </button>
     `).join('') || `<div class="hint">${escapeHtml(t('devTools.noItemMatches', {}, 'No matching items'))}</div>`;
@@ -3891,7 +3898,7 @@
       html = `<div class="inv-empty">${escapeHtml(t('common.empty', {}, 'Empty'))}</div>`;
     } else {
       html = inventory.map((it, i) => {
-        const def = ITEMS[it.id] || { emoji: '\u{1F4E6}', name: it.id };
+        const def = ITEMS[it.id] || { name: it.id };
         const sel = craftPickId === it.id ? 'selected' : (selectedInv === it.id ? 'selected' : '');
         const placeable = isPlaceableItem(it.id);
         const pm = placedModeForItem(it.id);
@@ -3909,12 +3916,12 @@
         const drag = placeable && !canUsePlaceableAsCraftMaterial(it.id) ? 'false' : 'true';
         const countHtml = it.count > 1 ? `<div class="inv-cell-count">${countSuffix(it.count)}</div>` : '';
         return `<div class="inv-cell ${sel}" draggable="${drag}" data-id="${it.id}" data-i="${i}" title="${escapeHtml(tip)}">
-          <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', def.emoji || '?')}</div>
+          <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', '?')}</div>
           <div class="inv-cell-name">${escapeHtml(def.name)}</div>${countHtml}</div>`;
       }).join('');
       collectedPages.filter(pi => !submittedPages.includes(pi)).sort((a, b) => a - b).forEach(pi => {
         html += `<div class="inv-cell" data-page="${pi}" title="${escapeHtml(t('pages.inventoryTitle', {}, 'Submit at crystal ball'))}">
-          <div class="inv-cell-icon">${itemIconMarkup('page', 'item-icon', '\u{1F4DC}')}</div>
+          <div class="inv-cell-icon">${itemIconMarkup('page', 'item-icon', '?')}</div>
           <div class="inv-cell-name">${escapeHtml(t('pages.inventoryName', { num: PAGE_NUMS[pi] }, `Page(${PAGE_NUMS[pi]})`))}</div></div>`;
       });
     }
@@ -3954,7 +3961,7 @@
       const pi = +el.dataset.page;
       el.onclick = () => showModal(
         t('pages.lostTitle', { num: PAGE_NUMS[pi] }, `Lost page ${PAGE_NUMS[pi]}`),
-        `<p>${escapeHtml(PAGES[pi])}</p><p class="hint">${escapeHtml(t('pages.submitHint', {}, 'Submit at the crystal ball.'))}</p>`
+        `<p>${escapeHtml(PAGES[pi])}</p><p class="hint">${richTextMarkup(t('pages.submitHint', {}, 'Submit at the crystal ball.'))}</p>`
       );
     });
     renderChest();
@@ -3962,7 +3969,7 @@
   }
 
   function showModal(title, html) {
-    document.getElementById('modal-title').textContent = title;
+    setRichText('modal-title', title);
     document.getElementById('modal-body').innerHTML = html;
     setModalCloseFooter();
     document.getElementById('modal').classList.add('show');
