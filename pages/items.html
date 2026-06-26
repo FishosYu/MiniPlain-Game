@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniPlain 物品一览</title>
+  <title>Stonia 物品一览 | 小石之原</title>
+  <link rel="icon" type="image/png" href="../assets/2D/ui/stonia-logo.png">
   <style>
     :root {
       --bg: #8fc6cc;
@@ -61,6 +62,23 @@
       text-shadow: 4px 4px 0 #efc477;
     }
 
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-logo {
+      width: clamp(42px, 8vw, 58px);
+      height: clamp(42px, 8vw, 58px);
+      object-fit: cover;
+      background: var(--card);
+      border: 3px solid var(--line);
+      box-shadow: 3px 3px 0 #c9b072;
+      image-rendering: pixelated;
+      flex: 0 0 auto;
+    }
+
     .lead {
       color: var(--muted);
       line-height: 1.7;
@@ -82,6 +100,28 @@
     .btn:focus-visible {
       transform: translate(2px, 2px);
       box-shadow: 2px 2px 0 var(--accent-dark);
+    }
+
+    .language-toggle {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 20;
+      color: var(--text);
+      background: var(--card);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 8px 10px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .language-toggle:hover,
+    .language-toggle:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #c9b072;
+      outline: none;
     }
 
     .category {
@@ -130,6 +170,15 @@
       margin-bottom: 6px;
     }
 
+    .item-icon {
+      display: block;
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      margin: 0 auto 6px;
+    }
+
     .name {
       display: block;
       font-size: .82rem;
@@ -167,7 +216,15 @@
       margin-bottom: 14px;
     }
 
-    .modal-title .emoji { margin: 0; }
+    .modal-title .emoji,
+    .modal-title .item-icon {
+      margin: 0;
+    }
+
+    .modal-title .item-icon {
+      width: 42px;
+      height: 42px;
+    }
 
     .section {
       background: rgba(255, 249, 233, .85);
@@ -201,16 +258,20 @@
   </style>
 </head>
 <body>
+  <button class="language-toggle" type="button" data-locale-toggle data-i18n-aria-label="language.toggleAria">中/En</button>
   <main class="wrap">
     <header>
       <div class="topbar">
-        <h1>物品一览</h1>
+        <div class="page-title">
+          <img class="page-logo" src="../assets/2D/ui/stonia-logo.png" alt="" aria-hidden="true">
+          <h1 data-i18n="itemsPage.title">物品一览</h1>
+        </div>
         <div>
-          <a class="btn" href="../index.html">返回首页</a>
-          <a class="btn" href="../MiniPlain.html">进入 Demo</a>
+          <a class="btn" href="../index.html" data-i18n="common.backToHome">返回首页</a>
+          <a class="btn" href="../Stonia.html" data-i18n="common.enterDemo">进入 Demo</a>
         </div>
       </div>
-      <p class="lead">按类别展示当前 Demo 中已经可获取或可合成的物品。点击格子可查看简介、获取途径、用途，以及它可以参与合成出的物品。</p>
+      <p class="lead" data-i18n="itemsPage.lead">按类别展示当前 Demo 中已经可获取或可合成的物品。点击格子可查看简介、获取途径、用途，以及它可以参与合成出的物品。</p>
     </header>
 
     <div id="content"></div>
@@ -220,27 +281,67 @@
     <div class="modal">
       <div class="modal-title" id="modal-title"></div>
       <div id="modal-body"></div>
-      <div class="close-row"><button class="btn" type="button" id="close">关闭</button></div>
+      <div class="close-row"><button class="btn" type="button" id="close" data-i18n="common.close">关闭</button></div>
     </div>
   </div>
 
+  <script src="../data/locales/zh-CN.js"></script>
+  <script src="../data/locales/en-US.js"></script>
+  <script src="../data/i18n.js"></script>
   <script src="../data/items.js"></script>
   <script>
+    const I18N = window.STONIA_I18N || {
+      t: (_key, _params, fallback) => fallback || _key,
+      list: (_key, fallback) => fallback,
+      itemName: id => window.MINIPLAIN_ITEMS?.[id]?.name || id,
+      itemText: (_id, _field, fallback) => fallback,
+      itemTextList: (_id, _field, fallback) => fallback,
+      categoryName: category => category,
+      applyStatic: () => {},
+    };
+    const t = (key, params = {}, fallback = '') => I18N.t(key, params, fallback);
+    I18N.applyStatic();
+    document.title = t('document.itemsTitle', {}, document.title);
+
     const categories = window.MINIPLAIN_ITEM_CATEGORIES || [];
     const itemData = window.MINIPLAIN_ITEMS || {};
-    const items = Object.entries(itemData).map(([id, item]) => {
-      const texts = item.texts || {};
-      return {
-        id,
-        cat: item.category,
-        name: item.name,
-        emoji: item.emoji,
-        overview: texts.overview || texts.codex || '等待补充。',
-        obtain: texts.obtain || [],
-        uses: texts.uses || [],
-        usedIn: texts.usedIn || [],
-      };
-    }).filter(item => item.cat);
+    const itemIconRoot = '../';
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function itemIcon(item, className = 'item-icon') {
+      if (item.icon) {
+        return `<img class="${className}" src="${escapeHtml(itemIconRoot + item.icon)}" alt="${escapeHtml(item.name)}" loading="lazy">`;
+      }
+      return `<span class="emoji">${escapeHtml(item.emoji || '?')}</span>`;
+    }
+
+    function buildItems() {
+      return Object.entries(itemData).map(([id, item]) => {
+        const texts = item.texts || {};
+        return {
+          id,
+          cat: item.category,
+          name: I18N.itemName(id),
+          emoji: item.emoji,
+          icon: item.icon,
+          overview: I18N.itemText(id, 'overview', texts.overview || texts.codex || t('itemsPage.fallbackOverview', {}, 'Waiting for details.')),
+          obtain: I18N.itemTextList(id, 'obtain', texts.obtain || []),
+          uses: I18N.itemTextList(id, 'uses', texts.uses || []),
+          usedIn: I18N.itemTextList(id, 'usedIn', texts.usedIn || []),
+        };
+      }).filter(item => item.cat);
+    }
+
+    let items = buildItems();
+    let activeItemId = null;
 
     const content = document.getElementById('content');
     const modal = document.getElementById('modal');
@@ -248,17 +349,18 @@
     const modalBody = document.getElementById('modal-body');
 
     function listBlock(title, values) {
-      const list = values && values.length ? values : ['当前暂无。'];
-      return `<section class="section"><h3>${title}</h3><ul>${list.map(value => `<li>${value}</li>`).join('')}</ul></section>`;
+      const list = values && values.length ? values : [t('itemsPage.empty', {}, 'None yet.')];
+      return `<section class="section"><h3>${escapeHtml(title)}</h3><ul>${list.map(value => `<li>${escapeHtml(value)}</li>`).join('')}</ul></section>`;
     }
 
     function showItem(item) {
-      modalTitle.innerHTML = `<span class="emoji">${item.emoji}</span><span>${item.name}</span>`;
+      activeItemId = item.id;
+      modalTitle.innerHTML = `${itemIcon(item)}<span>${escapeHtml(item.name)}</span>`;
       modalBody.innerHTML = [
-        listBlock('简介', [item.overview]),
-        listBlock('获取途径 / 合成配方', item.obtain),
-        listBlock('用途', item.uses),
-        listBlock('可用于合成 / 产出', item.usedIn),
+        listBlock(t('itemsPage.overview', {}, 'Overview'), [item.overview]),
+        listBlock(t('itemsPage.obtain', {}, 'How to obtain / recipes'), item.obtain),
+        listBlock(t('itemsPage.uses', {}, 'Uses'), item.uses),
+        listBlock(t('itemsPage.usedIn', {}, 'Used in'), item.usedIn),
       ].join('');
       modal.classList.add('show');
     }
@@ -268,11 +370,11 @@
         const group = items.filter(item => item.cat === cat);
         if (!group.length) return '';
         return `<section class="category">
-          <h2>${cat}</h2>
+          <h2>${escapeHtml(I18N.categoryName(cat))}</h2>
           <div class="grid">
             ${group.map(item => `<button class="item" type="button" data-id="${item.id}">
-              <span class="emoji">${item.emoji}</span>
-              <span class="name">${item.name}</span>
+              ${itemIcon(item)}
+              <span class="name">${escapeHtml(item.name)}</span>
             </button>`).join('')}
           </div>
         </section>`;
@@ -290,6 +392,16 @@
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') modal.classList.remove('show');
+    });
+
+    document.addEventListener('stonia:localechange', () => {
+      document.title = t('document.itemsTitle', {}, document.title);
+      items = buildItems();
+      render();
+      if (modal.classList.contains('show') && activeItemId) {
+        const item = items.find(entry => entry.id === activeItemId);
+        if (item) showItem(item);
+      }
     });
 
     render();

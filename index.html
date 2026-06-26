@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniPlain</title>
+  <title>Stonia | 小石之原</title>
+  <link rel="icon" type="image/png" href="./assets/2D/ui/stonia-logo.png">
   <style>
     :root {
       --sky: #9ed0d8;
@@ -151,6 +152,137 @@
       margin-bottom: 18px;
     }
 
+    .brand-heading {
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .brand-title-stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pixel-title {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(8px, 1.4vw, 14px);
+      flex-wrap: wrap;
+      margin: 0;
+      text-shadow: none;
+      text-transform: none;
+      --pixel-size: clamp(10px, 1.7vw, 18px);
+      --pixel-color: #6f4a34;
+    }
+
+    .pixel-letter {
+      position: relative;
+      width: calc(var(--pixel-size) * 3);
+      height: calc(var(--pixel-size) * 5);
+      flex: 0 0 auto;
+      color: var(--pixel-color);
+    }
+
+    .pixel-letter::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--pixel-size);
+      height: var(--pixel-size);
+      background: var(--pixel-color);
+      box-shadow: var(--pixels);
+    }
+
+    .letter-s {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-t {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-o {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-n {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-i {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-a {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .brand-subtitle {
+      justify-self: start;
+      color: var(--accent-dark);
+      background: #ffe4ba;
+      border: 2px solid var(--accent-dark);
+      padding: 4px 8px;
+      font-size: .86rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+    }
+
     h2 {
       font-size: clamp(1.65rem, 4vw, 2.7rem);
       line-height: 1.05;
@@ -222,6 +354,28 @@
     .btn.cream:hover,
     .btn.cream:focus-visible {
       box-shadow: 3px 3px 0 #c9b072;
+    }
+
+    .language-toggle {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 20;
+      color: var(--text);
+      background: var(--panel-light);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 8px 10px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .language-toggle:hover,
+    .language-toggle:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #c9b072;
+      outline: none;
     }
 
     .note {
@@ -528,6 +682,7 @@
   </style>
 </head>
 <body>
+  <button class="language-toggle" type="button" data-locale-toggle data-i18n-aria-label="language.toggleAria">中/En</button>
   <main>
     <div class="cloud" aria-hidden="true"></div>
     <div class="cloud right" aria-hidden="true"></div>
@@ -536,20 +691,32 @@
       <div class="content">
         <div class="hero">
           <div>
-            <span class="eyebrow">轻探索 · 采集 · 制造 · 烹饪</span>
-            <h1 id="title">MiniPlain</h1>
-            <p class="lead">
+            <span class="eyebrow" data-i18n="home.tagline">轻探索 · 采集 · 制造 · 烹饪</span>
+            <div class="brand-heading">
+              <div class="brand-title-stack">
+                <h1 class="pixel-title" id="title" aria-label="STONIA">
+                  <span class="pixel-letter letter-s" aria-hidden="true"></span>
+                  <span class="pixel-letter letter-t" aria-hidden="true"></span>
+                  <span class="pixel-letter letter-o" aria-hidden="true"></span>
+                  <span class="pixel-letter letter-n" aria-hidden="true"></span>
+                  <span class="pixel-letter letter-i" aria-hidden="true"></span>
+                  <span class="pixel-letter letter-a" aria-hidden="true"></span>
+                </h1>
+                <span class="brand-subtitle" data-i18n="home.subtitle">小石之原</span>
+              </div>
+            </div>
+            <p class="lead" data-i18n="home.lead">
               掉进一片被石头盖住的小小平原，从中心格开始一点点凿开道路。
               收集矿物和食材，搭起篝火，做出料理，读完遗落书页，让荒地慢慢露出它原本的样子。
             </p>
             <div class="actions">
-              <a class="btn" href="./MiniPlain.html">进入 Demo</a>
-              <a class="btn secondary" href="./pages/items.html">查看物品图鉴</a>
-              <span class="note">纯前端原型，打开即可游玩。</span>
+              <a class="btn" href="./Stonia.html" data-i18n="common.enterDemo">进入 Demo</a>
+              <a class="btn secondary" href="./pages/items.html" data-i18n="home.itemsLink">查看物品图鉴</a>
+              <span class="note" data-i18n="home.prototypeNote">纯前端原型，打开即可游玩。</span>
             </div>
           </div>
 
-          <aside class="card map-card" aria-label="MiniPlain 小地图装饰">
+          <aside class="card map-card" aria-label="Stonia 小地图装饰" data-i18n-aria-label="landing.mapAria">
             <div class="map" aria-hidden="true">
               <span class="tile stone" style="--i:1"></span><span class="tile stone" style="--i:2"></span><span class="tile grass" style="--i:3"></span><span class="tile stone" style="--i:4"></span><span class="tile water" style="--i:5"></span><span class="tile stone" style="--i:6"></span><span class="tile stone" style="--i:7"></span>
               <span class="tile stone" style="--i:8"></span><span class="tile grass" style="--i:9"></span><span class="tile grass" style="--i:10"></span><span class="tile grass" style="--i:11"></span><span class="tile water" style="--i:12"></span><span class="tile water" style="--i:13"></span><span class="tile stone" style="--i:14"></span>
@@ -557,9 +724,9 @@
               <span class="tile grass" style="--i:22"></span><span class="tile grass" style="--i:23"></span><span class="tile grass" style="--i:24"></span><span class="tile fire" style="--i:25"></span><span class="tile grass" style="--i:26"></span><span class="tile stone" style="--i:27"></span><span class="tile crystal" style="--i:28"></span>
               <span class="tile stone" style="--i:29"></span><span class="tile grass" style="--i:30"></span><span class="tile stone" style="--i:31"></span><span class="tile grass" style="--i:32"></span><span class="tile grass" style="--i:33"></span><span class="tile grass" style="--i:34"></span><span class="tile stone" style="--i:35"></span>
             </div>
-            <ul class="mini-stats" aria-label="当前 Demo 概览">
-              <li><strong>探索</strong></li>
-              <li><strong>休闲</strong></li>
+            <ul class="mini-stats" aria-label="当前 Demo 概览" data-i18n-aria-label="landing.demoOverviewAria">
+              <li><strong data-i18n="landing.exploreStat">探索</strong></li>
+              <li><strong data-i18n="landing.cozyStat">休闲</strong></li>
             </ul>
           </aside>
         </div>
@@ -570,22 +737,22 @@
       <div class="section-card">
         <div class="section-title">
           <span class="section-label">CREATORS</span>
-          <h2 id="creators-title">制作者</h2>
-          <p>策划和美术分别来自两位创作者。点击卡片可以打开对应 GitHub 主页。</p>
+          <h2 id="creators-title" data-i18n="landing.creatorsTitle">制作者</h2>
+          <p data-i18n="landing.creatorsLead">策划和美术分别来自两位创作者。点击卡片可以打开对应 GitHub 主页。</p>
         </div>
         <div class="creator-grid">
           <a class="creator-card" href="https://github.com/FishosYu" target="_blank" rel="noopener noreferrer">
-            <img src="https://github.com/FishosYu/FishosYu.github.io/blob/main/assets/images/icon.png?raw=true" alt="FishosYu 头像">
+            <img src="https://github.com/FishosYu/FishosYu.github.io/blob/main/assets/images/icon.png?raw=true" alt="FishosYu 头像" data-i18n-alt="landing.plannerAvatarAlt">
             <span>
-              <small>游戏策划</small>
+              <small data-i18n="landing.gamePlanner">游戏策划</small>
               <strong>FishosYu / Ximing Yu</strong>
               <span>GitHub: https://github.com/FishosYu</span>
             </span>
           </a>
           <a class="creator-card" href="https://github.com/haoccy0u" target="_blank" rel="noopener noreferrer">
-            <img src="https://github.com/haoccy0u.png?size=160" alt="haoccy0u 头像">
+            <img src="https://github.com/haoccy0u.png?size=160" alt="haoccy0u 头像" data-i18n-alt="landing.artistAvatarAlt">
             <span>
-              <small>游戏美术</small>
+              <small data-i18n="landing.gameArtist">游戏美术</small>
               <strong>haoccy0u / Rong Chen</strong>
               <span>GitHub: https://github.com/haoccy0u</span>
             </span>
@@ -598,28 +765,28 @@
       <div class="section-card">
         <div class="section-title">
           <span class="section-label">GAMEPLAY</span>
-          <h2 id="gameplay-title">主要玩法</h2>
-          <p>
+          <h2 id="gameplay-title" data-i18n="landing.gameplayTitle">主要玩法</h2>
+          <p data-i18n="landing.gameplayLead">
             地图是 11×11 的格子地，玩家从中心开始探索。你会在有限体力里决定先挖哪里，
             用挖到的材料制造工具和设施，再把新的工具带回探索循环里。
           </p>
         </div>
         <div class="loop">
           <article class="loop-card">
-            <h3>凿开石头</h3>
-            <p>凿石消耗 1 点体力，也会获得经验和随机矿物，并逐步显露地图里的植物、动物、事件与特殊设施。</p>
+            <h3 data-i18n="landing.mineTitle">凿开石头</h3>
+            <p data-i18n="landing.mineText">凿石消耗 1 点体力，也会获得经验和随机矿物，并逐步显露地图里的植物、动物、事件与特殊设施。</p>
           </article>
           <article class="loop-card">
-            <h3>收集资源</h3>
-            <p>矿物、木材、食材、动物产物和货币会进入背包，成为制造、料理和建造的原料。</p>
+            <h3 data-i18n="landing.collectTitle">收集资源</h3>
+            <p data-i18n="landing.collectText">矿物、木材、食材、动物产物和货币会进入背包，成为制造、料理和建造的原料。</p>
           </article>
           <article class="loop-card">
-            <h3>制造设施</h3>
-            <p>用工具箱、铸造台、篝火、石磨、料理台等平台，把材料加工成工具、装备、设施和料理。</p>
+            <h3 data-i18n="landing.craftTitle">制造设施</h3>
+            <p data-i18n="landing.craftText">用工具箱、铸造台、篝火、石磨、料理台等平台，把材料加工成工具、装备、设施和料理。</p>
           </article>
           <article class="loop-card">
-            <h3>继续探索</h3>
-            <p>料理回复体力，照明扩大夜晚视野，桥、庇护所和更多工具让玩家能处理越来越多的地图情况。</p>
+            <h3 data-i18n="landing.continueTitle">继续探索</h3>
+            <p data-i18n="landing.continueText">料理回复体力，照明扩大夜晚视野，桥、庇护所和更多工具让玩家能处理越来越多的地图情况。</p>
           </article>
         </div>
       </div>
@@ -629,21 +796,21 @@
       <div class="section-card">
         <div class="section-title">
           <span class="section-label">FUN</span>
-          <h2 id="fun-title">核心乐趣</h2>
-          <p>MiniPlain 想保留探索游戏里“再点一格”的好奇心，但不要给玩家太强的失败压力。</p>
+          <h2 id="fun-title" data-i18n="landing.funTitle">核心乐趣</h2>
+          <p data-i18n="landing.funLead">Stonia 想保留探索游戏里“再点一格”的好奇心，但不要给玩家太强的失败压力。</p>
         </div>
         <div class="fun-grid">
           <article class="fun-card">
-            <h3>一格一格打开未知</h3>
-            <p>石头遮住了地图，也遮住了下一次发现。每一次点击都可能改变接下来的路线和目标。</p>
+            <h3 data-i18n="landing.unknownTitle">一格一格打开未知</h3>
+            <p data-i18n="landing.unknownText">石头遮住了地图，也遮住了下一次发现。每一次点击都可能改变接下来的路线和目标。</p>
           </article>
           <article class="fun-card">
-            <h3>资源变成新能力</h3>
-            <p>石头、铁块、木材、食材不是单纯堆在背包里，它们会变成斧子、锅、篝火、桥和料理。</p>
+            <h3 data-i18n="landing.resourceTitle">资源变成新能力</h3>
+            <p data-i18n="landing.resourceText">石头、铁块、木材、食材不是单纯堆在背包里，它们会变成斧子、锅、篝火、桥和料理。</p>
           </article>
           <article class="fun-card">
-            <h3>低压力的完成感</h3>
-            <p>没有死亡或失败惩罚，体力更多是在提醒玩家试试料理、种植和设施，而不是制造焦虑。</p>
+            <h3 data-i18n="landing.lowPressureTitle">低压力的完成感</h3>
+            <p data-i18n="landing.lowPressureText">没有死亡或失败惩罚，体力更多是在提醒玩家试试料理、种植和设施，而不是制造焦虑。</p>
           </article>
         </div>
       </div>
@@ -653,35 +820,46 @@
       <div class="section-card">
         <div class="section-title">
           <span class="section-label">CONTENT</span>
-          <h2 id="overview-title">内容概览</h2>
-          <p>当前 Demo 的内容围绕探索、制造、种植、烹饪和书页收集展开。完整物品图鉴仍然放在独立子页面。</p>
+          <h2 id="overview-title" data-i18n="landing.contentTitle">内容概览</h2>
+          <p data-i18n="landing.contentLead">当前 Demo 的内容围绕探索、制造、种植、烹饪和书页收集展开。完整物品图鉴仍然放在独立子页面。</p>
         </div>
         <div class="milestones">
           <article class="milestone">
-            <strong>开局</strong>
-            <p>从中心格和破旧工具箱开始，凿开周围石头，收集基础矿物和木材。</p>
+            <strong data-i18n="landing.earlyTitle">开局</strong>
+            <p data-i18n="landing.earlyText">从中心格和破旧工具箱开始，凿开周围石头，收集基础矿物和木材。</p>
           </article>
           <article class="milestone">
-            <strong>中段</strong>
-            <p>制造铸造台、石斧、铁锅、篝火和箱子，开始处理动物、植物、烹饪与储物问题。</p>
+            <strong data-i18n="landing.midTitle">中段</strong>
+            <p data-i18n="landing.midText">制造铸造台、石斧、铁锅、篝火和箱子，开始处理动物、植物、烹饪与储物问题。</p>
           </article>
           <article class="milestone">
-            <strong>后段</strong>
-            <p>借助照明、庇护所、料理台、石磨和更多设施，把探索推进到遗落书页与水晶球目标。</p>
+            <strong data-i18n="landing.lateTitle">后段</strong>
+            <p data-i18n="landing.lateText">借助照明、庇护所、料理台、石磨和更多设施，把探索推进到遗落书页与水晶球目标。</p>
           </article>
         </div>
         <ul class="features">
-          <li>凿开石头可能发现新的资源、动物、植物、宝箱、纸袋、特殊盒子、水池和事件。</li>
-          <li>玩家只能在已清开的普通地面移动，不能穿过石头或水池，探索路线会自然形成。</li>
-          <li>昼夜由凿石次数推进，夜晚会缩小视野；篝火和水晶球能照亮身边的格子。</li>
-          <li>当前目标是收集 7 页遗落书页，并把它们交给水晶球。</li>
+          <li data-i18n="landing.featureReveal">凿开石头可能发现新的资源、动物、植物、宝箱、纸袋、特殊盒子、水池和事件。</li>
+          <li data-i18n="landing.featureMovement">玩家只能在已清开的普通地面移动，不能穿过石头或水池，探索路线会自然形成。</li>
+          <li data-i18n="landing.featureDayNight">昼夜由凿石次数推进，夜晚会缩小视野；篝火和水晶球能照亮身边的格子。</li>
+          <li data-i18n="landing.featureGoal">当前目标是收集 7 页遗落书页，并把它们交给水晶球。</li>
         </ul>
         <div class="actions">
-          <a class="btn" href="./MiniPlain.html">进入 Demo</a>
-          <a class="btn cream" href="./pages/items.html">进入物品图鉴</a>
+          <a class="btn" href="./Stonia.html" data-i18n="common.enterDemo">进入 Demo</a>
+          <a class="btn cream" href="./pages/items.html" data-i18n="common.itemCodex">进入物品图鉴</a>
         </div>
       </div>
     </section>
   </main>
+  <script src="./data/locales/zh-CN.js"></script>
+  <script src="./data/locales/en-US.js"></script>
+  <script src="./data/i18n.js"></script>
+  <script>
+    const I18N = window.STONIA_I18N;
+    I18N.applyStatic();
+    document.title = I18N.t('document.homeTitle', {}, document.title);
+    document.addEventListener('stonia:localechange', () => {
+      document.title = I18N.t('document.homeTitle', {}, document.title);
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,4086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stonia Demo</title>
+  <link rel="icon" type="image/png" href="./assets/2D/ui/stonia-logo.png">
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --panel: #fffef9;
+      --border: #d4cfc4;
+      --text: #3d3830;
+      --accent: #7a9e6a;
+      --accent-hover: #5d824f;
+      --danger: #c45c4a;
+      --night: #2a2838;
+      --highlight: #e8f4e0;
+      --pixel-panel: #fff4d8;
+      --pixel-paper: #fff9e9;
+      --pixel-shadow: #c69a52;
+      --pixel-shadow-soft: #c9b072;
+      --pixel-dark: #3d3830;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(61,56,48,.035) 1px, transparent 1px),
+        linear-gradient(rgba(61,56,48,.035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 16px 16px, 16px 16px, 100% 100%;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 12px;
+      image-rendering: pixelated;
+    }
+    h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #5a5548; }
+    .screen-hidden { display: none !important; }
+    .main-menu,
+    .codex-screen {
+      min-height: calc(100vh - 24px);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .main-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu-panel,
+    .codex-panel {
+      background: #fff4d8;
+      border: 4px solid #3d3830;
+      border-radius: 0;
+      box-shadow: 8px 8px 0 #c69a52, 12px 12px 0 rgba(61, 56, 48, .22);
+      padding: 24px;
+    }
+    .menu-panel {
+      width: min(680px, 100%);
+      text-align: center;
+    }
+    .menu-logo {
+      width: 76px;
+      height: 76px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 12px;
+      image-rendering: pixelated;
+    }
+    .menu-title {
+      font-size: clamp(2.6rem, 9vw, 5.4rem);
+      line-height: .9;
+      margin: 4px 0 8px;
+      text-transform: uppercase;
+      color: #3d3830;
+      text-shadow: 4px 4px 0 #efc477;
+    }
+    .pixel-title {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(8px, 1.4vw, 14px);
+      flex-wrap: wrap;
+      margin: 0;
+      text-shadow: none;
+      text-transform: none;
+      --pixel-size: clamp(10px, 1.7vw, 18px);
+      --pixel-color: #6f4a34;
+    }
+
+    .pixel-letter {
+      position: relative;
+      width: calc(var(--pixel-size) * 3);
+      height: calc(var(--pixel-size) * 5);
+      flex: 0 0 auto;
+      color: var(--pixel-color);
+    }
+
+    .pixel-letter::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--pixel-size);
+      height: var(--pixel-size);
+      background: var(--pixel-color);
+      box-shadow: var(--pixels);
+    }
+
+    .letter-s {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-t {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-o {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-n {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-i {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .letter-a {
+      --pixels:
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 0) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 1) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 1) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 3) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 0) calc(var(--pixel-size) * 4) 0 var(--pixel-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) 0 var(--pixel-color);
+    }
+
+    .menu-panel .pixel-title {
+      justify-content: center;
+      margin: 4px 0 8px;
+      --pixel-size: clamp(8px, 1.7vw, 14px);
+    }
+
+    .brand-subtitle {
+      display: inline-block;
+      color: #8e3528;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      padding: 4px 8px;
+      margin-bottom: 16px;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+    }
+    .menu-lead {
+      color: #6a655c;
+      line-height: 1.8;
+      margin: 0 auto 22px;
+      max-width: 520px;
+      font-size: 0.95rem;
+    }
+    .menu-actions,
+    .game-top-actions,
+    .codex-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pixel-btn {
+      border: 3px solid #3d3830;
+      border-radius: 0;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 4px 4px 0 #4d6e42;
+      font-weight: 700;
+    }
+    .pixel-btn.secondary {
+      background: #d65f43;
+      box-shadow: 4px 4px 0 #8e3528;
+    }
+    .pixel-btn.muted {
+      background: #8a8578;
+      box-shadow: 4px 4px 0 #5a5548;
+    }
+    .pixel-btn:hover {
+      background: var(--accent-hover);
+      transform: translate(1px, 1px);
+      box-shadow: 3px 3px 0 #4d6e42;
+    }
+    .pixel-btn.secondary:hover {
+      background: #b84c34;
+      box-shadow: 3px 3px 0 #8e3528;
+    }
+    .pixel-btn.muted:hover {
+      background: #706b61;
+      box-shadow: 3px 3px 0 #5a5548;
+    }
+    .language-toggle {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 50;
+      color: var(--text);
+      background: var(--pixel-paper);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 var(--pixel-shadow-soft);
+      padding: 8px 10px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .language-toggle:hover,
+    .language-toggle:focus-visible {
+      background: var(--pixel-paper);
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--pixel-shadow-soft);
+      outline: none;
+    }
+    .game-shell {
+      max-width: 960px;
+      margin: 0 auto;
+      padding-bottom: 16px;
+    }
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--pixel-panel);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
+      box-shadow: 6px 6px 0 var(--pixel-shadow), 9px 9px 0 rgba(61, 56, 48, .18);
+    }
+    .game-top h1 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+      color: var(--pixel-dark);
+      font-weight: 800;
+      text-shadow: 2px 2px 0 #efc477;
+    }
+    .game-title-logo {
+      width: 34px;
+      height: 34px;
+      object-fit: cover;
+      image-rendering: pixelated;
+      flex: 0 0 auto;
+    }
+    .game-title-subtitle {
+      color: #8e3528;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-shadow: none;
+    }
+    .codex-screen {
+      padding: 16px 0;
+    }
+    .codex-panel {
+      width: 100%;
+    }
+    .codex-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .codex-header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1;
+      color: #3d3830;
+      text-shadow: 3px 3px 0 #efc477;
+    }
+    .codex-lead {
+      color: #6a655c;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-top: 8px;
+      max-width: 620px;
+    }
+    .codex-progress {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 8px;
+      border: 2px solid #8e3528;
+      background: #ffe4ba;
+      color: #8e3528;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .codex-category {
+      background: #fff9e9;
+      border: 3px solid #3d3830;
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 12px;
+      margin-top: 14px;
+    }
+    .codex-category h2 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #5a5548;
+    }
+    .codex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+      gap: 10px;
+    }
+    .codex-item {
+      position: relative;
+      min-height: 86px;
+      border: 3px solid #3d3830;
+      border-radius: 0;
+      background: #fffef9;
+      color: #3d3830;
+      box-shadow: 4px 4px 0 #c9b072;
+      padding: 8px 5px;
+      text-align: center;
+    }
+    .codex-item.locked {
+      background:
+        linear-gradient(45deg, rgba(61,56,48,.08) 25%, transparent 25%, transparent 75%, rgba(61,56,48,.08) 75%),
+        #faf8f4;
+      background-size: 12px 12px;
+      color: rgba(61, 56, 48, .52);
+    }
+    .codex-icon {
+      display: block;
+      font-size: 1.9rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .item-icon {
+      display: block;
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .codex-icon .item-icon {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto;
+    }
+    .codex-name {
+      display: block;
+      font-size: 0.72rem;
+      line-height: 1.25;
+    }
+    .codex-tip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      z-index: 20;
+      display: none;
+      width: min(240px, 78vw);
+      transform: translateX(-50%);
+      background: #2f2b26;
+      border: 3px solid #fff4d8;
+      box-shadow: 4px 4px 0 rgba(47, 43, 38, .35);
+      color: #fff9e9;
+      padding: 9px;
+      text-align: left;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .codex-tip strong,
+    .codex-tip span { display: block; }
+    .codex-tip .tip-cat {
+      color: #ffd46b;
+      margin: 3px 0;
+    }
+    .codex-item:hover .codex-tip,
+    .codex-item:focus-visible .codex-tip {
+      display: block;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 12px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--pixel-paper);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
+      padding: 12px;
+      box-shadow: 6px 6px 0 var(--pixel-shadow-soft), 9px 9px 0 rgba(61, 56, 48, .14);
+    }
+    .stats { display: flex; flex-wrap: wrap; gap: 7px; font-size: 0.82rem; margin-bottom: 10px; }
+    .stats span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      white-space: nowrap;
+      padding: 4px 7px;
+      background: var(--pixel-panel);
+      border: 2px solid var(--pixel-dark);
+      box-shadow: 3px 3px 0 #d8c896;
+      font-weight: 700;
+    }
+    #grid-wrap {
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      padding: 8px;
+      background: #dccaa2;
+      border: 3px solid var(--pixel-dark);
+      box-shadow: inset 0 0 0 3px rgba(255,255,255,.22), 4px 4px 0 #a98f60;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(11, 40px);
+      gap: 0;
+      user-select: none;
+    }
+    .mobile-controls {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      background: var(--pixel-panel);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 #d8c896;
+      text-align: center;
+      touch-action: none;
+    }
+    .mobile-controls-title {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 7px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      font-size: 0.72rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .mobile-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+    .mobile-move-btn {
+      width: 58px;
+      height: 52px;
+      padding: 0;
+      font-size: 1.25rem;
+      line-height: 1;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .mobile-move-btn.up { grid-column: 2; grid-row: 1; }
+    .mobile-move-btn.left { grid-column: 1; grid-row: 2; }
+    .mobile-move-btn.right { grid-column: 3; grid-row: 2; }
+    .mobile-move-btn.down { grid-column: 2; grid-row: 3; }
+    .orientation-tip {
+      display: none;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #ffe4ba;
+      border: 3px solid #8e3528;
+      color: #8e3528;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 4px 4px 0 #c9b072;
+    }
+    body.mobile-controls-enabled .mobile-controls { display: block; }
+    body.mobile-controls-enabled.mobile-landscape .orientation-tip { display: block; }
+    body.mobile-controls-enabled {
+      padding: 8px;
+      overscroll-behavior: none;
+    }
+    body.mobile-controls-enabled .game-shell,
+    body.mobile-controls-enabled .layout {
+      max-width: 560px;
+    }
+    body.mobile-controls-enabled .layout {
+      grid-template-columns: 1fr;
+    }
+    body.mobile-controls-enabled .game-top {
+      margin-bottom: 10px;
+      padding: 8px 10px;
+    }
+    body.mobile-controls-enabled #grid-wrap {
+      overflow: visible;
+      padding: 6px;
+    }
+    body.mobile-controls-enabled #grid {
+      width: min(100%, 462px);
+      grid-template-columns: repeat(11, minmax(24px, 1fr));
+      gap: 0;
+    }
+    body.mobile-controls-enabled .cell {
+      width: auto;
+      height: auto;
+      aspect-ratio: 1;
+      font-size: clamp(16px, 5vw, 22px);
+    }
+    body.mobile-controls-enabled .inv-grid {
+      max-height: none;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border-radius: 0;
+      cursor: default;
+      position: relative;
+      border: 0;
+      box-shadow: none;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+      transition: transform .08s ease, filter .08s ease;
+    }
+    .cell span {
+      position: relative;
+      z-index: 1;
+    }
+    .cell-icon-wrap {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      pointer-events: none;
+    }
+    .cell .cell-icon-layer {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+    .cell .cell-content-layer { z-index: 1; }
+    .cell .cell-player-layer { z-index: 6; }
+    .cell-icon {
+      display: block;
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .cell.has-bridge .cell-content-layer .cell-icon {
+      width: 44px;
+      height: 44px;
+      max-width: none;
+      max-height: none;
+    }
+    .cell-animal-layer .cell-icon {
+      width: 30px;
+      height: 30px;
+      filter: drop-shadow(1px 1px 0 rgba(47, 43, 38, .35));
+    }
+    .cell.hidden { background: #9f978d !important; opacity: 0.42; }
+    .cell.player {
+      z-index: 10;
+      border-color: var(--pixel-dark);
+      box-shadow: inset 0 0 0 3px #5a8f4a, inset 0 -4px 0 rgba(61, 56, 48, .1);
+    }
+    .cell.breakable {
+      cursor: pointer;
+      border-color: var(--pixel-dark);
+      box-shadow: inset 0 0 0 3px rgba(255, 228, 154, .9), inset 0 -4px 0 rgba(61, 56, 48, .08);
+    }
+    .cell.breakable:hover { transform: translate(1px, 1px); filter: brightness(0.97); }
+    .cell.ground-normal {
+      background-color: #8ebe4c;
+      background-image: url("./assets/2D/tiles/terrain/grass.png");
+    }
+    .cell.ground-normal.terrain-bottom {
+      background-image: url("./assets/2D/tiles/terrain/grass-dirt-edge.png");
+    }
+    .cell.ground-water {
+      background-color: #76b7c8;
+      background-image: url("./assets/2D/tiles/terrain/water.png");
+    }
+    .cell.ground-stone {
+      background-color: #d9b36e;
+      background-image:
+        url("./assets/2D/tiles/terrain/stone.png"),
+        url("./assets/2D/tiles/terrain/grass.png");
+    }
+    .log {
+      font-size: 0.75rem;
+      max-height: 72px;
+      overflow-y: auto;
+      color: #fff9e9;
+      margin-top: 10px;
+      padding: 8px;
+      background: #2f2b26;
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 rgba(61, 56, 48, .18);
+      line-height: 1.35;
+    }
+    .log div + div { margin-top: 3px; padding-top: 3px; border-top: 1px dotted rgba(255,249,233,.25); }
+    .inv-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .inv-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px 4px 5px;
+      border: 3px solid var(--pixel-dark);
+      border-radius: 0;
+      background: var(--panel);
+      box-shadow: 3px 3px 0 #d8c896;
+      min-height: 72px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
+    }
+    .inv-cell:hover { background: var(--highlight); transform: translate(1px, 1px); box-shadow: 2px 2px 0 #a9bd96; }
+    .inv-cell.selected { background: #ffe4ba; border-color: #8e3528; box-shadow: 3px 3px 0 #8e3528; }
+    .inv-cell[draggable="true"] { cursor: grab; }
+    .inv-cell.dragging { opacity: 0.45; }
+    .inv-cell.bulk-flash { background: #c8ddb8 !important; border-color: var(--accent); box-shadow: 3px 3px 0 #4d6e42; }
+    #inventory .inv-cell[data-id], #chest-inventory .inv-cell[data-id] { touch-action: manipulation; }
+    .inv-cell-icon { font-size: 28px; line-height: 1; margin-bottom: 4px; }
+    .inv-cell-icon .item-icon { width: 30px; height: 30px; margin: 0 auto; }
+    .inv-cell-name { font-size: 0.62rem; line-height: 1.25; color: #5a5548; text-align: center; word-break: break-all; }
+    .inv-cell-count { font-size: 0.58rem; color: #8a8578; margin-top: 2px; }
+    .inv-empty {
+      grid-column: 1 / -1;
+      color: #8a8578;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      border: 2px dashed #c9b072;
+      background: rgba(255,255,255,.38);
+    }
+    #chest-panel {
+      margin-top: 12px;
+      padding: 10px;
+      border: 3px solid var(--pixel-dark);
+      background: #fff4d8;
+      box-shadow: 4px 4px 0 #d8c896;
+    }
+    #chest-panel.hidden { display: none; }
+    #chest-panel .chest-title { color: #5a5548; }
+    .panel-title,
+    #chest-panel .chest-title {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 7px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .panel-divider {
+      margin: 12px 0;
+      border: none;
+      border-top: 3px solid var(--pixel-dark);
+      box-shadow: 0 3px 0 #d8c896;
+    }
+    #craft-section {
+      padding: 10px;
+      background: var(--pixel-panel);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 4px 4px 0 #d8c896;
+    }
+    #craft-title {
+      display: inline-block;
+      padding: 3px 7px;
+      margin-bottom: 2px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    #craft-section.craft-locked .craft-box { border-color: #a99f91; opacity: .76; }
+    #craft-section.craft-ready #craft-title { color: #4a7a3a; border-color: #4a7a3a; }
+    .craft-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      margin: 8px 0;
+      flex-wrap: wrap;
+    }
+    .craft-row > span {
+      align-self: center;
+      color: var(--pixel-dark);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .craft-slot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 52px;
+    }
+    .craft-result-label {
+      font-size: 0.62rem;
+      color: #5a5548;
+      text-align: center;
+      line-height: 1.2;
+      max-width: 56px;
+      word-break: break-all;
+      min-height: 2.4em;
+    }
+    .craft-result-wrap .craft-box.result { border-color: #c9a227; }
+    .craft-box {
+      width: 48px;
+      height: 48px;
+      border: 3px dashed var(--pixel-dark);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      line-height: 1;
+      background: var(--panel);
+      box-shadow: inset 0 -4px 0 rgba(61, 56, 48, .08), 3px 3px 0 #d8c896;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .craft-box .slot-emoji {
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .craft-box .slot-emoji .item-icon { width: 30px; height: 30px; }
+    .craft-box.filled { border-style: solid; border-color: #4d6e42; background: #e0edd8; }
+    .craft-box.result { border-style: solid; border-color: #c9a227; background: #fff9e6; cursor: pointer; }
+    .craft-box.drag-over { background: #e0edd8; border-color: var(--accent); transform: translate(1px, 1px); }
+    .craft-box[draggable="true"] { cursor: grab; }
+    button {
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border: 3px solid var(--pixel-dark);
+      border-radius: 0;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #4d6e42;
+      font-weight: 700;
+      transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
+    }
+    button:hover { background: var(--accent-hover); transform: translate(1px, 1px); box-shadow: 3px 3px 0 #4d6e42; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: 4px 4px 0 #8a8578; }
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(47,43,38,.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      background: var(--pixel-panel);
+      border: 4px solid var(--pixel-dark);
+      border-radius: 0;
+      padding: 16px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 8px 8px 0 var(--pixel-shadow), 12px 12px 0 rgba(61, 56, 48, .25);
+    }
+    .modal h3 { margin-bottom: 10px; font-size: 1rem; color: var(--pixel-dark); text-shadow: 2px 2px 0 #efc477; }
+    .modal p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 8px; }
+    .hint { font-size: 0.72rem; color: #8a8578; margin-top: 6px; line-height: 1.45; }
+    .hint .hint-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      vertical-align: -4px;
+      margin: 0 1px;
+    }
+    .hint .recipe-entry {
+      display: inline-block;
+      margin: 0 8px 2px 0;
+      white-space: nowrap;
+    }
+    body.night-mode #grid .cell:not(.visible-night):not(.player) {
+      background: #3a3848 !important;
+      color: transparent;
+      text-shadow: none;
+    }
+    body.night-mode #grid .cell.campfire-lit {
+      background: #5c5648 !important;
+      box-shadow: inset 0 0 12px rgba(255, 180, 80, 0.35);
+    }
+    body.night-mode #grid .cell.campfire-lit span { visibility: visible !important; color: inherit; }
+    body.night-mode #grid .cell:not(.visible-night):not(.player):not(.campfire-lit):not(.crystal-lit) span { visibility: hidden; }
+    body.night-mode #grid .cell.crystal-lit {
+      background: #4a4868 !important;
+      box-shadow: inset 0 0 14px rgba(180, 160, 255, 0.45);
+    }
+    body.night-mode #grid .cell.crystal-lit span { visibility: visible !important; color: inherit; }
+    .cell.spawn-tile { background: #f5e8e6; box-shadow: inset 0 0 0 1px #e8b4b0; }
+    .tag-night {
+      color: #4a3f73;
+      background: #e5ddff !important;
+      border-color: #5a4a8a !important;
+      box-shadow: 3px 3px 0 #9a86c8 !important;
+      font-weight: 800;
+    }
+    .merchant-item { display: block; width: 100%; text-align: left; margin: 4px 0; padding: 8px; }
+    .modal-btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .modal-btn-row button { flex: 1; min-width: 100px; }
+    .page-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0;
+      padding: 6px;
+      font-size: 0.85rem;
+      background: var(--pixel-paper);
+      border: 2px solid var(--pixel-dark);
+    }
+    #victory-modal .modal { text-align: center; max-width: 400px; }
+    #victory-modal h3 { font-size: 1.4rem; color: #5a4a8a; }
+    .dev-tools {
+      position: fixed;
+      left: 12px;
+      top: 54px;
+      width: 230px;
+      max-height: calc(100vh - 72px);
+      overflow-y: auto;
+      z-index: 90;
+      background: #fff9e6;
+      border: 3px solid #3d3830;
+      border-radius: 0;
+      box-shadow: 5px 5px 0 rgba(61, 56, 48, .28);
+      padding: 10px;
+      font-size: 0.78rem;
+    }
+    .dev-tools.hidden { display: none; }
+    .dev-tools h2 { font-size: 0.95rem; margin-bottom: 8px; color: #7a3f2d; }
+    .dev-tools .dev-row { display: flex; align-items: center; gap: 6px; margin: 8px 0; line-height: 1.35; }
+    .dev-tools input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
+    .dev-tools input[type="text"] {
+      width: 100%;
+      border: 2px solid var(--border);
+      background: #fffef9;
+      color: var(--text);
+      padding: 6px;
+      margin: 6px 0;
+      font-family: inherit;
+      font-size: 0.78rem;
+    }
+    .dev-action {
+      width: 100%;
+      margin: 6px 0 8px;
+      text-align: center;
+    }
+    .dev-item-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .dev-item {
+      min-height: 54px;
+      padding: 5px 3px;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      background: #faf8f4;
+      color: var(--text);
+      font-size: 0.65rem;
+      line-height: 1.2;
+    }
+    .dev-item:hover { background: var(--highlight); color: var(--text); }
+    .dev-item .emoji { display: block; font-size: 1.3rem; line-height: 1; margin-bottom: 3px; }
+    .dev-item .item-icon { width: 24px; height: 24px; margin: 0 auto 3px; }
+  </style>
+</head>
+<body>
+  <audio id="game-bgm" src="./assets/audio/bgm.mp3" preload="auto" loop aria-hidden="true"></audio>
+  <button class="language-toggle" type="button" data-locale-toggle data-i18n-aria-label="language.toggleAria">&#20013;/En</button>
+  <main class="main-menu" id="main-menu">
+    <section class="menu-panel" aria-labelledby="menu-title">
+      <img class="menu-logo" src="./assets/2D/ui/stonia-logo.png" alt="" aria-hidden="true">
+      <div class="hint" data-i18n="home.tagline">Explore ? Gather ? Craft ? Cook</div>
+            <h1 class="pixel-title" id="menu-title" aria-label="STONIA">
+        <span class="pixel-letter letter-s" aria-hidden="true"></span>
+        <span class="pixel-letter letter-t" aria-hidden="true"></span>
+        <span class="pixel-letter letter-o" aria-hidden="true"></span>
+        <span class="pixel-letter letter-n" aria-hidden="true"></span>
+        <span class="pixel-letter letter-i" aria-hidden="true"></span>
+        <span class="pixel-letter letter-a" aria-hidden="true"></span>
+      </h1>
+      <div class="brand-subtitle" data-i18n="home.subtitle">Stonia</div>
+      <p class="menu-lead" data-i18n="home.lead">
+        Explore a tiny plain covered in stones.
+      </p>
+      <div class="menu-actions">
+        <button class="pixel-btn" type="button" id="btn-start-game" data-i18n="common.startGame">Start</button>
+        <button class="pixel-btn secondary" type="button" id="btn-open-codex" data-i18n="common.codex">Codex</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="codex-screen screen-hidden" id="codex-screen" aria-labelledby="codex-title">
+    <div class="codex-panel">
+      <div class="codex-header">
+        <div>
+          <h1 id="codex-title" data-i18n="codex.title">Item Codex</h1>
+          <p class="codex-lead" data-i18n="codex.lead">Discovered items show their names and descriptions.</p>
+          <span class="codex-progress" id="codex-progress"></span>
+        </div>
+        <div class="codex-actions">
+          <button class="pixel-btn" type="button" id="btn-codex-start" data-i18n="common.startGame">Start</button>
+          <button class="pixel-btn muted" type="button" id="btn-codex-back" data-i18n="common.backToHome">Back</button>
+        </div>
+      </div>
+      <div id="codex-content"></div>
+    </div>
+  </section>
+
+  <section class="game-shell screen-hidden" id="game-screen">
+    <header class="game-top">
+      <h1>
+        <img class="game-title-logo" src="./assets/2D/ui/stonia-logo.png" alt="" aria-hidden="true">
+        <span data-i18n="game.title">Stonia Demo</span>
+        <small class="game-title-subtitle" data-i18n="game.subtitle">Stonia</small>
+      </h1>
+      <div class="game-top-actions">
+        <button class="pixel-btn muted" type="button" id="btn-bgm-toggle" aria-label="Toggle music" title="Toggle music">&#9834;</button>
+        <button class="pixel-btn secondary" type="button" id="btn-game-codex" data-i18n="common.codex">Codex</button>
+        <button class="pixel-btn muted" type="button" id="btn-game-menu" data-i18n="common.mainMenu">Menu</button>
+      </div>
+    </header>
+
+  <aside class="dev-tools hidden" id="dev-tools" aria-label="Developer tools" data-i18n-aria-label="devTools.ariaLabel">
+    <h2 data-i18n="devTools.title">Developer Tools</h2>
+    <label class="dev-row"><input type="checkbox" id="dev-stamina"> <span data-i18n="devTools.disableStamina">Disable stamina limit</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-inventory"> <span data-i18n="devTools.disableInventory">Disable inventory limit</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-movement"> <span data-i18n="devTools.disableMovement">Disable movement limit</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-daynight"> <span data-i18n="devTools.disableDayNight">Disable day/night</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-fast-mine"> <span data-i18n="devTools.fastMine">Fast mine all stones</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-all-tools"> <span data-i18n="devTools.allTools">All tools</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-show-codex"> <span data-i18n="devTools.showCodex">Show all codex</span></label>
+    <button class="dev-action pixel-btn secondary" type="button" id="dev-clear-stones" data-i18n="devTools.clearStones">Clear stones</button>
+    <div class="hint" data-i18n="devTools.hint">Search and click an item to add one.</div>
+    <input type="text" id="dev-search" placeholder="Search item name or id" data-i18n-placeholder="devTools.searchPlaceholder">
+    <div class="dev-item-list" id="dev-item-list"></div>
+  </aside>
+  <div class="layout">
+    <div class="panel">
+      <div class="orientation-tip" id="orientation-tip" data-i18n="game.orientationTip">Portrait mode is recommended.</div>
+      <div class="stats" id="stats"></div>
+      <div id="grid-wrap"><div id="grid"></div></div>
+      <div class="log" id="log"></div>
+      <div class="mobile-controls" id="mobile-controls" aria-label="Move controls" data-i18n-aria-label="game.mobileControlsAria">
+        <div class="mobile-controls-title" data-i18n="game.mobileControls">Move</div>
+        <div class="mobile-dpad">
+          <button class="mobile-move-btn up" type="button" data-move="0,-1" aria-label="Move up" data-i18n-aria-label="game.moveUp">&uarr;</button>
+          <button class="mobile-move-btn left" type="button" data-move="-1,0" aria-label="Move left" data-i18n-aria-label="game.moveLeft">&larr;</button>
+          <button class="mobile-move-btn right" type="button" data-move="1,0" aria-label="Move right" data-i18n-aria-label="game.moveRight">&rarr;</button>
+          <button class="mobile-move-btn down" type="button" data-move="0,1" aria-label="Move down" data-i18n-aria-label="game.moveDown">&darr;</button>
+        </div>
+        <p class="hint" data-i18n="game.mobileHint">Tap the direction buttons to move.</p>
+      </div>
+      <p class="hint" data-i18n="game.controlsHint">WASD / arrow keys to move. Click highlighted cells to mine.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><strong data-i18n="game.inventory">Inventory</strong> <span id="inv-cap"></span></div>
+      <div class="inv-grid" id="inventory"></div>
+      <div id="chest-panel" class="hidden">
+        <div class="chest-title"><strong data-i18n="game.chest">Chest</strong> <span id="chest-cap"></span></div>
+        <div class="inv-grid" id="chest-inventory"></div>
+        <p class="hint" data-i18n="game.chestHint">Drag items between chest and inventory.</p>
+      </div>
+      <hr class="panel-divider">
+      <div id="craft-section">
+        <strong id="craft-title" data-i18n="game.craftInitialTitle">Craft</strong>
+        <div class="craft-row">
+          <div class="craft-slot-wrap">
+            <div class="craft-box" id="c1" data-slot="0" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-emoji"></span></div>
+          </div>
+          <span>+</span>
+          <div class="craft-slot-wrap">
+            <div class="craft-box" id="c2" data-slot="1" title="Click or drag material" data-i18n-title="game.craftSlotTitle"><span class="slot-emoji"></span></div>
+          </div>
+          <span>=</span>
+          <div class="craft-slot-wrap craft-result-wrap">
+            <div class="craft-box result" id="c3"><span class="slot-emoji" id="c3-emoji"></span></div>
+            <div class="craft-result-label" id="c3-name"></div>
+          </div>
+        </div>
+        <button id="craft-btn" disabled data-i18n="game.craftInitialButton">Craft</button>
+      </div>
+      <p class="hint" id="craft-hint">Click inventory items, then click a craft slot.</p>
+    </div>
+  </div>
+  </section>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3 id="modal-title"></h3>
+      <div id="modal-body"></div>
+      <div id="modal-footer">
+        <button class="pixel-btn muted" id="modal-close" data-i18n="common.close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="victory-modal">
+    <div class="modal">
+      <h3 data-i18n="game.victoryTitle">Victory</h3>
+      <p data-i18n="game.victoryText">All pages have been submitted.</p>
+      <div class="modal-btn-row">
+        <button id="btn-victory-restart" data-i18n="game.victoryRestart">Restart</button>
+        <button class="pixel-btn muted" id="btn-victory-map" data-i18n="game.victoryMap">Back to map</button>
+      </div>
+    </div>
+  </div>
+
+<script src="./data/locales/zh-CN.js"></script>
+<script src="./data/locales/en-US.js"></script>
+<script src="./data/i18n.js"></script>
+<script src="./data/items.js"></script>
+<script src="./data/pages.js"></script>
+<script src="./data/recipes.js"></script>
+<script>
+(function () {
+  const I18N = window.STONIA_I18N || {
+    t: (_key, _params, fallback) => fallback || _key,
+    list: (_key, fallback) => fallback,
+    itemName: id => window.MINIPLAIN_ITEMS?.[id]?.name || id,
+    itemText: (_id, _field, fallback) => fallback,
+    itemTextList: (_id, _field, fallback) => fallback,
+    categoryName: category => category,
+    applyStatic: () => {},
+  };
+  const t = (key, params = {}, fallback = '') => I18N.t(key, params, fallback);
+  const tl = (key, fallback = []) => I18N.list(key, fallback);
+  const logT = (key, params = {}, fallback = '') => t(`log.${key}`, params, fallback);
+  const countSuffix = count => count > 1 ? `${count}` : '';
+
+  I18N.applyStatic();
+  document.title = t('document.gameTitle', {}, document.title);
+
+  const SIZE = 11;
+  const CENTER = 5;
+  const STAMINA_MAX = 30;
+  const INV_MAX = 30;
+  const CHEST_MAX = 30;
+
+  const ITEM_DATA = window.MINIPLAIN_ITEMS || {};
+  const ITEMS = Object.fromEntries(Object.entries(ITEM_DATA).map(([id, item]) => [id, {
+    name: I18N.itemName(id),
+    emoji: item.emoji,
+    icon: item.icon,
+    vol: item.vol || 0,
+    use: item.use,
+    plant: item.plant,
+    place: item.place,
+  }]));
+  const ITEM_ICON_ROOT = './';
+
+  const STRUCTURE_ITEM_IDS = Object.fromEntries(Object.entries(ITEMS)
+    .filter(([, item]) => item.place)
+    .map(([id, item]) => [item.place, id]));
+  STRUCTURE_ITEM_IDS.storage_chest = 'chest';
+  const PLANT_ITEM_IDS = {
+    fruit: 'fruit',
+    veg: 'veg',
+    potato: 'potato',
+    carrot: 'carrot',
+    sapling: 'sapling',
+    wheat: 'wheat',
+  };
+  const SPECIAL_STRUCTURE_EMOJIS = {
+    treasure_chest: '\u{1F4E6}',
+    bag: '\u{1F6CD}\uFE0F',
+    golden: '\u2728',
+    silver_box: '\u{1F4BF}',
+    crystal_ball: '\u{1F52E}',
+    shelter: '\u{1F3E0}',
+  };
+  const MAP_ICON_ROOT = './assets/2D/entities/';
+  const MAP_ICONS = {
+    player: { file: 'player.png', label: '??' },
+    spawn: { file: 'spawn.png', label: '???' },
+    chicken: { file: 'chicken.png', label: '?' },
+    cow: { file: 'cow.png', label: '?' },
+    wolf: { file: 'wolf.png', label: '?' },
+    tree: { file: 'tree.png', label: '??' },
+    bush: { file: 'bush.png', label: '??' },
+    treasure_chest: { file: 'treasure_chest.png', label: '???' },
+    bag: { file: 'bag.png', label: '??' },
+    golden: { file: 'golden.png', label: '??????' },
+    silver_box: { file: 'silver_box.png', label: '????' },
+    crystal_ball: { file: 'crystal_ball.png', label: '???' },
+    shelter: { file: 'shelter.png', label: '???' },
+  };
+
+  function itemEmoji(id, fallback = '') {
+    return ITEMS[id]?.emoji || fallback;
+  }
+
+  function itemDisplay(id) {
+    const def = ITEMS[id];
+    return (def?.emoji || '') + (def?.name || id);
+  }
+
+  function plantEmoji(type, fallback = '') {
+    return itemEmoji(PLANT_ITEM_IDS[type], fallback);
+  }
+
+  const DISCOVERY_STORAGE_KEY = 'stonia.discoveredItems';
+
+  function loadDiscoveredItems() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(DISCOVERY_STORAGE_KEY) || '[]');
+      return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch (err) {
+      return new Set();
+    }
+  }
+
+  const discoveredItems = loadDiscoveredItems();
+
+  function saveDiscoveredItems() {
+    try {
+      localStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify([...discoveredItems]));
+    } catch (err) {
+      // localStorage can fail in restricted browser contexts; gameplay should continue.
+    }
+  }
+
+  function discoverItem(id) {
+    if (!id || (!ITEMS[id] && id !== 'page') || discoveredItems.has(id)) return;
+    discoveredItems.add(id);
+    saveDiscoveredItems();
+  }
+
+  const CODEX_CATEGORIES = window.MINIPLAIN_ITEM_CATEGORIES || [];
+  const CODEX_ITEM_CATEGORIES = Object.fromEntries(Object.entries(ITEM_DATA)
+    .filter(([, item]) => item.category)
+    .map(([id, item]) => [id, item.category]));
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function itemIconMarkup(id, className = 'item-icon', fallback = '') {
+    const def = ITEMS[id];
+    if (def?.icon) {
+      return `<img class="${escapeHtml(className)}" src="${escapeHtml(ITEM_ICON_ROOT + def.icon)}" alt="${escapeHtml(def.name || id)}" loading="lazy">`;
+    }
+    return escapeHtml(fallback || def?.emoji || '?');
+  }
+
+  function recipeHintIcon(id) {
+    return itemIconMarkup(id, 'hint-icon', ITEMS[id]?.emoji || '?');
+  }
+
+  function mapIconMarkup(id, fallback = '') {
+    const icon = MAP_ICONS[id];
+    if (icon) {
+      return `<img class="cell-icon" src="${escapeHtml(MAP_ICON_ROOT + icon.file)}" alt="${escapeHtml(icon.label || id)}" loading="lazy">`;
+    }
+    return escapeHtml(fallback || '');
+  }
+
+  function codexEntry(id) {
+    const def = ITEMS[id] || (id === 'page'
+      ? { name: t('pages.lostTitle', { num: '' }, 'Lost page'), emoji: '\u{1F4DC}' }
+      : { name: id, emoji: '\u{1F4E6}' });
+    const data = ITEM_DATA[id] || {};
+    const texts = data.texts || {};
+    return {
+      id,
+      cat: CODEX_ITEM_CATEGORIES[id],
+      name: I18N.itemName(id) || data.name || def.name,
+      emoji: def.emoji || '\u{1F4E6}',
+      desc: I18N.itemText(id, 'codex', texts.codex || texts.game || texts.overview || t('codex.fallbackDesc', {}, 'Waiting to be discovered.')),
+    };
+  }
+
+  function renderCodex() {
+    const allEntries = Object.keys(CODEX_ITEM_CATEGORIES).map(codexEntry);
+    const discoveredCount = allEntries.filter(entry => discoveredItems.has(entry.id)).length;
+    document.getElementById('codex-progress').textContent = devShowAllCodex
+      ? t('codex.devProgress', { count: discoveredCount, total: allEntries.length }, `Dev view all ? found ${discoveredCount}/${allEntries.length}`)
+      : t('codex.progress', { count: discoveredCount, total: allEntries.length }, `Found ${discoveredCount}/${allEntries.length}`);
+    document.getElementById('codex-content').innerHTML = CODEX_CATEGORIES.map(cat => {
+      const group = allEntries.filter(entry => entry.cat === cat);
+      if (!group.length) return '';
+      const catName = I18N.categoryName(cat);
+      return `<section class="codex-category">
+        <h2>${escapeHtml(catName)}</h2>
+        <div class="codex-grid">
+          ${group.map(entry => {
+            const found = devShowAllCodex || discoveredItems.has(entry.id);
+            const name = found ? entry.name : t('common.undiscovered', {}, 'Undiscovered');
+            const icon = found ? itemIconMarkup(entry.id, 'item-icon', entry.emoji) : '?';
+            const desc = found ? entry.desc : '?';
+            const category = found ? I18N.categoryName(entry.cat) : '?';
+            const title = t('codex.titleTemplate', { name, category, desc }, `${name} / Category: ${category} / ${desc}`);
+            return `<button class="codex-item ${found ? '' : 'locked'}" type="button" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
+              <span class="codex-icon">${icon}</span>
+              <span class="codex-name">${escapeHtml(name)}</span>
+              <span class="codex-tip" role="tooltip">
+                <strong>${escapeHtml(name)}</strong>
+                <span class="tip-cat">${escapeHtml(t('codex.categoryPrefix', {}, 'Category: '))}${escapeHtml(category)}</span>
+                <span>${escapeHtml(desc)}</span>
+              </span>
+            </button>`;
+          }).join('')}
+        </div>
+      </section>`;
+    }).join('');
+  }
+
+  function showScreen(screen) {
+    document.getElementById('main-menu').classList.toggle('screen-hidden', screen !== 'menu');
+    document.getElementById('codex-screen').classList.toggle('screen-hidden', screen !== 'codex');
+    document.getElementById('game-screen').classList.toggle('screen-hidden', screen !== 'game');
+    updateDeviceMode();
+    if (screen === 'game') {
+      requestPortraitForGame();
+      playGameBgm();
+    } else {
+      releasePortraitForGame();
+      pauseGameBgm();
+    }
+    if (screen === 'codex') renderCodex();
+  }
+
+  let bgmMuted = false;
+
+  function playGameBgm() {
+    const bgm = document.getElementById('game-bgm');
+    if (!bgm || bgmMuted || document.getElementById('game-screen').classList.contains('screen-hidden')) return;
+    bgm.volume = 0.5;
+    bgm.muted = false;
+    bgm.play().catch(() => {
+      // Browser autoplay policies may block playback until the next user gesture.
+    });
+  }
+
+  function pauseGameBgm() {
+    const bgm = document.getElementById('game-bgm');
+    if (bgm) bgm.pause();
+  }
+
+  function updateBgmButton() {
+    const btn = document.getElementById('btn-bgm-toggle');
+    if (!btn) return;
+    const label = bgmMuted
+      ? t('game.unmuteBgm', {}, 'Unmute music')
+      : t('game.muteBgm', {}, 'Mute music');
+    btn.textContent = bgmMuted ? '\u266A/' : '\u266A';
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+  }
+
+  function toggleGameBgmMute() {
+    bgmMuted = !bgmMuted;
+    const bgm = document.getElementById('game-bgm');
+    if (bgm) bgm.muted = bgmMuted;
+    if (bgmMuted) pauseGameBgm();
+    else playGameBgm();
+    updateBgmButton();
+  }
+
+  const touchQuery = window.matchMedia?.('(hover: none), (pointer: coarse)');
+  const portraitQuery = window.matchMedia?.('(orientation: portrait)');
+  let mobileControlsActive = false;
+
+  function isMobileOrTablet() {
+    const ua = navigator.userAgent || '';
+    const mobileUa = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const iPadDesktopUa = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+    const coarseTouch = Boolean(touchQuery?.matches && navigator.maxTouchPoints > 0);
+    const tabletSizedViewport = Math.max(window.innerWidth, window.innerHeight) <= 1366;
+    return mobileUa || iPadDesktopUa || (coarseTouch && tabletSizedViewport);
+  }
+
+  function updateDeviceMode() {
+    mobileControlsActive = isMobileOrTablet();
+    const isPortrait = portraitQuery ? portraitQuery.matches : window.innerHeight >= window.innerWidth;
+    document.body.classList.toggle('mobile-controls-enabled', mobileControlsActive);
+    document.body.classList.toggle('mobile-landscape', mobileControlsActive && !isPortrait);
+  }
+
+  function requestPortraitForGame() {
+    if (!mobileControlsActive || !window.screen?.orientation?.lock) return;
+    window.screen.orientation.lock('portrait').catch(() => {
+      // Some browsers require fullscreen before locking orientation; the layout still guides portrait play.
+    });
+  }
+
+  function releasePortraitForGame() {
+    if (!window.screen?.orientation?.unlock) return;
+    try {
+      window.screen.orientation.unlock();
+    } catch (_) {}
+  }
+
+  function watchMedia(query, handler) {
+    if (!query) return;
+    if (query.addEventListener) query.addEventListener('change', handler);
+    else if (query.addListener) query.addListener(handler);
+  }
+
+  function initDeviceMode() {
+    updateDeviceMode();
+    watchMedia(touchQuery, updateDeviceMode);
+    watchMedia(portraitQuery, updateDeviceMode);
+    window.addEventListener('resize', updateDeviceMode);
+    window.addEventListener('orientationchange', updateDeviceMode);
+  }
+
+  const PAGE_NUMS = [...tl('pages.nums', window.MINIPLAIN_PAGE_NUMS || ['1', '2', '3', '4', '5', '6', '7'])];
+  const PAGES = (window.MINIPLAIN_PAGES || []).map(page => t(`pages.entries.${page.id}.text`, {}, page.text));
+  const PAGE_TOTAL = PAGES.length || 7;
+  /** Page pity interval: every N mined stones should reveal at least one more page. */
+  const PAGE_PITY_EVERY = 12;
+
+  function refreshLocalizedGameData() {
+    Object.entries(ITEM_DATA).forEach(([id, item]) => {
+      if (ITEMS[id]) ITEMS[id].name = I18N.itemName(id) || item.name || id;
+    });
+    PAGE_NUMS.splice(0, PAGE_NUMS.length, ...tl('pages.nums', window.MINIPLAIN_PAGE_NUMS || ['1', '2', '3', '4', '5', '6', '7']));
+    PAGES.splice(0, PAGES.length, ...(window.MINIPLAIN_PAGES || []).map(page => t(`pages.entries.${page.id}.text`, {}, page.text)));
+  }
+
+  let grid = [];
+  let player = { x: CENTER, y: CENTER, stamina: 10, exp: 0, level: 0, breaks: 0 };
+  let inventory = [];
+  const chestStorages = {};
+  let invUsed = 0;
+  let selectedInv = null;
+  let craftSlots = [null, null];
+  let craftMode = 'make'; // make | forge | cook
+  let craftPickId = null;
+  let mpDrag = null;
+  let logLines = [];
+  let pageCount = 0;
+  const collectedPages = [];
+  const submittedPages = [];
+  let crystalBallPos = null;
+  let stoneBreaks = 0;
+  let breaksSinceEgg = 0;
+  let eggGuaranteed = false;
+  let merchantBought = { rod: false, sword: false, axe: false };
+  let goldenBoxSpawned = 0;
+  const GOLDEN_BOX_MAX = 2;
+  let placedMode = null; // sapling, wheat, building, egg, place_*
+  let shelterRest = false;
+  let devToolsActive = false;
+  let devIgnoreStaminaLimit = false;
+  let devIgnoreInventoryLimit = false;
+  let devIgnoreMovementLimit = false;
+  let devDisableDayNight = false;
+  let devFastMine = false;
+  let devAllTools = false;
+  let devShowAllCodex = false;
+  let devItemSearch = '';
+  let devBulkClearingStones = false;
+
+  const guarantees = {
+    firstBreak: false,
+    pool: false,
+    bush: false,
+    stone2: 0,
+    iron2: 0,
+    forcedPool: false,
+    forcedBush: false,
+  };
+
+  function fibExpNeeded(level) {
+    if (level <= 0) return 1;
+    if (level === 1) return 1;
+    let a = 1, b = 1;
+    for (let i = 2; i <= level; i++) {
+      const t = a + b;
+      a = b;
+      b = t;
+    }
+    return b;
+  }
+
+  function expToNext() {
+    return fibExpNeeded(player.level);
+  }
+
+  function initGrid() {
+    grid = [];
+    for (let y = 0; y < SIZE; y++) {
+      const row = [];
+      for (let x = 0; x < SIZE; x++) {
+        row.push({
+          stone: true,
+          ground: 'stone',
+          hidden: null,
+          entity: null,
+          entities: [],
+          plant: null,
+          structure: null,
+          mature: 0,
+          treeHits: 0,
+          wheatHits: 0,
+          hadTree: false,
+          incubatingEgg: 0,
+          groundLoot: null,
+          lit: false,
+          spawn: false,
+        });
+      }
+      grid.push(row);
+    }
+    const c = grid[CENTER][CENTER];
+    c.stone = false;
+    c.ground = 'normal';
+    c.hidden = { type: 'toolbox' };
+    c.structure = 'toolbox';
+    c.spawn = true;
+    discoverItem('toolbox');
+  }
+
+  function isNight() {
+    if (devDisableDayNight) return false;
+    return player.breaks >= 20 && (player.breaks % 20) < 5;
+  }
+
+  function chebDist(x1, y1, x2, y2) {
+    return Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
+  }
+
+  function inBounds(x, y) {
+    return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
+  }
+
+  function adjacent(x, y) {
+    return [[0,-1],[0,1],[-1,0],[1,0]].map(([dx,dy]) => [x+dx, y+dy]).filter(([ax,ay]) => inBounds(ax,ay));
+  }
+
+  const ANIMAL_LAYER_RANK = { cow: 1, chicken: 2, wolf: 3 };
+
+  function cellAnimals(c) {
+    if (!Array.isArray(c.entities)) c.entities = [];
+    if (c.entity?.alive && !c.entities.includes(c.entity)) c.entities.push(c.entity);
+    c.entities = c.entities.filter(animal => animal?.alive);
+    c.entity = topAnimal(c);
+    return c.entities;
+  }
+
+  function topAnimal(c) {
+    const animals = Array.isArray(c.entities)
+      ? c.entities.filter(animal => animal?.alive)
+      : [];
+    if (c.entity?.alive && !animals.includes(c.entity)) animals.push(c.entity);
+    return animals.reduce((top, animal) => {
+      if (!top) return animal;
+      return (ANIMAL_LAYER_RANK[animal.type] || 0) > (ANIMAL_LAYER_RANK[top.type] || 0) ? animal : top;
+    }, null);
+  }
+
+  function hasAnimals(c) {
+    return cellAnimals(c).length > 0;
+  }
+
+  function addAnimalToCell(c, type) {
+    const animal = { type, alive: true };
+    cellAnimals(c).push(animal);
+    c.entity = topAnimal(c);
+    return animal;
+  }
+
+  function removeAnimalFromCell(c, animal) {
+    c.entities = cellAnimals(c).filter(entry => entry !== animal);
+    animal.alive = false;
+    c.entity = topAnimal(c);
+  }
+
+  function removeTopAnimalFromCell(c) {
+    const animal = topAnimal(c);
+    if (animal) removeAnimalFromCell(c, animal);
+    return animal;
+  }
+
+  function playerAdjacentToTopAnimal(type) {
+    return adjacent(player.x, player.y).some(([ax, ay]) => topAnimal(grid[ay][ax])?.type === type);
+  }
+
+  function canMilkCowAt(x, y) {
+    return topAnimal(grid[y][x])?.type === 'cow' &&
+      adjacent(player.x, player.y).some(([ax, ay]) => ax === x && ay === y);
+  }
+
+  function hasNormalGroundNear(x, y) {
+    return adjacent(x, y).some(([ax, ay]) => {
+      const c = grid[ay][ax];
+      return !c.stone && (c.ground === 'normal' || c.structure === 'bridge');
+    });
+  }
+
+  function canMoveTo(x, y) {
+    const c = grid[y][x];
+    if (c.stone) return false;
+    if (c.ground === 'water' && c.structure !== 'bridge') return false;
+    return true;
+  }
+
+  function cellHasStructure(ax, ay, type) {
+    const c = grid[ay][ax];
+    if (type === 'water') return c.ground === 'water';
+    return c.structure === type;
+  }
+
+  /** Checks the player's current tile and four neighboring tiles. */
+  function playerNearStructure(type) {
+    if (cellHasStructure(player.x, player.y, type)) return true;
+    return adjacent(player.x, player.y).some(([ax, ay]) => cellHasStructure(ax, ay, type));
+  }
+
+  function playerAdjacentTo(type) {
+    return playerNearStructure(type);
+  }
+
+  function nearWater(x, y) {
+    return adjacent(x, y).some(([ax, ay]) => grid[ay][ax].ground === 'water');
+  }
+
+  function adjacentToMatureWheat(x, y) {
+    return adjacent(x, y).some(([ax, ay]) => {
+      const nc = grid[ay][ax];
+      return nc.plant === 'wheat' && nc.wheatHits >= 3;
+    });
+  }
+
+  function placedModeForItem(id) {
+    if (id === 'sapling') return 'sapling';
+    if (id === 'wheat_seed') return 'wheat';
+    if (id === 'building') return 'building';
+    if (id === 'egg') return 'egg';
+    if (isPlaceableItem(id)) return 'place_' + id;
+    return null;
+  }
+
+  function togglePlacedMode(mode, activateLog) {
+    if (placedMode === mode) {
+      placedMode = null;
+      addLog(logT('cancelPlaceMode', {}, 'Cancelled placement mode'));
+      render();
+      return false;
+    }
+    placedMode = mode;
+    addLog(activateLog);
+    render();
+    return true;
+  }
+
+  /** Campfires cannot be placed next to water in the eight surrounding cells. */
+  function hasWaterNeighbor8(x, y) {
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (inBounds(nx, ny) && grid[ny][nx].ground === 'water') return true;
+      }
+    }
+    return false;
+  }
+
+  function canPlaceCampfire(x, y) {
+    return canPlaceOnCell(x, y) && !hasWaterNeighbor8(x, y);
+  }
+
+  function canPlaceIronPlate(x, y) {
+    return canPlaceOnCell(x, y) && adjacent(x, y).some(([ax, ay]) => grid[ay][ax].structure === 'campfire');
+  }
+
+  function canPlaceBridge(x, y) {
+    const c = grid[y][x];
+    return !c.stone && c.ground === 'water' && !c.structure && !hasAnimals(c) && !c.groundLoot;
+  }
+
+  function addLog(msg) {
+    logLines.unshift(msg);
+    if (logLines.length > 12) logLines.pop();
+    document.getElementById('log').innerHTML = logLines.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+  }
+
+  function countItem(id) {
+    const it = inventory.find(i => i.id === id);
+    return it ? it.count : 0;
+  }
+
+  function getSilverBalance() {
+    return countItem('silver_coin') + countItem('silver') * 2;
+  }
+
+  function spendSilver(amount) {
+    if (getSilverBalance() < amount) return false;
+    let need = amount;
+    const useCoins = Math.min(countItem('silver_coin'), need);
+    if (useCoins) {
+      removeItem('silver_coin', useCoins);
+      need -= useCoins;
+    }
+    while (need >= 2 && countItem('silver') > 0) {
+      removeItem('silver', 1);
+      need -= 2;
+    }
+    if (need === 1) {
+      if (countItem('silver') > 0) {
+        removeItem('silver', 1);
+        addItem('silver_coin', 1);
+        need = 0;
+      } else return false;
+    }
+    return need === 0;
+  }
+
+  function exchangeSilverBlock() {
+    if (!countItem('silver')) {
+      addLog(logT('noSilverBlock', {}, 'No silver block to exchange'));
+      return false;
+    }
+    removeItem('silver', 1);
+    addItem('silver_coin', 2);
+    addLog(logT('silverExchange', {}, '1 silver block exchanged for 2 silver coins'));
+    return true;
+  }
+
+  function containerVolume(list) {
+    let v = 0;
+    for (const it of list) {
+      const def = ITEMS[it.id];
+      if (def && def.vol) v += def.vol * it.count;
+    }
+    return v;
+  }
+
+  function invVolume() {
+    return containerVolume(inventory);
+  }
+
+  function chestVolume(list) {
+    return containerVolume(list);
+  }
+
+  function playerOnStorageChest() {
+    const c = grid[player.y][player.x];
+    return c.structure === 'storage_chest';
+  }
+
+  function chestStorageKey(x, y) {
+    return x + ',' + y;
+  }
+
+  function getChestStorageAt(x, y) {
+    const key = chestStorageKey(x, y);
+    if (!chestStorages[key]) chestStorages[key] = [];
+    return chestStorages[key];
+  }
+
+  function getActiveChestStorage() {
+    if (!playerOnStorageChest()) return null;
+    return getChestStorageAt(player.x, player.y);
+  }
+
+  function addToContainer(list, maxVol, id, n, fullMsg) {
+    const def = ITEMS[id];
+    if (!def) return false;
+    const addVol = (def.vol || 0) * n;
+    if (devIgnoreInventoryLimit && list === inventory) {
+      const slot = list.find(i => i.id === id);
+      if (slot) slot.count += n;
+      else list.push({ id, count: n });
+      discoverItem(id);
+      return true;
+    }
+    const currentVol = containerVolume(list);
+    if (addVol > 0 && currentVol >= maxVol) {
+      addLog(fullMsg || logT('containerFull', {}, 'Container full!'));
+      return false;
+    }
+    if (addVol > 0 && currentVol + addVol > maxVol) {
+      addLog(fullMsg || logT('containerFull', {}, 'Container full!'));
+      return false;
+    }
+    const slot = list.find(i => i.id === id);
+    if (slot) slot.count += n;
+    else list.push({ id, count: n });
+    if (list === inventory) discoverItem(id);
+    return true;
+  }
+
+  function removeFromContainer(list, id, n) {
+    const slot = list.find(i => i.id === id);
+    if (!slot || slot.count < n) return false;
+    slot.count -= n;
+    if (slot.count <= 0) {
+      const idx = list.findIndex(i => i.id === id);
+      if (idx >= 0) list.splice(idx, 1);
+    }
+    return true;
+  }
+
+  function countFitInContainer(toList, toMaxVol, id, want) {
+    const def = ITEMS[id];
+    if (!def) return 0;
+    if (devIgnoreInventoryLimit && toList === inventory) return want;
+    const volPer = def.vol || 0;
+    if (volPer <= 0) return want;
+    const currentVol = containerVolume(toList);
+    if (currentVol >= toMaxVol) return 0;
+    const space = toMaxVol - currentVol;
+    return Math.min(want, Math.floor(space / volPer));
+  }
+
+  /** Transfers a whole stack while respecting target container capacity. */
+  function transferEntireStack(fromList, fromIndex, toList, toMaxVol) {
+    const slot = fromList[fromIndex];
+    if (!slot || !toList) return 0;
+    const n = countFitInContainer(toList, toMaxVol, slot.id, slot.count);
+    if (n <= 0) {
+      addLog(toList === inventory ? logT('inventoryFull', {}, 'Inventory full!') : logT('chestFull', {}, 'Chest full!'));
+      return 0;
+    }
+    const id = slot.id;
+    if (!removeFromContainer(fromList, id, n)) return 0;
+    if (!addToContainer(toList, toMaxVol, id, n)) {
+      addToContainer(fromList, fromList === inventory ? INV_MAX : CHEST_MAX, id, n);
+      return 0;
+    }
+    return n;
+  }
+
+  function transferStackItem(fromList, fromIndex, toList, toMaxVol) {
+    const slot = fromList[fromIndex];
+    if (!slot) return false;
+    const id = slot.id;
+    if (!removeFromContainer(fromList, id, 1)) return false;
+    if (!addToContainer(toList, toMaxVol, id, 1, toList === inventory ? logT('inventoryFull', {}, 'Inventory full!') : logT('chestFull', {}, 'Chest full!'))) {
+      addToContainer(fromList, fromList === inventory ? INV_MAX : CHEST_MAX, id, 1);
+      return false;
+    }
+    return true;
+  }
+
+  function addItem(id, n = 1) {
+    return addToContainer(inventory, INV_MAX, id, n, logT('inventoryFull', {}, 'Inventory full!'));
+  }
+
+  function dropLootOnCell(x, y, id, n = 1) {
+    const c = grid[y][x];
+    if (c.groundLoot && c.groundLoot.id === id) c.groundLoot.count += n;
+    else c.groundLoot = { id, count: n };
+  }
+
+  /** Adds loot to inventory first, otherwise drops it on this cell. */
+  function giveItemOrDropOnCell(x, y, id, n = 1) {
+    if (addToContainer(inventory, INV_MAX, id, n)) return 'inv';
+    dropLootOnCell(x, y, id, n);
+    return 'ground';
+  }
+
+  function removeItem(id, n = 1) {
+    return removeFromContainer(inventory, id, n);
+  }
+
+  function rollMineralByWeight() {
+    const r = Math.random();
+    if (r < 0.4) return 'iron';
+    if (r < 0.85) return 'stone';
+    if (r < 0.95) return 'silver';
+    return 'gold';
+  }
+
+  /** Early mining guarantee: first 10 stones should include at least 2 stone and 2 iron. */
+  function randomMineral() {
+    let type = rollMineralByWeight();
+
+    if (player.breaks <= 10) {
+      const needStone = 2 - guarantees.stone2;
+      const needIron = 2 - guarantees.iron2;
+      const breaksLeft = 10 - player.breaks + 1;
+      if (needStone > 0 && breaksLeft <= needStone) type = 'stone';
+      else if (needIron > 0 && breaksLeft <= needIron) type = 'iron';
+    }
+
+    if (type === 'stone' && guarantees.stone2 < 2 && player.breaks <= 10) guarantees.stone2++;
+    if (type === 'iron' && guarantees.iron2 < 2 && player.breaks <= 10) guarantees.iron2++;
+
+    addItem(type);
+    return type;
+  }
+
+  function allPagesCollected() {
+    return collectedPages.length >= PAGE_TOTAL;
+  }
+
+  function nextPageIdx() {
+    for (let i = 0; i < PAGE_TOTAL; i++) {
+      if (!collectedPages.includes(i)) return i;
+    }
+    return -1;
+  }
+
+  function crystalChanceForStoneBreak(n) {
+    if (n <= 70) return 0;
+    if (n >= 121) return 1;
+    if (n <= 100) return 0.02;
+    if (n <= 115) return Math.min(1, 0.02 + (n - 100) * 0.02);
+    return Math.min(1, 0.02 + 15 * 0.02 + (n - 115) * 0.05);
+  }
+
+  function shouldRevealCrystalBall() {
+    if (crystalBallPos) return false;
+    if (stoneBreaks >= 121 || countStoneCells() <= 0) return true;
+    const chance = crystalChanceForStoneBreak(stoneBreaks);
+    return chance > 0 && Math.random() < chance;
+  }
+
+  function countStoneCells() {
+    let n = 0;
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++)
+        if (grid[y][x].stone) n++;
+    return n;
+  }
+
+  function syncCrystalBallPos() {
+    if (crystalBallPos && grid[crystalBallPos.y]?.[crystalBallPos.x]?.structure === 'crystal_ball') return true;
+    crystalBallPos = null;
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        if (grid[y][x].structure === 'crystal_ball') {
+          crystalBallPos = { x, y };
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function hasWaterCell() {
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++)
+        if (grid[y][x].ground === 'water') return true;
+    return false;
+  }
+
+  function hasBushCell() {
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++)
+        if (grid[y][x].plant === 'bush') return true;
+    return false;
+  }
+
+  function isDevProtectedCell(x, y) {
+    return grid[y][x].spawn || (x === player.x && y === player.y);
+  }
+
+  function findDevRevealCell() {
+    const passes = [
+      c => !c.stone && c.ground === 'normal' && !c.plant && !c.structure && !hasAnimals(c) && !c.groundLoot,
+      c => !c.stone && c.ground === 'normal' && !c.structure && !hasAnimals(c) && !c.groundLoot,
+      c => !c.stone && c.ground !== 'water' && !c.structure,
+      c => !c.stone,
+    ];
+    for (const pass of passes) {
+      for (let y = 0; y < SIZE; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          if (!isDevProtectedCell(x, y) && pass(grid[y][x])) return [x, y];
+        }
+      }
+    }
+    return null;
+  }
+
+  function resetCellForDevReveal(x, y) {
+    const c = grid[y][x];
+    if (c.structure === 'crystal_ball') crystalBallPos = null;
+    c.stone = false;
+    c.ground = 'normal';
+    c.hidden = null;
+    c.entity = null;
+    c.entities = [];
+    c.plant = null;
+    c.structure = null;
+    c.mature = 0;
+    c.treeHits = 0;
+    c.wheatHits = 0;
+    c.hadTree = false;
+    c.incubatingEgg = 0;
+    c.groundLoot = null;
+    c.lit = false;
+  }
+
+  function placeDevGuaranteedReveal(hidden) {
+    const pos = findDevRevealCell();
+    if (!pos) return false;
+    const [x, y] = pos;
+    resetCellForDevReveal(x, y);
+    applyReveal(x, y, hidden);
+    return true;
+  }
+
+  function ensureDevClearStoneGuarantees() {
+    if (!hasWaterCell()) placeDevGuaranteedReveal({ type: 'water' });
+    if (!hasBushCell()) placeDevGuaranteedReveal({ type: 'bush' });
+    while (!allPagesCollected()) {
+      const idx = nextPageIdx();
+      if (idx < 0 || !placeDevGuaranteedReveal({ type: 'page', idx })) break;
+    }
+    if (!syncCrystalBallPos()) placeDevGuaranteedReveal({ type: 'crystal_ball' });
+    syncCrystalBallPos();
+  }
+
+  /** Keeps page discovery from running out of available stone cells. */
+  function applyPageGuarantee(hidden) {
+    if (hidden?.type === 'crystal_ball') return hidden;
+    if (allPagesCollected()) return hidden;
+    const missing = PAGE_TOTAL - collectedPages.length;
+    const stonesLeft = countStoneCells();
+    const required = Math.min(PAGE_TOTAL, Math.floor(player.breaks / PAGE_PITY_EVERY));
+    const behindSchedule = required > 0 && collectedPages.length < required;
+    const mapAlmostClear = stonesLeft <= missing;
+    if (!behindSchedule && !mapAlmostClear) return hidden;
+    const idx = nextPageIdx();
+    if (idx < 0) return hidden;
+    return { type: 'page', idx };
+  }
+
+  function rollReveal(cell) {
+    if (!guarantees.firstBreak) {
+      guarantees.firstBreak = true;
+      return { type: 'toolbox' };
+    }
+    if (player.breaks <= 10 && !guarantees.pool && player.breaks >= 3 && !guarantees.forcedPool) {
+      guarantees.forcedPool = true;
+      guarantees.pool = true;
+      return { type: 'water' };
+    }
+    if (player.breaks <= 10 && !guarantees.bush && player.breaks >= 5 && !guarantees.forcedBush) {
+      guarantees.forcedBush = true;
+      guarantees.bush = true;
+      return { type: 'bush' };
+    }
+
+    const r = Math.random();
+    if (r < 0.35) {
+      const sub = Math.random();
+      if (sub < 0.4) return { type: 'plant', sub: 'fruit' };
+      if (sub < 0.7) return { type: 'plant', sub: 'veg' };
+      return { type: 'plant', sub: 'sapling' };
+    }
+    if (r < 0.40) return { type: 'water' };
+    if (r < 0.60) {
+      if (player.breaks > 20 && Math.random() < 0.08) return { type: 'wolf' };
+      if (Math.random() < 0.5) return { type: 'chicken' };
+      return { type: 'cow' };
+    }
+    if (r < 0.65) return { type: 'wood_chest' };
+    if (r < 0.70) return { type: 'paper_bag' };
+    if (r < 0.80) {
+      if (nearWater(cell.x, cell.y) || adjacent(cell.x, cell.y).some(([ax, ay]) => grid[ay][ax].ground === 'water'))
+        return { type: 'tree' };
+      return { type: 'empty' };
+    }
+    if (r < 0.85) return { type: 'bush' };
+    if (r < 0.89) return { type: 'silver_box' };
+    if (!allPagesCollected() && Math.random() < 0.06) {
+      const idx = nextPageIdx();
+      if (idx >= 0) return { type: 'page', idx };
+    }
+    return { type: 'empty' };
+  }
+
+  function applyReveal(x, y, hidden) {
+    const c = grid[y][x];
+    c.hidden = hidden;
+    switch (hidden.type) {
+      case 'toolbox':
+        c.structure = 'toolbox';
+        c.ground = 'normal';
+        discoverItem('toolbox');
+        addLog(logT('revealToolbox', {}, 'Found an old toolbox.'));
+        break;
+      case 'water':
+        c.ground = 'water';
+        guarantees.pool = true;
+        addLog(logT('revealWater', {}, 'Found a water pool.'));
+        break;
+      case 'plant':
+        c.plant = hidden.sub;
+        c.ground = 'normal';
+        addLog(logT('revealPlant', { plant: t(`plantNames.${hidden.sub}`, {}, hidden.sub) }, `Found ${hidden.sub}.`));
+        break;
+      case 'chicken':
+        addAnimalToCell(c, 'chicken');
+        c.ground = 'normal';
+        addLog(logT('revealChicken', {}, 'Found a chicken.'));
+        break;
+      case 'cow':
+        addAnimalToCell(c, 'cow');
+        c.ground = 'normal';
+        addLog(logT('revealCow', {}, 'Found a cow.'));
+        break;
+      case 'wolf':
+        addAnimalToCell(c, 'wolf');
+        c.ground = 'normal';
+        addLog(logT('revealWolf', {}, 'Found a wolf!'));
+        maybeWolfAttack();
+        break;
+      case 'wood_chest':
+        c.structure = 'treasure_chest';
+        c.ground = 'normal';
+        addLog(logT('revealWoodChest', {}, 'Found a wooden chest.'));
+        break;
+      case 'paper_bag':
+        c.structure = 'bag';
+        c.ground = 'normal';
+        addLog(logT('revealBag', {}, 'Found a paper bag.'));
+        break;
+      case 'page':
+        c.ground = 'normal';
+        hidden.idx = nextPageIdx();
+        if (hidden.idx >= 0) {
+          collectedPages.push(hidden.idx);
+          pageCount = collectedPages.length;
+          player.exp += player.level;
+          discoverItem('page');
+          addLog(logT('revealPage', { num: PAGE_NUMS[hidden.idx], exp: player.level }, `Found page ${PAGE_NUMS[hidden.idx]} +${player.level} exp`));
+          checkLevel();
+        }
+        break;
+      case 'tree':
+        c.plant = 'tree';
+        c.ground = 'normal';
+        c.hadTree = true;
+        c.treeHits = 3;
+        addLog(logT('revealTree', {}, 'Found a tree.'));
+        break;
+      case 'bush':
+        c.plant = 'bush';
+        c.ground = 'normal';
+        guarantees.bush = true;
+        addLog(logT('revealBush', {}, 'Found a bush.'));
+        break;
+      case 'empty':
+        c.ground = 'normal';
+        break;
+      case 'golden':
+        c.structure = 'golden';
+        c.ground = 'normal';
+        addLog(logT('revealGolden', { max: GOLDEN_BOX_MAX }, `Found a golden box. Max ${GOLDEN_BOX_MAX}.`));
+        break;
+      case 'silver_box':
+        c.structure = 'silver_box';
+        c.ground = 'normal';
+        addLog(logT('revealSilver', {}, 'Found a silver box.'));
+        break;
+      case 'crystal_ball':
+        c.structure = 'crystal_ball';
+        c.ground = 'normal';
+        crystalBallPos = { x, y };
+        addLog(logT('revealCrystal', {}, 'Found the crystal ball.'));
+        break;
+    }
+  }
+
+  function maybeWolfAttack() {
+    const targets = [];
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        const animal = topAnimal(c);
+        if (animal && (animal.type === 'chicken' || animal.type === 'cow'))
+          if (chebDist(x, y, player.x, player.y) <= 4) targets.push([x, y]);
+      }
+    if (targets.length && Math.random() < 0.4) {
+      const [tx, ty] = targets[Math.floor(Math.random() * targets.length)];
+      removeTopAnimalFromCell(grid[ty][tx]);
+      addLog(logT('wolfAttack', {}, 'The wolf attacked nearby animals!'));
+    }
+  }
+
+  function breakStone(x, y) {
+    const c = grid[y][x];
+    if (!c.stone) return;
+    if (!devFastMine && !hasNormalGroundNear(x, y)) {
+      addLog(logT('needNormalNeighbor', {}, 'Need adjacent normal ground to mine.'));
+      return;
+    }
+    if (!devFastMine && !adjacent(player.x, player.y).some(([ax, ay]) => ax === x && ay === y)) {
+      addLog(logT('needAdjacentStone', {}, 'Can only mine adjacent stones.'));
+      return;
+    }
+    if (!devIgnoreStaminaLimit && player.stamina < 1) {
+      addLog(logT('noStamina', {}, 'Not enough stamina!'));
+      return;
+    }
+
+    if (!devIgnoreStaminaLimit) player.stamina -= 1;
+    player.breaks++;
+    stoneBreaks++;
+    c.stone = false;
+    c.ground = 'normal';
+
+    player.exp += 1;
+    const mineral = randomMineral();
+    const mdef = ITEMS[mineral];
+    addLog(logT('mineStone', { item: (mdef?.emoji || '') + (mdef?.name || mineral) }, `Mined stone +1 exp, got ${mdef?.name || mineral}`));
+
+    let hidden = rollReveal({ x, y });
+    if (!guarantees.firstBreak) {
+      hidden = { type: 'toolbox' };
+      guarantees.firstBreak = true;
+    }
+    if (shouldRevealCrystalBall()) {
+      hidden = { type: 'crystal_ball' };
+    } else if (player.breaks >= 40 && goldenBoxSpawned < GOLDEN_BOX_MAX && Math.random() < 0.12) {
+      hidden = { type: 'golden' };
+      goldenBoxSpawned++;
+    }
+
+    hidden = applyPageGuarantee(hidden);
+
+    applyReveal(x, y, hidden);
+    onBreakEffects();
+    tickEggIncubation();
+    checkLevel();
+    tickPlants();
+    if (!devBulkClearingStones) render();
+  }
+
+  function onBreakEffects() {
+    breaksSinceEgg++;
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        if (cellAnimals(c).some(animal => animal.type === 'chicken')) {
+          if (!eggGuaranteed && player.breaks <= 10) {
+            if (breaksSinceEgg >= 10 || Math.random() < 0.1) {
+              addItem('egg');
+              addLog(logT('chickenLaidEgg', {}, 'Chicken laid an egg.'));
+              eggGuaranteed = true;
+            }
+          } else if (Math.random() < 0.1) {
+            addItem('egg');
+            addLog(logT('chickenLaidEgg', {}, 'Chicken laid an egg.'));
+          }
+        }
+      }
+
+    if (!devDisableDayNight && player.breaks >= 20 && player.breaks % 20 === 0) {
+      addLog(logT('nightFalls', {}, 'Night falls.'));
+    }
+    if (!devDisableDayNight && player.breaks >= 25 && player.breaks % 20 === 5) {
+      addLog(logT('dayBreaks', {}, 'Day breaks.'));
+    }
+  }
+
+  function tickEggIncubation() {
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        if (!c.incubatingEgg) continue;
+        c.incubatingEgg--;
+        if (c.incubatingEgg <= 0) {
+          c.incubatingEgg = 0;
+          addAnimalToCell(c, 'chicken');
+          addLog(logT('eggHatched', {}, 'Egg hatched into a chicken!'));
+        }
+      }
+  }
+
+  function tickPlants() {
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        if (c.plant === 'sapling' || c.plant === 'tree') {
+          if (c.treeHits < 3) c.treeHits++;
+        }
+        if (c.plant === 'wheat') {
+          if (c.wheatHits < 3) c.wheatHits++;
+        }
+      }
+  }
+
+  function checkLevel() {
+    while (player.exp >= expToNext()) {
+      player.exp -= expToNext();
+      player.level++;
+      player.stamina = Math.min(STAMINA_MAX, player.stamina + 5);
+      addLog(logT('levelUp', { level: player.level }, `Level up! Lv.${player.level} stamina +5`));
+      if (player.level >= 8) addLog(logT('shelterUnlocked', {}, 'Lv.8 unlocked shelter building.'));
+    }
+  }
+
+  function itemCellIconMarkup(id, fallback = '') {
+    return itemIconMarkup(id, 'cell-icon', fallback);
+  }
+
+  function animalIconMarkup(type) {
+    if (type === 'wolf') return mapIconMarkup('wolf', '\u{1F43A}');
+    if (type === 'chicken') return mapIconMarkup('chicken', '\u{1F414}');
+    if (type === 'cow') return mapIconMarkup('cow', '\u{1F42E}');
+    return '';
+  }
+
+  function cellIconMarkup(x, y) {
+    const c = grid[y][x];
+    if (c.stone) return '';
+    if (c.structure === 'bridge') return itemCellIconMarkup('bridge', SPECIAL_STRUCTURE_EMOJIS.bridge || '');
+    if (c.ground === 'water') return '';
+    if (c.spawn) return mapIconMarkup('spawn', '\u{1F6A9}');
+    if (c.structure) {
+      const itemId = STRUCTURE_ITEM_IDS[c.structure];
+      return itemId
+        ? itemCellIconMarkup(itemId, SPECIAL_STRUCTURE_EMOJIS[c.structure] || '')
+        : mapIconMarkup(c.structure, SPECIAL_STRUCTURE_EMOJIS[c.structure] || '');
+    }
+    if (c.plant === 'fruit') return itemCellIconMarkup('fruit', '\u{1F34E}');
+    if (c.plant === 'veg') return itemCellIconMarkup('veg', '\u{1F96C}');
+    if (c.plant === 'potato') return itemCellIconMarkup('potato', '\u{1F954}');
+    if (c.plant === 'carrot') return itemCellIconMarkup('carrot', '\u{1F955}');
+    if (c.plant === 'sapling') return c.treeHits >= 3 ? mapIconMarkup('tree', '\u{1F333}') : itemCellIconMarkup('sapling', '\u{1F331}');
+    if (c.plant === 'tree') return mapIconMarkup('tree', '\u{1F333}');
+    if (c.plant === 'bush') return mapIconMarkup('bush', '\u{1F33F}');
+    if (c.plant === 'wheat') return c.wheatHits >= 3 ? itemCellIconMarkup('wheat', '\u{1F33E}') : itemCellIconMarkup('wheat_seed', '\u{1F33E}');
+    if (c.groundLoot) {
+      return itemCellIconMarkup(c.groundLoot.id, '\u{1F4E6}');
+    }
+    if (c.incubatingEgg > 0) return itemCellIconMarkup('egg', '\u{1F95A}');
+    return '';
+  }
+
+  function isAdjacentToPlayer(x, y) {
+    return (x === player.x && y === player.y) ||
+      adjacent(player.x, player.y).some(([ax, ay]) => ax === x && ay === y);
+  }
+
+  function isLit(x, y) {
+    for (let y2 = 0; y2 < SIZE; y2++)
+      for (let x2 = 0; x2 < SIZE; x2++)
+        if (grid[y2][x2].structure === 'campfire' && chebDist(x, y, x2, y2) <= 3)
+          return true;
+    return false;
+  }
+
+  function isCrystalLit(x, y) {
+    if (!crystalBallPos) return false;
+    const { x: cx, y: cy } = crystalBallPos;
+    if (x === cx && y === cy) return true;
+    return adjacent(cx, cy).some(([ax, ay]) => ax === x && ay === y);
+  }
+
+  function canSee(x, y) {
+    if (!isNight()) return true;
+    if (isAdjacentToPlayer(x, y)) return true;
+    if (isLit(x, y)) return true;
+    if (isCrystalLit(x, y)) return true;
+    return false;
+  }
+
+  function getBreakableCells() {
+    const list = [];
+    if (devFastMine) {
+      for (let y = 0; y < SIZE; y++)
+        for (let x = 0; x < SIZE; x++)
+          if (grid[y][x].stone) list.push([x, y]);
+      return list;
+    }
+    for (const [ax, ay] of adjacent(player.x, player.y)) {
+      const c = grid[ay][ax];
+      if (c.stone && hasNormalGroundNear(ax, ay)) list.push([ax, ay]);
+    }
+    return list;
+  }
+
+  function interactCell(x, y) {
+    const c = grid[y][x];
+    if (c.stone) {
+      breakStone(x, y);
+      return;
+    }
+
+    const animal = topAnimal(c);
+    if (placedMode === 'milk') {
+      if (!canMilkCowAt(x, y)) {
+        addLog(logT('milkCowTarget', {}, 'Click an adjacent cow that is not covered by another animal.'));
+        return;
+      }
+      if (addItem('milk')) {
+        placedMode = null;
+        addLog(logT('milkCow', {}, 'Got milk from the cow.'));
+      } else {
+        addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      }
+      render();
+      renderInv();
+      return;
+    }
+
+    if (animal) {
+      if (placedMode) {
+        addLog(logT('cannotPlaceHere', {}, 'Cannot place here.'));
+        return;
+      }
+      if (animal.type === 'chicken') {
+        addItem('chicken');
+        removeAnimalFromCell(c, animal);
+        addLog(logT('getChicken', {}, 'Got chicken meat.'));
+        render();
+        return;
+      }
+      if (animal.type === 'cow') {
+        if (devAllTools || countItem('iron_sword') || countItem('stone_axe')) {
+          addItem('beef');
+          removeAnimalFromCell(c, animal);
+          addLog(logT('getBeef', {}, 'Got beef.'));
+        } else if (countItem('iron_bucket')) {
+          addLog(logT('milkCowWithBucket', {}, 'Click the iron bucket first, then click an adjacent uncovered cow.'));
+        } else addLog(logT('needSwordOrAxe', {}, 'Need iron sword or axe.'));
+        render();
+        return;
+      }
+      if (animal.type === 'wolf') {
+        if (devAllTools || countItem('iron_sword')) {
+          addItem('wolf_fur');
+          removeAnimalFromCell(c, animal);
+          addLog(logT('killWolf', {}, 'Killed wolf and got fur.'));
+        } else addLog(logT('needSword', {}, 'Need iron sword.'));
+        render();
+        return;
+      }
+    }
+
+    if (c.groundLoot) {
+      const { id, count } = c.groundLoot;
+      const def = ITEMS[id];
+      if (addItem(id, count)) {
+        c.groundLoot = null;
+        addLog(logT('pickup', { item: def?.name || id, count: countSuffix(count) }, `Picked up ${def?.name || id}${countSuffix(count)}`));
+      } else addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      render();
+      return;
+    }
+
+    if (placedMode === 'sapling') {
+      if (!nearWater(x, y)) { addLog(logT('needSaplingNearWater', {}, 'Sapling must be planted near water.')); return; }
+      if (c.ground !== 'normal' || c.plant || c.structure || hasAnimals(c) || c.groundLoot) { addLog(logT('cannotPlantHere', {}, 'Cannot plant here.')); return; }
+      if (!removeItem('sapling')) return;
+      c.plant = 'sapling';
+      c.treeHits = 0;
+      placedMode = null;
+      addLog(logT('plantSapling', {}, 'Planted sapling.'));
+      render();
+      return;
+    }
+
+    if (placedMode === 'wheat') {
+      if (!c.hadTree) { addLog(logT('wheatNeedsOldTreeTile', {}, 'Wheat seed needs a tile that once had a tree.')); return; }
+      if (c.ground !== 'normal' || c.plant || c.structure || hasAnimals(c) || c.groundLoot) { addLog(logT('cannotFarmHere', {}, 'Cannot farm here.')); return; }
+      if (!removeItem('wheat_seed')) return;
+      c.plant = 'wheat';
+      c.wheatHits = 0;
+      placedMode = null;
+      addLog(logT('plantWheat', {}, 'Planted wheat.'));
+      render();
+      return;
+    }
+
+    if (placedMode === 'egg') {
+      if (!adjacentToMatureWheat(x, y)) { addLog(logT('eggNeedsWheat', {}, 'Egg must be placed near mature wheat.')); return; }
+      if (!canPlaceEggCell(x, y)) { addLog(logT('cannotPlaceEgg', {}, 'Cannot place egg here.')); return; }
+      if (!removeItem('egg')) return;
+      c.incubatingEgg = 4;
+      placedMode = null;
+      addLog(logT('placeEgg', {}, 'Placed egg. Mine 4 stones to hatch it.'));
+      render();
+      return;
+    }
+
+    if (c.incubatingEgg > 0) {
+      if (addItem('egg')) {
+        c.incubatingEgg = 0;
+        addLog(logT('retrieveEgg', {}, 'Retrieved egg.'));
+      } else addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      render();
+      return;
+    }
+
+    if (placedMode === 'building') {
+      if (player.level < 8) { addLog(logT('shelterLevelRequired', {}, 'Shelter unlocks at level 8.')); return; }
+      if (c.ground !== 'normal' || c.plant || c.structure) { addLog(logT('needEmptyLand', {}, 'Need empty land.')); return; }
+      const bx = x, by = y;
+      const cells = [[bx,by],[bx+1,by],[bx,by+1],[bx+1,by+1]];
+      if (!cells.every(([cx,cy]) => inBounds(cx,cy))) { addLog(logT('notEnoughSpace2x2', {}, 'Not enough 2x2 space.')); return; }
+      if (!cells.every(([cx,cy]) => {
+        const cc = grid[cy][cx];
+        return cc.ground === 'normal' && !cc.stone && !cc.plant && !cc.structure && !hasAnimals(cc) && !cc.groundLoot;
+      })) { addLog(logT('needEmpty2x2', {}, '2x2 area must be empty.')); return; }
+      if (countItem('building') < 4) { addLog(logT('needBuildingMaterials', {}, 'Need 4 building materials.')); return; }
+      removeItem('building', 4);
+      for (const [cx,cy] of cells) {
+        grid[cy][cx].structure = 'shelter';
+      }
+      placedMode = null;
+      addLog(logT('buildShelter', {}, 'Built a shelter.'));
+      render();
+      return;
+    }
+
+    if (c.plant === 'fruit' || c.plant === 'veg' || c.plant === 'potato' || c.plant === 'carrot') {
+      const kind = c.plant === 'veg' ? 'veg' : c.plant;
+      if (addItem(kind)) {
+        c.plant = null;
+        addLog(logT('pickup', { item: ITEMS[kind]?.name || kind, count: '' }, `Picked up ${ITEMS[kind]?.name || kind}`));
+      }
+      render();
+      return;
+    }
+
+    if (c.plant === 'sapling' && c.treeHits < 3) {
+      if (addItem('sapling')) {
+        c.plant = null;
+        c.treeHits = 0;
+        addLog(logT('pickupSapling', {}, 'Picked up sapling.'));
+      } else addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      render();
+      return;
+    }
+
+    if ((c.plant === 'sapling' || c.plant === 'tree') && (c.plant === 'tree' || c.treeHits >= 3)) {
+      if (!devAllTools && !countItem('stone_axe')) { addLog(logT('needAxe', {}, 'Need a stone axe.')); return; }
+      addItem('wood', 3);
+      addItem('sapling');
+      c.hadTree = true;
+      c.plant = null;
+      c.treeHits = 0;
+      addLog(logT('cutTree', {}, 'Cut tree: got wood x3 and sapling.'));
+      render();
+      return;
+    }
+
+    if (c.plant === 'bush') {
+      addItem('wood');
+      c.plant = null;
+      addLog(logT('clearBush', {}, 'Cleared bush and got wood.'));
+      render();
+      return;
+    }
+
+    if (c.plant === 'wheat' && c.wheatHits >= 3) {
+      addItem('wheat_seed');
+      addItem('wheat', 2);
+      c.plant = null;
+      c.wheatHits = 0;
+      addLog(logT('harvestWheat', {}, 'Harvested wheat.'));
+      render();
+      return;
+    }
+
+    if (c.structure === 'treasure_chest') {
+      const loot = ['rod','iron_sword','stone_axe','coin'][Math.floor(Math.random() * 4)];
+      const id = loot === 'coin' ? 'coin' : loot;
+      const n = loot === 'coin' ? 5 : 1;
+      c.structure = null;
+      const where = giveItemOrDropOnCell(x, y, id, n);
+      if (where === 'inv') {
+        addLog(logT('chestLootToInventory', { item: ITEMS[id].name, count: countSuffix(n) }, `Opened chest and got ${ITEMS[id].name}${countSuffix(n)}`));
+      } else {
+        addLog(logT('chestLootToGround', { item: ITEMS[id].name, count: countSuffix(n) }, `Opened chest. ${ITEMS[id].name}${countSuffix(n)} dropped on ground.`));
+      }
+      render();
+      return;
+    }
+
+    if (c.structure === 'bag') {
+      const br = Math.random();
+      let id, n = 1;
+      if (br < 0.25) id = 'wheat_seed';
+      else if (br < 0.5) id = 'potato';
+      else if (br < 0.75) id = 'carrot';
+      else { id = 'silver_coin'; n = 3; }
+      c.structure = null;
+      const where = giveItemOrDropOnCell(x, y, id, n);
+      if (where === 'inv') {
+        addLog(logT('bagLootToInventory', { item: ITEMS[id].name, count: countSuffix(n) }, `Opened bag and got ${ITEMS[id].name}${countSuffix(n)}`));
+      } else {
+        addLog(logT('bagLootToGround', { item: ITEMS[id].name, count: countSuffix(n) }, `Opened bag. ${ITEMS[id].name}${countSuffix(n)} dropped on ground.`));
+      }
+      render();
+      return;
+    }
+
+    if (c.structure === 'crystal_ball') {
+      openCrystalBallUI();
+      return;
+    }
+
+    if (c.structure === 'golden') {
+      openGoldenMerchant();
+      return;
+    }
+
+    if (c.structure === 'silver_box') {
+      openSilverMerchant();
+      return;
+    }
+
+    if (c.structure === 'shelter') {
+      player.breaks++;
+      onBreakEffects();
+      tickPlants();
+      addLog(logT('restShelter', {}, 'Rested at shelter.'));
+      render();
+      return;
+    }
+  }
+
+  function openCrystalBallUI() {
+    const body = document.getElementById('modal-body');
+    const footer = document.getElementById('modal-footer');
+    document.getElementById('modal-title').textContent = t('crystal.title', {}, 'Crystal Ball');
+    let html = `<p>${escapeHtml(t('crystal.intro', {}, 'Submit lost pages.'))}</p>`;
+    html += `<p>${escapeHtml(t('crystal.progress', {
+      collected: collectedPages.length,
+      submitted: submittedPages.length,
+      total: PAGE_TOTAL,
+    }, `Collected ${collectedPages.length}/${PAGE_TOTAL} ? Submitted ${submittedPages.length}/${PAGE_TOTAL}`))}</p>`;
+
+    const pending = collectedPages.filter(i => !submittedPages.includes(i)).sort((a, b) => a - b);
+    if (pending.length) {
+      html += `<p><strong>${escapeHtml(t('crystal.pending', {}, 'Pending'))}</strong></p>`;
+      pending.forEach(pi => {
+        html += `<div class="page-row"><span>\u{1F4DC} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
+          <button type="button" data-submit-page="${pi}">${escapeHtml(t('crystal.submit', {}, 'Submit'))}</button></div>`;
+      });
+    }
+
+    const done = submittedPages.slice().sort((a, b) => a - b);
+    if (done.length) {
+      html += `<p><strong>${escapeHtml(t('crystal.submitted', {}, 'Submitted'))}</strong></p>`;
+      done.forEach(pi => {
+        html += `<div class="page-row"><span>\u{1F4DC} ${escapeHtml(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`))}</span>
+          <button type="button" data-view-page="${pi}">${escapeHtml(t('crystal.read', {}, 'Read'))}</button></div>`;
+      });
+    }
+
+    if (!pending.length && !done.length) {
+      html += `<p>${escapeHtml(t('crystal.empty', {}, 'No pages discovered yet.'))}</p>`;
+    }
+
+    body.innerHTML = html;
+    footer.innerHTML = '';
+    const allSubmitted = submittedPages.length >= PAGE_TOTAL;
+
+    if (allSubmitted) {
+      footer.innerHTML = `<div class="modal-btn-row">
+        <button class="pixel-btn muted" type="button" id="btn-crystal-map">${escapeHtml(t('common.backToMap', {}, 'Back to map'))}</button>
+        <button type="button" id="btn-crystal-win">${escapeHtml(t('crystal.winButton', {}, 'Finish'))}</button>
+      </div>`;
+      document.getElementById('btn-crystal-map').onclick = () => {
+        document.getElementById('modal').classList.remove('show');
+      };
+      document.getElementById('btn-crystal-win').onclick = () => {
+        document.getElementById('modal').classList.remove('show');
+        document.getElementById('victory-modal').classList.add('show');
+      };
+    } else {
+      footer.innerHTML = `<button class="pixel-btn muted" id="modal-close">${escapeHtml(t('common.backToMap', {}, 'Back to map'))}</button>`;
+      document.getElementById('modal-close').onclick = () => {
+        document.getElementById('modal').classList.remove('show');
+      };
+    }
+
+    body.querySelectorAll('[data-submit-page]').forEach(btn => {
+      btn.onclick = () => {
+        const pi = +btn.dataset.submitPage;
+        if (!collectedPages.includes(pi) || submittedPages.includes(pi)) return;
+        submittedPages.push(pi);
+        addLog(logT('submitPage', { num: PAGE_NUMS[pi] }, `Submitted page ${PAGE_NUMS[pi]}`));
+        openCrystalBallUI();
+        renderInv();
+      };
+    });
+    body.querySelectorAll('[data-view-page]').forEach(btn => {
+      btn.onclick = () => {
+        const pi = +btn.dataset.viewPage;
+        showModal(t('pages.genericTitle', { num: PAGE_NUMS[pi] }, `Page ${PAGE_NUMS[pi]}`), '<p>' + escapeHtml(PAGES[pi]) + '</p>');
+      };
+    });
+
+    document.getElementById('modal').classList.add('show');
+  }
+
+  function restartGame() {
+    document.getElementById('victory-modal').classList.remove('show');
+    document.getElementById('modal').classList.remove('show');
+    player = { x: CENTER, y: CENTER, stamina: 10, exp: 0, level: 0, breaks: 0 };
+    inventory = [];
+    Object.keys(chestStorages).forEach(k => delete chestStorages[k]);
+    craftSlots = [null, null];
+    craftPickId = null;
+    selectedInv = null;
+    placedMode = null;
+    logLines = [];
+    pageCount = 0;
+    collectedPages.length = 0;
+    submittedPages.length = 0;
+    crystalBallPos = null;
+    stoneBreaks = 0;
+    breaksSinceEgg = 0;
+    eggGuaranteed = false;
+    merchantBought = { rod: false, sword: false, axe: false };
+    goldenBoxSpawned = 0;
+    devToolsActive = false;
+    devIgnoreStaminaLimit = false;
+    devIgnoreInventoryLimit = false;
+    devIgnoreMovementLimit = false;
+    devDisableDayNight = false;
+    devFastMine = false;
+    devAllTools = false;
+    devShowAllCodex = false;
+    devItemSearch = '';
+    Object.assign(guarantees, {
+      firstBreak: false, pool: false, bush: false, stone2: 0, iron2: 0,
+      forcedPool: false, forcedBush: false,
+    });
+    initGrid();
+    addLog(logT('restart', {}, 'New game started.'));
+    render();
+  }
+
+  function openGoldenMerchant() {
+    const body = document.getElementById('modal-body');
+    document.getElementById('modal-title').textContent = t('merchant.goldenTitle', {}, 'Golden Box');
+    let html = `<p>${escapeHtml(t('merchant.goldenBalance', {
+      coins: countItem('coin'),
+      spawned: goldenBoxSpawned,
+      max: GOLDEN_BOX_MAX,
+    }, `Coins: ${countItem('coin')} ? Boxes ${goldenBoxSpawned}/${GOLDEN_BOX_MAX}`))}</p>`;
+    const opts = [
+      { id: 'rod', key: 'rod', cost: 5, oneTime: true },
+      { id: 'iron_sword', key: 'sword', cost: 5, oneTime: true },
+      { id: 'stone_axe', key: 'axe', cost: 5, oneTime: true },
+      { id: 'carrot', cost: 2 },
+      { id: 'potato', cost: 2 },
+      { id: 'wheat_seed', cost: 2 },
+    ];
+    for (const o of opts) {
+      const bought = o.oneTime && merchantBought[o.key];
+      html += `<button class="merchant-item" data-buy="${o.id}" data-key="${o.key || ''}" data-one-time="${o.oneTime ? '1' : '0'}" data-cost="${o.cost}" data-currency="gold" ${bought || countItem('coin') < o.cost ? 'disabled' : ''}>
+        ${bought ? escapeHtml(t('merchant.bought', {}, 'Bought')) : ''} ${escapeHtml(t('merchant.goldCost', { cost: o.cost }, `${o.cost} gold`))} -> ${escapeHtml(itemDisplay(o.id))}
+      </button>`;
+    }
+    body.innerHTML = html;
+    body.querySelectorAll('[data-buy]').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.buy;
+        const key = btn.dataset.key;
+        const oneTime = btn.dataset.oneTime === '1';
+        const cost = +btn.dataset.cost;
+        if (oneTime && merchantBought[key]) return;
+        if (countItem('coin') < cost) return;
+        removeItem('coin', cost);
+        if (!addItem(id)) {
+          addItem('coin', cost);
+          return;
+        }
+        if (oneTime) merchantBought[key] = true;
+        addLog(logT('exchanged', { item: ITEMS[id].name }, `Exchanged ${ITEMS[id].name}`));
+        openGoldenMerchant();
+      };
+    });
+    setModalCloseFooter();
+    document.getElementById('modal').classList.add('show');
+  }
+
+  function setModalCloseFooter() {
+    const footer = document.getElementById('modal-footer');
+    footer.innerHTML = `<button class="pixel-btn muted" type="button" id="modal-close">${escapeHtml(t('common.close', {}, 'Close'))}</button>`;
+    document.getElementById('modal-close').onclick = () => {
+      document.getElementById('modal').classList.remove('show');
+    };
+  }
+
+  function openSilverMerchant() {
+    const body = document.getElementById('modal-body');
+    document.getElementById('modal-title').textContent = t('merchant.silverTitle', {}, 'Silver Meal Shop');
+    const bal = getSilverBalance();
+    let html = `<p>${escapeHtml(t('merchant.silverBalance', {
+      balance: bal,
+      coins: countItem('silver_coin'),
+      silver: countItem('silver'),
+    }, `Silver balance: ${bal}`))}<br>
+      <small>${escapeHtml(t('merchant.silverHint', {}, 'Forge silver into silver coins.'))}</small></p>`;
+    const meals = [
+      { id: 'veg_egg', cost: 3 },
+      { id: 'vegetable_stew', cost: 4 },
+      { id: 'big_plate_chicken', cost: 5 },
+    ];
+    for (const m of meals) {
+      const def = ITEMS[m.id];
+      html += `<button class="merchant-item" data-meal="${m.id}" data-cost="${m.cost}" ${bal < m.cost ? 'disabled' : ''}>
+        ${escapeHtml(t('merchant.silverCost', { cost: m.cost }, `${m.cost} silver coins`))} -> ${escapeHtml((def.emoji || '') + def.name)}
+      </button>`;
+    }
+    body.innerHTML = html;
+    setModalCloseFooter();
+    body.querySelectorAll('[data-meal]').forEach(btn => {
+      btn.onclick = () => {
+        const mealId = btn.dataset.meal;
+        const cost = +btn.dataset.cost;
+        if (getSilverBalance() < cost) {
+          addLog(logT('silverNotEnough', {}, 'Not enough silver coins.'));
+          return;
+        }
+        if (!addItem(mealId)) {
+          addLog(logT('inventoryFull', {}, 'Inventory full!'));
+          return;
+        }
+        if (!spendSilver(cost)) {
+          removeItem(mealId);
+          addLog(logT('silverNotEnough', {}, 'Not enough silver coins.'));
+          openSilverMerchant();
+          return;
+        }
+        addLog(logT('boughtMeal', { item: ITEMS[mealId].name }, `Bought ${ITEMS[mealId].name}`));
+        openSilverMerchant();
+        renderInv();
+      };
+    });
+    document.getElementById('modal').classList.add('show');
+  }
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') document.getElementById('modal').classList.remove('show');
+  });
+
+  function move(dx, dy) {
+    const nx = player.x + dx, ny = player.y + dy;
+    if (!inBounds(nx, ny)) return;
+    if (!devIgnoreMovementLimit && !canMoveTo(nx, ny)) {
+      addLog(logT('cannotMove', {}, 'Cannot pass water or stone.'));
+      return;
+    }
+    player.x = nx;
+    player.y = ny;
+    moveAnimals();
+    render();
+  }
+
+  function moveAnimals() {
+    const animals = [];
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        cellAnimals(c).forEach(animal => animals.push({ x, y, animal }));
+      }
+    }
+    animals.forEach(({ x, y, animal }) => {
+      const c = grid[y]?.[x];
+      if (!c || !cellAnimals(c).includes(animal)) return;
+      if (chebDist(x, y, player.x, player.y) > 4) return;
+      const opts = adjacent(x, y).filter(([ax, ay]) => canMoveTo(ax, ay));
+      if (!opts.length) return;
+      if (Math.random() > 0.35) return;
+      const [nx, ny] = opts[Math.floor(Math.random() * opts.length)];
+      removeAnimalFromCell(c, animal);
+      addAnimalToCell(grid[ny][nx], animal.type);
+    });
+  }
+
+  const RECIPES = (window.MINIPLAIN_RECIPES || []).map(recipe => ({
+    station: recipe.station,
+    inputs: [...(recipe.inputs || [])].filter(Boolean),
+    output: recipe.output,
+    count: recipe.count || 1,
+    returns: recipe.returns || [],
+  })).filter(recipe => recipe.station && recipe.inputs.length && recipe.output);
+
+  const COOK_STATIONS = new Set(['campfire', 'iron_plate', 'mill', 'prep_table', 'oven']);
+  const CRAFT_STATIONS = new Set(['toolbox', 'forge']);
+  const RECIPE_STATIONS = new Set([...COOK_STATIONS, ...CRAFT_STATIONS]);
+  const STATION_LABELS = {
+    toolbox: t('stations.toolbox', {}, 'Toolbox'),
+    forge: t('stations.forge', {}, 'Forge'),
+    campfire: t('stations.campfire', {}, 'Campfire'),
+    iron_plate: t('stations.iron_plate', {}, 'Iron plate'),
+    mill: t('stations.mill', {}, 'Mill'),
+    prep_table: t('stations.prep_table', {}, 'Prep table'),
+    oven: t('stations.oven', {}, 'Oven'),
+  };
+
+  function refreshStationLabels() {
+    STATION_LABELS.toolbox = t('stations.toolbox', {}, 'Toolbox');
+    STATION_LABELS.forge = t('stations.forge', {}, 'Forge');
+    STATION_LABELS.campfire = t('stations.campfire', {}, 'Campfire');
+    STATION_LABELS.iron_plate = t('stations.iron_plate', {}, 'Iron plate');
+    STATION_LABELS.mill = t('stations.mill', {}, 'Mill');
+    STATION_LABELS.prep_table = t('stations.prep_table', {}, 'Prep table');
+    STATION_LABELS.oven = t('stations.oven', {}, 'Oven');
+  }
+  const COOK_FOODS = [...new Set(RECIPES
+    .filter(recipe => COOK_STATIONS.has(recipe.station))
+    .flatMap(recipe => recipe.inputs))];
+  const CRAFT_MATS = [...new Set(RECIPES
+    .filter(recipe => CRAFT_STATIONS.has(recipe.station))
+    .flatMap(recipe => recipe.inputs))];
+
+  function recipeKey(a, b) {
+    const ids = [a, b].filter(Boolean).sort();
+    return ids.join('+');
+  }
+
+  function recipeInputKey(inputs) {
+    return [...inputs].filter(Boolean).sort().join('+');
+  }
+
+  const RECIPE_LOOKUP = RECIPES.reduce((lookup, recipe) => {
+    if (!lookup[recipe.station]) lookup[recipe.station] = {};
+    lookup[recipe.station][recipeInputKey(recipe.inputs)] = recipe;
+    return lookup;
+  }, {});
+
+  const STATION_HINT_OUTPUTS = {
+    toolbox: ['forge', 'flint', 'chest', 'campfire', 'wood_plank'],
+  };
+  const RECIPE_HINT_INPUTS = {
+    forge: ['stone', 'iron'],
+    flint: ['stone', 'stone'],
+    chest: ['wood', 'wood'],
+    campfire: ['wood', 'flint'],
+    wood_plank: ['wood', 'stone_axe'],
+  };
+
+  function recipeHintText(id, count = 1) {
+    const name = ITEMS[id]?.name || id;
+    return `${escapeHtml(name)}${escapeHtml(countSuffix(count))}`;
+  }
+
+  function recipeHintRecipe(recipe) {
+    const inputs = RECIPE_HINT_INPUTS[recipe.output] || recipe.inputs;
+    return `<span class="recipe-entry">${inputs.map(recipeHintIcon).join('+')}=${recipeHintIcon(recipe.output)}${recipeHintText(recipe.output, recipe.count || 1)}</span>`;
+  }
+
+  function recipesForHintStation(station) {
+    const outputOrder = STATION_HINT_OUTPUTS[station];
+    if (outputOrder) {
+      return outputOrder
+        .map(output => RECIPES.find(recipe => recipe.station === station && recipe.output === output))
+        .filter(Boolean);
+    }
+    return RECIPES.filter(recipe => recipe.station === station);
+  }
+
+  function stationRecipeHintHtml(station) {
+    const recipes = recipesForHintStation(station);
+    const stationName = ITEMS[station]?.name || STATION_LABELS[station] || station;
+    return `${recipeHintIcon(station)}${escapeHtml(stationName)}: ${recipes.map(recipeHintRecipe).join('')}`;
+  }
+
+  function packResult(id, count = 1) {
+    return count > 1 ? `${id}*${count}` : id;
+  }
+
+  function packRecipeResult(recipe) {
+    return recipe ? packResult(recipe.output, recipe.count || 1) : '';
+  }
+
+  function unpackResult(result) {
+    const [id, countRaw] = (result || '').split('*');
+    const count = Math.max(1, parseInt(countRaw || '1', 10) || 1);
+    return { id, count };
+  }
+
+  function slotsHaveFood() {
+    return craftSlots.some(id => id && COOK_FOODS.includes(id));
+  }
+
+  function slotsHaveCraftMat() {
+    return craftSlots.some(id => id && CRAFT_MATS.includes(id));
+  }
+
+  function canCookHere() {
+    return playerNearStructure('campfire') && countItem('iron_pot') > 0;
+  }
+
+  function currentRecipeStation() {
+    const station = grid[player.y][player.x].structure;
+    return RECIPE_STATIONS.has(station) ? station : null;
+  }
+
+  function stationForMode(mode) {
+    const station = currentRecipeStation();
+    if (station) return station;
+    return mode === 'cook' && canCookHere() ? 'campfire' : null;
+  }
+
+  function itemCanBeCraftedHere(id) {
+    const mode = getCraftMode();
+    const station = stationForMode(mode);
+    if (!station) return false;
+    return RECIPES.some(recipe => recipe.station === station && recipe.inputs.includes(id));
+  }
+
+  /** Chooses crafting mode based on station and current slot contents. */
+  function getCraftMode() {
+    const station = currentRecipeStation();
+    if (station) {
+      if (CRAFT_STATIONS.has(station)) return station === 'forge' ? 'forge' : 'make';
+      if (COOK_STATIONS.has(station)) {
+        if (station !== 'campfire') return 'cook';
+        return countItem('iron_pot') > 0 ? 'cook' : null;
+      }
+    }
+    const canCook = canCookHere();
+
+    if (slotsHaveFood()) {
+      return canCook ? 'cook' : null;
+    }
+    if (slotsHaveCraftMat()) {
+      return null;
+    }
+    if (canCook) return 'cook';
+    return null;
+  }
+
+  function recipeForStation(station, a, b) {
+    return RECIPE_LOOKUP[station]?.[recipeKey(a, b)] || null;
+  }
+
+  function resolveCookRecipeEntry(a, b) {
+    const station = currentRecipeStation();
+    if (station && COOK_STATIONS.has(station)) return recipeForStation(station, a, b);
+    return canCookHere() ? recipeForStation('campfire', a, b) : null;
+  }
+
+  function resolveRecipeEntry(a, b, mode) {
+    if (!mode) return null;
+    if (mode === 'make') return recipeForStation('toolbox', a, b);
+    if (mode === 'forge') return recipeForStation('forge', a, b);
+    if (mode === 'cook') return resolveCookRecipeEntry(a, b);
+    return null;
+  }
+
+  function resolveRecipe(a, b, mode) {
+    return packRecipeResult(resolveRecipeEntry(a, b, mode));
+  }
+
+  function returnCraftSlot(slotIndex) {
+    const id = craftSlots[slotIndex];
+    if (!id) return;
+    if (!addItem(id)) {
+      addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      return;
+    }
+    craftSlots[slotIndex] = null;
+    syncCraftBoxUI();
+    updateCraft();
+    renderInv();
+  }
+
+  function isPlaceableItem(id) {
+    return !!(ITEMS[id] && ITEMS[id].place);
+  }
+
+  function canUsePlaceableAsCraftMaterial(id) {
+    return id === 'campfire';
+  }
+
+  function canPlaceOnCell(x, y) {
+    const c = grid[y][x];
+    return !c.stone && c.ground === 'normal' && !c.plant && !c.structure && !hasAnimals(c) && !c.groundLoot;
+  }
+
+  function canPlaceEggCell(x, y) {
+    const c = grid[y][x];
+    return !c.stone && c.ground === 'normal' && !c.plant && !c.structure && !hasAnimals(c) && !c.incubatingEgg && !c.groundLoot;
+  }
+
+  function canPlaceBuildingAt(x, y) {
+    if (player.level < 8) return false;
+    const cells = [[x, y], [x + 1, y], [x, y + 1], [x + 1, y + 1]];
+    if (!cells.every(([cx, cy]) => inBounds(cx, cy))) return false;
+    return cells.every(([cx, cy]) => {
+      const cc = grid[cy][cx];
+      return cc.ground === 'normal' && !cc.stone && !cc.plant && !cc.structure && !hasAnimals(cc) && !cc.groundLoot;
+    });
+  }
+
+  function putInCraftSlot(slotIndex, itemId) {
+    if (!itemId || !ITEMS[itemId]) {
+      addLog(logT('invalidItem', {}, 'Invalid item'));
+      return false;
+    }
+    if (isPlaceableItem(itemId) && !canUsePlaceableAsCraftMaterial(itemId)) {
+      addLog(logT('placeableUseClick', { item: ITEMS[itemId].name }, `"${ITEMS[itemId].name}" must be placed on the map.`));
+      return false;
+    }
+    const mode = getCraftMode();
+    if (!mode) {
+      if (COOK_FOODS.includes(itemId) && playerNearStructure('campfire') && !countItem('iron_pot')) {
+        addLog(t('craft.needPotHint', {}, 'Campfire cooking needs an iron pot.'));
+      } else if (COOK_FOODS.includes(itemId)) {
+        addLog(t('craft.needCampfireAndPot', {}, 'Cooking needs campfire and pot.'));
+      } else if (CRAFT_MATS.includes(itemId)) {
+        addLog(t('craft.needStation', {}, 'Stand on the matching station.'));
+      } else {
+        addLog(t('craft.needStation', {}, 'Stand on the matching station.'));
+      }
+      return false;
+    }
+    if (mode === 'cook' && !COOK_FOODS.includes(itemId)) {
+      addLog(t('craft.wrongCookRecipe', {}, 'Wrong cooking ingredient.'));
+      return false;
+    }
+    if ((mode === 'make' || mode === 'forge') && COOK_FOODS.includes(itemId)) {
+      addLog(t('craft.needStation', {}, 'Use a cooking station for food.'));
+      return false;
+    }
+    if (craftSlots[slotIndex] === itemId) return true;
+    if (craftSlots[slotIndex]) {
+      const prev = craftSlots[slotIndex];
+      returnCraftSlot(slotIndex);
+      if (craftSlots[slotIndex]) return false;
+    }
+    if (!removeItem(itemId, 1)) {
+      addLog(logT('invalidItem', {}, 'Invalid item'));
+      return false;
+    }
+    craftSlots[slotIndex] = itemId;
+    craftPickId = null;
+    syncCraftBoxUI();
+    updateCraft();
+    renderInv();
+    addLog(logT('craftSlotSet', { slot: slotIndex + 1, item: itemDisplay(itemId) }, `Slot ${slotIndex + 1}: ${ITEMS[itemId]?.name || itemId}`));
+    return true;
+  }
+
+  function swapCraftSlots(from, to) {
+    if (from === to) return;
+    const t = craftSlots[from];
+    craftSlots[from] = craftSlots[to];
+    craftSlots[to] = t;
+    syncCraftBoxUI();
+    updateCraft();
+  }
+
+  function syncCraftBoxUI() {
+    ['c1', 'c2'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      const span = el.querySelector('.slot-emoji');
+      const item = craftSlots[i];
+      const icon = item ? itemIconMarkup(item, 'item-icon', ITEMS[item]?.emoji || '?') : '';
+      if (span) span.innerHTML = icon;
+      else el.innerHTML = icon;
+      el.classList.toggle('filled', !!item);
+      el.draggable = !!item;
+      el.dataset.item = item || '';
+    });
+  }
+
+  function setDragData(e, payload) {
+    mpDrag = payload;
+    let plain = '';
+    if (payload.from === 'inv') plain = 'mp:inv:' + payload.index + ':' + payload.id;
+    else if (payload.from === 'chest') plain = 'mp:chest:' + payload.index + ':' + payload.id;
+    else if (payload.from === 'craft') plain = 'mp:craft:' + payload.slot + ':' + payload.id;
+    e.dataTransfer.setData('text/plain', plain);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function readDragData(e) {
+    let plain = '';
+    try { plain = e.dataTransfer.getData('text/plain') || ''; } catch (err) { /* ignore */ }
+    if (plain.startsWith('mp:inv:')) {
+      const rest = plain.slice(7).split(':');
+      return { from: 'inv', index: parseInt(rest[0], 10), id: rest.slice(1).join(':') };
+    }
+    if (plain.startsWith('mp:chest:')) {
+      const rest = plain.slice(9).split(':');
+      return { from: 'chest', index: parseInt(rest[0], 10), id: rest.slice(1).join(':') };
+    }
+    if (plain.startsWith('mp:craft:')) {
+      const rest = plain.slice(9).split(':');
+      return { from: 'craft', slot: parseInt(rest[0], 10), id: rest.slice(1).join(':') };
+    }
+    if (mpDrag) return mpDrag;
+    return null;
+  }
+
+  function ejectPlaceablesFromCraftSlots() {
+    craftSlots.forEach((id, i) => {
+      if (id && isPlaceableItem(id) && !canUsePlaceableAsCraftMaterial(id)) {
+        craftSlots[i] = null;
+        addItem(id);
+        addLog(logT('placeableBackToInventory', { item: ITEMS[id].name }, `${ITEMS[id].name} returned to inventory.`));
+      }
+    });
+  }
+
+  function updateCraft() {
+    ejectPlaceablesFromCraftSlots();
+    const mode = getCraftMode();
+    craftMode = mode;
+
+    const section = document.getElementById('craft-section');
+    section.classList.toggle('craft-ready', !!mode);
+    section.classList.toggle('craft-locked', !mode);
+
+    const title = document.getElementById('craft-title');
+    const hint = document.getElementById('craft-hint');
+    const craftBtn = document.getElementById('craft-btn');
+    if (mode === 'make') {
+      title.textContent = t('craft.make', {}, 'Craft');
+      hint.innerHTML = stationRecipeHintHtml('toolbox');
+      craftBtn.textContent = t('craft.make', {}, 'Craft');
+    } else if (mode === 'forge') {
+      title.textContent = t('craft.forge', {}, 'Forge');
+      hint.innerHTML = stationRecipeHintHtml('forge');
+      craftBtn.textContent = t('craft.forge', {}, 'Forge');
+    } else if (mode === 'cook') {
+      const station = stationForMode(mode);
+      title.textContent = station === 'mill' ? t('craft.mill', {}, 'Mill') : station === 'prep_table' ? t('craft.prep', {}, 'Prep') : station === 'oven' ? t('craft.oven', {}, 'Bake') : t('craft.cook', {}, 'Cook');
+      hint.innerHTML = stationRecipeHintHtml(station);
+      craftBtn.textContent = title.textContent;
+    } else {
+      title.textContent = t('craft.combine', {}, 'Combine');
+      hint.textContent = t('craft.lockedHint', {}, 'Stand on a tool tile or near campfire with pot.');
+      craftBtn.textContent = t('game.craftInitialButton', {}, 'Craft');
+      if (playerNearStructure('campfire') && !countItem('iron_pot')) {
+        hint.textContent = t('craft.needPotHint', {}, 'Campfire cooking needs an iron pot.');
+      }
+    }
+
+    syncCraftBoxUI();
+    const [a, b] = craftSlots;
+    const result = resolveRecipe(a, b, mode);
+
+    const r3 = document.getElementById('c3');
+    const r3Emoji = document.getElementById('c3-emoji');
+    const r3Name = document.getElementById('c3-name');
+    if (result) {
+      const { id, count } = unpackResult(result);
+      r3Emoji.innerHTML = itemIconMarkup(id, 'item-icon', ITEMS[id]?.emoji || '?');
+      r3Name.textContent = (ITEMS[id]?.name || '') + countSuffix(count);
+    } else {
+      r3Emoji.textContent = mode ? '?' : '';
+      r3Name.textContent = mode ? t('craft.unknownRecipe', {}, 'Unknown recipe') : '';
+    }
+    r3.dataset.result = result || '';
+    r3.title = result ? t('craft.collectResultTitle', {}, 'Click to collect result') : '';
+
+    document.getElementById('craft-btn').disabled = !result || !mode;
+  }
+
+  function doCraft() {
+    const result = document.getElementById('c3').dataset.result;
+    const mode = getCraftMode();
+    if (!result || !mode) {
+      if (mode === 'cook') addLog(t('craft.wrongCookRecipe', {}, 'Wrong cooking recipe.'));
+      else if (slotsHaveFood() && !canCookHere()) addLog(t('craft.needCampfireAndPot', {}, 'Cooking needs campfire and pot.'));
+      else addLog(mode ? t('craft.wrongRecipe', {}, 'Wrong recipe.') : t('craft.needStation', {}, 'Stand on the matching station.'));
+      return;
+    }
+
+    const [a, b] = [...craftSlots];
+    const recipe = resolveRecipeEntry(a, b, mode);
+    const { id: productId, count: productCount } = unpackResult(result);
+    const isSingleIngredientRecipe = recipe?.inputs.length === 1;
+    if ((!a || !b) && !isSingleIngredientRecipe) {
+      addLog(t('craft.needTwoSlots', {}, 'Need two materials, unless the recipe only uses one.'));
+      return;
+    }
+    craftSlots = [null, null];
+    if (!addItem(productId, productCount)) {
+      craftSlots = [a, b];
+      addLog(t('craft.inventoryFullCancel', {}, 'Inventory full, craft canceled.'));
+      updateCraft();
+      renderInv();
+      return;
+    }
+    (recipe?.returns || []).forEach(item => {
+      addItem(item.id, item.count || 1);
+    });
+
+    if (isPlaceableItem(productId)) {
+      addLog(logT('craftedPlaceable', { item: ITEMS[productId].name }, `Crafted ${ITEMS[productId].name}. Place it from inventory.`));
+    } else {
+      addLog(logT('crafted', { item: ITEMS[productId]?.name || productId, count: countSuffix(productCount) }, `Crafted ${ITEMS[productId]?.name || productId}${countSuffix(productCount)}`));
+    }
+
+    updateCraft();
+    renderInv();
+  }
+
+  function handleCraftDrop(slotIndex, data) {
+    if (!data) return;
+    if (data.from === 'inv' && data.id) {
+      putInCraftSlot(slotIndex, data.id);
+      return;
+    }
+    if (data.from === 'craft' && !isNaN(data.slot)) {
+      if (data.slot === slotIndex) return;
+      swapCraftSlots(data.slot, slotIndex);
+    }
+  }
+
+  const CHEST_LONG_PRESS_MS = 450;
+
+  function setupChestBulkTransfer() {
+    let pressTimer = null;
+    let suppressClick = false;
+
+    function clearPress() {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+
+    function tryBulkTransfer(fromName, cell) {
+      if (!playerOnStorageChest()) return 0;
+      const chest = getActiveChestStorage();
+      if (!chest) return 0;
+      const fromList = fromName === 'inv' ? inventory : chest;
+      const toList = fromName === 'inv' ? chest : inventory;
+      const toMax = fromName === 'inv' ? CHEST_MAX : INV_MAX;
+      const idx = +cell.dataset.i;
+      const moved = transferEntireStack(fromList, idx, toList, toMax);
+      if (moved > 0) {
+        const def = ITEMS[cell.dataset.id];
+        const action = fromName === 'inv' ? logT('storeToChest', {}, 'Stored in chest') : logT('takeBack', {}, 'Took back');
+        addLog(logT('transferredStack', { action, item: def?.name || cell.dataset.id, count: moved }, `${action}: ${def?.name || cell.dataset.id} x${moved}`));
+        renderInv();
+        renderChest();
+        cell.classList.add('bulk-flash');
+        setTimeout(() => cell.classList.remove('bulk-flash'), 220);
+      }
+      return moved;
+    }
+
+    function bindPanel(panelEl, fromName) {
+      panelEl.addEventListener('pointerdown', e => {
+        if (!playerOnStorageChest() || e.button !== 0) return;
+        const cell = e.target.closest('.inv-cell[data-id]');
+        if (!cell || !panelEl.contains(cell)) return;
+        clearPress();
+        pressTimer = setTimeout(() => {
+          pressTimer = null;
+          suppressClick = true;
+          tryBulkTransfer(fromName, cell);
+        }, CHEST_LONG_PRESS_MS);
+      });
+
+      panelEl.addEventListener('pointerup', clearPress);
+      panelEl.addEventListener('pointercancel', clearPress);
+
+      panelEl.addEventListener('click', e => {
+        if (suppressClick) {
+          suppressClick = false;
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        if (!playerOnStorageChest() || !e.shiftKey) return;
+        const cell = e.target.closest('.inv-cell[data-id]');
+        if (!cell || !panelEl.contains(cell)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        tryBulkTransfer(fromName, cell);
+      }, true);
+    }
+
+    bindPanel(document.getElementById('inventory'), 'inv');
+    bindPanel(document.getElementById('chest-inventory'), 'chest');
+  }
+
+  function setupCraftDragDrop() {
+    const invEl = document.getElementById('inventory');
+
+    invEl.addEventListener('dragstart', e => {
+      const el = e.target.closest('.inv-cell[data-id]');
+      if (!el) return;
+      if (isPlaceableItem(el.dataset.id) && !canUsePlaceableAsCraftMaterial(el.dataset.id)) {
+        e.preventDefault();
+        addLog(logT('dragPlaceableHint', { item: ITEMS[el.dataset.id].name }, `"${ITEMS[el.dataset.id].name}" should be placed from inventory.`));
+        return;
+      }
+      setDragData(e, { from: 'inv', index: +el.dataset.i, id: el.dataset.id });
+      el.classList.add('dragging');
+    });
+    invEl.addEventListener('dragend', () => {
+      mpDrag = null;
+      invEl.querySelectorAll('.inv-cell.dragging').forEach(el => el.classList.remove('dragging'));
+    });
+    invEl.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
+    invEl.addEventListener('drop', e => {
+      e.preventDefault();
+      const data = readDragData(e);
+      mpDrag = null;
+      if (data?.from === 'craft' && !isNaN(data.slot)) returnCraftSlot(data.slot);
+      if (data?.from === 'chest' && playerOnStorageChest()) {
+        const chest = getActiveChestStorage();
+        if (chest && transferStackItem(chest, data.index, inventory, INV_MAX)) {
+          renderInv();
+          renderChest();
+        }
+      }
+    });
+
+    const chestEl = document.getElementById('chest-inventory');
+    chestEl.addEventListener('dragstart', e => {
+      const el = e.target.closest('.inv-cell[data-id]');
+      if (!el || !playerOnStorageChest()) { e.preventDefault(); return; }
+      setDragData(e, { from: 'chest', index: +el.dataset.i, id: el.dataset.id });
+      el.classList.add('dragging');
+    });
+    chestEl.addEventListener('dragend', () => {
+      mpDrag = null;
+      chestEl.querySelectorAll('.inv-cell.dragging').forEach(el => el.classList.remove('dragging'));
+    });
+    chestEl.addEventListener('dragover', e => {
+      if (!playerOnStorageChest()) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
+    chestEl.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!playerOnStorageChest()) return;
+      const data = readDragData(e);
+      mpDrag = null;
+      const chest = getActiveChestStorage();
+      if (!chest) return;
+      if (data?.from === 'inv') {
+        if (transferStackItem(inventory, data.index, chest, CHEST_MAX)) {
+          renderInv();
+          renderChest();
+        }
+      }
+    });
+
+    ['c1', 'c2'].forEach((boxId, slotIndex) => {
+      const box = document.getElementById(boxId);
+
+      box.addEventListener('dragstart', e => {
+        if (!craftSlots[slotIndex]) { e.preventDefault(); return; }
+        setDragData(e, { from: 'craft', slot: slotIndex, id: craftSlots[slotIndex] });
+      });
+      box.addEventListener('dragend', () => { mpDrag = null; });
+
+      box.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        box.classList.add('drag-over');
+      });
+      box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+      box.addEventListener('drop', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        box.classList.remove('drag-over');
+        const data = readDragData(e);
+        mpDrag = null;
+        handleCraftDrop(slotIndex, data);
+      });
+
+      box.addEventListener('click', e => {
+        e.stopPropagation();
+        if (craftPickId) {
+          if (isPlaceableItem(craftPickId)) {
+            addLog(logT('placeableClickHint', { item: ITEMS[craftPickId].name }, `"${ITEMS[craftPickId].name}" should be placed on the map.`));
+            craftPickId = null;
+            renderInv();
+            return;
+          }
+          handleCraftDrop(slotIndex, { from: 'inv', id: craftPickId });
+        }
+      });
+
+      box.addEventListener('dblclick', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        returnCraftSlot(slotIndex);
+      });
+    });
+
+    document.addEventListener('dragend', () => { mpDrag = null; });
+    setupChestBulkTransfer();
+  }
+
+  /** Items that trigger directly on inventory click; other items are selected for crafting. */
+  function invItemQuickUse(id) {
+    if (!id || !ITEMS[id]) return false;
+    if (isPlaceableItem(id)) return true;
+    if (ITEMS[id].use || ITEMS[id].plant) return true;
+    if (id === 'wheat_seed' || id === 'rod' || id === 'building' || id === 'iron_bucket') return true;
+    return false;
+  }
+
+  function useInvItem(idx) {
+    const it = inventory[idx];
+    if (!it) return;
+    const id = it.id;
+
+    if (ITEMS[id]?.use) {
+      const u = ITEMS[id].use;
+      let heal = 0;
+      if (u === 'heal1') heal = 1;
+      if (u === 'heal2') heal = 2;
+      if (u === 'heal3') heal = 3;
+      if (u === 'heal4') heal = 4;
+      if (u === 'heal5') heal = 5;
+      if (u === 'heal_fish') heal = 1 + Math.floor(Math.random() * 2);
+      if (u === 'snack') {
+        removeItem(id);
+        addLog(logT('eatNoHeal', { item: ITEMS[id].name }, `Ate ${ITEMS[id].name}, no stamina restored.`));
+        renderInv();
+        return;
+      }
+      if (heal) {
+        removeItem(id);
+        player.stamina = Math.min(STAMINA_MAX, player.stamina + heal);
+        addLog(logT('heal', { heal }, `Recovered ${heal} stamina.`));
+        render();
+        renderInv();
+      }
+      return;
+    }
+
+    if (id === 'iron_bucket') {
+      if (playerAdjacentToTopAnimal('cow')) {
+        togglePlacedMode('milk', logT('milkMode', {}, 'Milking mode: click an adjacent uncovered cow.'));
+        return;
+      }
+      if (!playerAdjacentTo('water')) { addLog(logT('needWaterForBucket', {}, 'Need to stand near water.')); return; }
+      if (addItem('water')) addLog(logT('bucketWater', {}, 'Filled bucket with water.'));
+      else addLog(logT('inventoryFullWater', {}, 'Inventory full, cannot hold water.'));
+      renderInv();
+      return;
+    }
+
+    if (id === 'sapling') {
+      togglePlacedMode('sapling', logT('saplingMode', {}, 'Sapling mode: click empty land near water.'));
+      return;
+    }
+    if (isPlaceableItem(id)) {
+      togglePlacedMode('place_' + id, logT('placeItemMode', { item: ITEMS[id].name }, `Place ${ITEMS[id].name}: click highlighted empty land.`));
+      return;
+    }
+    if (id === 'rod') {
+      if (!playerAdjacentTo('water')) { addLog(logT('needWaterForFishing', {}, 'Need to stand near water to fish.')); return; }
+      if (Math.random() < 0.6) { addItem('fish'); addLog(logT('caughtFish', {}, 'Caught a fish.')); }
+      else addLog(logT('noFish', {}, 'No fish.'));
+      renderInv();
+      return;
+    }
+    if (id === 'wheat_seed') {
+      togglePlacedMode('wheat', logT('wheatMode', {}, 'Farming mode: click a tile that once had a tree.'));
+      return;
+    }
+    if (id === 'egg') {
+      togglePlacedMode('egg', logT('eggMode', {}, 'Incubation mode: place egg near mature wheat.'));
+      return;
+    }
+    if (id === 'building' && player.level >= 8) {
+      togglePlacedMode('building', logT('shelterMode', {}, 'Shelter mode: click top-left of a 2x2 empty area.'));
+      return;
+    }
+    selectedInv = id;
+    renderInv();
+  }
+
+  function tryPlaceStructure(x, y) {
+    const c = grid[y][x];
+    if (placedMode === 'place_bridge') {
+      if (!canPlaceBridge(x, y)) {
+        addLog(logT('bridgeWaterOnly', {}, 'Bridge can only be placed on an unobstructed water tile.'));
+        return false;
+      }
+      if (!removeItem('bridge')) return false;
+      c.structure = 'bridge';
+      placedMode = null;
+      addLog(logT('placeBridge', {}, 'Built a bridge.'));
+      return true;
+    }
+    if (c.stone || c.ground === 'water') return false;
+    if (c.structure || hasAnimals(c) || c.groundLoot) return false;
+
+    if (placedMode === 'place_forge' && removeItem('forge')) {
+      c.structure = 'forge';
+      placedMode = null;
+      addLog(logT('placeForge', {}, 'Placed forge.'));
+      return true;
+    }
+    if (placedMode === 'place_chest' && removeItem('chest')) {
+      c.structure = 'storage_chest';
+      getChestStorageAt(x, y);
+      placedMode = null;
+      addLog(logT('placeChest', {}, 'Placed storage chest.'));
+      return true;
+    }
+    if (placedMode === 'place_campfire') {
+      if (!canPlaceCampfire(x, y)) {
+        if (hasWaterNeighbor8(x, y)) addLog(logT('campfireNoWaterNeighbor', {}, 'Campfire cannot be placed next to water.'));
+        else addLog(logT('cannotPlaceCampfire', {}, 'Cannot place campfire here.'));
+        return false;
+      }
+      if (!removeItem('campfire')) return false;
+      c.structure = 'campfire';
+      placedMode = null;
+      addLog(logT('placeCampfire', {}, 'Placed campfire.'));
+      return true;
+    }
+    if (placedMode === 'place_oven' && removeItem('oven')) {
+      c.structure = 'oven';
+      placedMode = null;
+      addLog(logT('placeOven', {}, 'Placed oven.'));
+      return true;
+    }
+    if (placedMode === 'place_iron_plate') {
+      if (!canPlaceIronPlate(x, y)) {
+        addLog(logT('ironPlateNeedsCampfire', {}, 'Iron plate must be next to campfire.'));
+        return false;
+      }
+      if (!removeItem('iron_plate')) return false;
+      c.structure = 'iron_plate';
+      placedMode = null;
+      addLog(logT('placeIronPlate', {}, 'Placed iron plate.'));
+      return true;
+    }
+    if (placedMode === 'place_mill' && removeItem('mill')) {
+      c.structure = 'mill';
+      placedMode = null;
+      addLog(logT('placeMill', {}, 'Placed mill.'));
+      return true;
+    }
+    if (placedMode === 'place_prep_table' && removeItem('prep_table')) {
+      c.structure = 'prep_table';
+      placedMode = null;
+      addLog(logT('placePrepTable', {}, 'Placed prep table.'));
+      return true;
+    }
+    return false;
+  }
+
+  function render() {
+    document.body.classList.toggle('night-mode', isNight());
+    const g = document.getElementById('grid');
+    g.innerHTML = '';
+    const breakable = new Set(getBreakableCells().map(([x,y]) => `${x},${y}`));
+
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const el = document.createElement('div');
+        el.className = 'cell';
+        const c = grid[y][x];
+        const see = canSee(x, y);
+
+        if (!see) el.classList.add('hidden');
+        if (isNight() && see) el.classList.add('visible-night');
+
+        if (!c.stone) {
+          if (c.ground === 'water') el.classList.add('ground-water');
+          else if (c.ground === 'stone') el.classList.add('ground-stone');
+          else el.classList.add('ground-normal');
+        } else el.classList.add('ground-stone');
+        if (y === SIZE - 1 && !c.stone && c.ground === 'normal') el.classList.add('terrain-bottom');
+
+        if (x === player.x && y === player.y) el.classList.add('player');
+        if (breakable.has(`${x},${y}`)) el.classList.add('breakable');
+        if (c.structure === 'forge') el.classList.add('has-forge');
+        if (c.structure === 'campfire') el.classList.add('has-campfire');
+        if (c.structure === 'crystal_ball') el.classList.add('has-crystal');
+        if (c.structure === 'bridge') el.classList.add('has-bridge');
+        if (c.spawn) el.classList.add('spawn-tile');
+        if (isNight() && isLit(x, y)) el.classList.add('campfire-lit');
+        if (isNight() && isCrystalLit(x, y)) el.classList.add('crystal-lit');
+        if (placedMode === 'sapling' && !c.stone && canPlaceOnCell(x, y) && nearWater(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_forge' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_chest' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_campfire' && canPlaceCampfire(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_oven' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_iron_plate' && canPlaceIronPlate(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_mill' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_prep_table' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_bridge' && canPlaceBridge(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'wheat' && !c.stone && c.hadTree && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'building' && canPlaceBuildingAt(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'egg' && canPlaceEggCell(x, y) && adjacentToMatureWheat(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'milk' && canMilkCowAt(x, y)) {
+          el.classList.add('breakable');
+        }
+
+        let icon = '';
+        if (see) {
+          const cellIcon = cellIconMarkup(x, y);
+          const animalIcons = cellAnimals(c)
+            .slice()
+            .sort((a, b) => (ANIMAL_LAYER_RANK[a.type] || 0) - (ANIMAL_LAYER_RANK[b.type] || 0))
+            .map(animal => {
+              const animalIcon = animalIconMarkup(animal.type);
+              if (!animalIcon) return '';
+              const layer = 2 + (ANIMAL_LAYER_RANK[animal.type] || 0);
+              return `<span class="cell-icon-layer cell-animal-layer" data-animal="${escapeHtml(animal.type)}" style="z-index:${layer}">${animalIcon}</span>`;
+            }).join('');
+          const playerIcon = x === player.x && y === player.y ? mapIconMarkup('player', '\u{1F9D1}') : '';
+          if (cellIcon || animalIcons || playerIcon) {
+            icon = [
+              cellIcon ? `<span class="cell-icon-layer cell-content-layer">${cellIcon}</span>` : '',
+              animalIcons,
+              playerIcon ? `<span class="cell-icon-layer cell-player-layer">${playerIcon}</span>` : '',
+            ].join('');
+          }
+        }
+        el.innerHTML = icon ? `<span class="cell-icon-wrap">${icon}</span>` : '';
+
+        el.onclick = () => {
+          if (!see && !isAdjacentToPlayer(x, y)) return;
+          if (placedMode?.startsWith('place_')) {
+            if (tryPlaceStructure(x, y)) { render(); return; }
+          }
+          if (placedMode && !c.stone) { interactCell(x, y); return; }
+          if (c.stone && breakable.has(`${x},${y}`)) breakStone(x, y);
+          else if (!c.stone && chebDist(x,y,player.x,player.y) <= 1) interactCell(x, y);
+          else if (!c.stone) move(Math.sign(x - player.x), Math.sign(y - player.y));
+        };
+
+        g.appendChild(el);
+      }
+    }
+
+    const cyclePos = player.breaks % 20;
+    const nightPhase = isNight();
+    const dayNightText = devDisableDayNight
+      ? t('stats.dayNightDisabled', {}, 'Day/night off')
+      : `${isNight() ? t('stats.night', {}, 'Night') : t('stats.day', {}, 'Day')} ? ${t('stats.cycle', { current: cyclePos }, `Cycle ${cyclePos}/20`)}`;
+    document.getElementById('stats').innerHTML = `
+      <span>\u2764\uFE0F ${player.stamina}/${STAMINA_MAX}</span>
+      <span>\u2B50 Lv.${player.level} (${player.exp}/${expToNext()})</span>
+      <span>\u26CF\uFE0F ${escapeHtml(t('stats.mining', { count: player.breaks }, `Mined ${player.breaks}`))}</span>
+      <span class="${nightPhase ? 'tag-night' : ''}">${dayNightText}</span>
+    `;
+    renderInv();
+    renderChest();
+    updateCraft();
+  }
+
+  function renderChestGridCells(list, opts) {
+    const { container, prefix, onClick } = opts;
+    if (!list.length) {
+      container.innerHTML = `<div class="inv-empty">${escapeHtml(t('common.empty', {}, 'Empty'))}</div>`;
+      return;
+    }
+    container.innerHTML = list.map((it, i) => {
+      const def = ITEMS[it.id] || { emoji: '\u{1F4E6}', name: it.id };
+      const countHtml = it.count > 1 ? `<div class="inv-cell-count">${countSuffix(it.count)}</div>` : '';
+      const bulkTip = prefix === 'chest' ? t('tips.bulkTakeFromChest', {}, 'Long press or Shift+click to take stack') : t('tips.bulkStoreInChest', {}, 'Long press or Shift+click to store stack');
+      return `<div class="inv-cell" draggable="true" data-id="${it.id}" data-i="${i}" data-from="${prefix}" title="${escapeHtml(t('tips.dragOne', {}, 'Drag one'))}; ${escapeHtml(bulkTip)}">
+        <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', def.emoji || '?')}</div>
+        <div class="inv-cell-name">${escapeHtml(def.name)}</div>${countHtml}</div>`;
+    }).join('');
+    container.querySelectorAll('.inv-cell[data-i]').forEach(el => {
+      if (onClick) el.addEventListener('click', () => onClick(el));
+    });
+  }
+
+  function renderChest() {
+    const panel = document.getElementById('chest-panel');
+    const chest = getActiveChestStorage();
+    if (!chest) {
+      panel.classList.add('hidden');
+      return;
+    }
+    panel.classList.remove('hidden');
+    document.getElementById('chest-cap').textContent = `(${chestVolume(chest)}/${CHEST_MAX})`;
+    const chestEl = document.getElementById('chest-inventory');
+    renderChestGridCells(chest, { container: chestEl, prefix: 'chest' });
+  }
+
+  function clearAllStonesDev() {
+    if (!devToolsActive) return;
+    const stoneCells = [];
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        if (grid[y][x].stone) stoneCells.push([x, y]);
+      }
+    }
+
+    const previousFastMine = devFastMine;
+    const previousIgnoreStamina = devIgnoreStaminaLimit;
+    devBulkClearingStones = true;
+    devFastMine = true;
+    devIgnoreStaminaLimit = true;
+    try {
+      stoneCells.forEach(([x, y]) => {
+        if (grid[y][x].stone) breakStone(x, y);
+      });
+    } finally {
+      devBulkClearingStones = false;
+      devFastMine = previousFastMine;
+      devIgnoreStaminaLimit = previousIgnoreStamina;
+    }
+
+    ensureDevClearStoneGuarantees();
+    checkLevel();
+    addLog(logT('devClearedStones', { count: stoneCells.length }, `Dev: cleared ${stoneCells.length} stones.`));
+    render();
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+  }
+
+  function renderDevTools() {
+    const panel = document.getElementById('dev-tools');
+    panel.classList.toggle('hidden', !devToolsActive);
+    document.getElementById('dev-stamina').checked = devIgnoreStaminaLimit;
+    document.getElementById('dev-inventory').checked = devIgnoreInventoryLimit;
+    document.getElementById('dev-movement').checked = devIgnoreMovementLimit;
+    document.getElementById('dev-daynight').checked = devDisableDayNight;
+    document.getElementById('dev-fast-mine').checked = devFastMine;
+    document.getElementById('dev-all-tools').checked = devAllTools;
+    document.getElementById('dev-show-codex').checked = devShowAllCodex;
+    const search = document.getElementById('dev-search');
+    if (document.activeElement !== search) search.value = devItemSearch;
+
+    const q = devItemSearch.trim().toLowerCase();
+    const entries = Object.entries(ITEMS).filter(([id, def]) => {
+      if (!q) return true;
+      return id.toLowerCase().includes(q) || (def.name || '').toLowerCase().includes(q);
+    });
+    document.getElementById('dev-item-list').innerHTML = entries.map(([id, def]) => `
+      <button type="button" class="dev-item" data-id="${id}" title="${escapeHtml('Add ' + def.name)}">
+        <span class="emoji">${itemIconMarkup(id, 'item-icon', def.emoji || '?')}</span>
+        <span>${escapeHtml(def.name || id)}</span>
+      </button>
+    `).join('') || `<div class="hint">${escapeHtml(t('devTools.noItemMatches', {}, 'No matching items'))}</div>`;
+  }
+
+  function closeDevTools() {
+    devToolsActive = false;
+    devIgnoreStaminaLimit = false;
+    devIgnoreInventoryLimit = false;
+    devIgnoreMovementLimit = false;
+    devDisableDayNight = false;
+    devFastMine = false;
+    devAllTools = false;
+    devShowAllCodex = false;
+    devItemSearch = '';
+    addLog(logT('devToolsClosed', {}, 'Developer tools closed.'));
+    renderDevTools();
+    render();
+    renderInv();
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+  }
+
+  function toggleDevTools() {
+    if (devToolsActive) {
+      closeDevTools();
+      return;
+    }
+    const code = window.prompt(t('devTools.prompt', {}, 'Developer tool password'));
+    if (code !== 'fishcanfly') {
+      if (code !== null) addLog(logT('devWrongCode', {}, 'Wrong developer tool password.'));
+      return;
+    }
+    devToolsActive = true;
+    addLog(logT('devToolsOpened', {}, 'Developer tools opened.'));
+    renderDevTools();
+  }
+
+  function renderInv() {
+    const list = document.getElementById('inventory');
+    const vol = invVolume();
+    document.getElementById('inv-cap').textContent = `(${vol}/${INV_MAX})`;
+
+    let html = '';
+    if (!inventory.length && !collectedPages.length) {
+      html = `<div class="inv-empty">${escapeHtml(t('common.empty', {}, 'Empty'))}</div>`;
+    } else {
+      html = inventory.map((it, i) => {
+        const def = ITEMS[it.id] || { emoji: '\u{1F4E6}', name: it.id };
+        const sel = craftPickId === it.id ? 'selected' : (selectedInv === it.id ? 'selected' : '');
+        const placeable = isPlaceableItem(it.id);
+        const pm = placedModeForItem(it.id);
+        const chestBulk = playerOnStorageChest() && !placeable && !pm
+          ? `; ${t('tips.bulkStoreInChest', {}, 'Long press or Shift+click to store stack')}`
+          : '';
+        const quickUsesAsCraftMat = itemCanBeCraftedHere(it.id);
+        const tip = pm
+          ? (placedMode === pm
+            ? t('tips.cancelPlace', {}, 'Click again to cancel placement')
+            : (canUsePlaceableAsCraftMaterial(it.id) ? t('tips.placeOrCraft', {}, 'Click to place, or drag into craft slot') : t('tips.placeOnMap', {}, 'Click then place on map')))
+          : (invItemQuickUse(it.id) && !quickUsesAsCraftMat)
+            ? t('tips.singleClickUse', {}, 'Click to use')
+            : t('tips.selectForCraft', {}, 'Click to select for crafting') + chestBulk;
+        const drag = placeable && !canUsePlaceableAsCraftMaterial(it.id) ? 'false' : 'true';
+        const countHtml = it.count > 1 ? `<div class="inv-cell-count">${countSuffix(it.count)}</div>` : '';
+        return `<div class="inv-cell ${sel}" draggable="${drag}" data-id="${it.id}" data-i="${i}" title="${escapeHtml(tip)}">
+          <div class="inv-cell-icon">${itemIconMarkup(it.id, 'item-icon', def.emoji || '?')}</div>
+          <div class="inv-cell-name">${escapeHtml(def.name)}</div>${countHtml}</div>`;
+      }).join('');
+      collectedPages.filter(pi => !submittedPages.includes(pi)).sort((a, b) => a - b).forEach(pi => {
+        html += `<div class="inv-cell" data-page="${pi}" title="${escapeHtml(t('pages.inventoryTitle', {}, 'Submit at crystal ball'))}">
+          <div class="inv-cell-icon">${itemIconMarkup('page', 'item-icon', '\u{1F4DC}')}</div>
+          <div class="inv-cell-name">${escapeHtml(t('pages.inventoryName', { num: PAGE_NUMS[pi] }, `Page(${PAGE_NUMS[pi]})`))}</div></div>`;
+      });
+    }
+    list.innerHTML = html;
+
+    list.querySelectorAll('.inv-cell[data-i]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        const idx = +el.dataset.i;
+        const pm = placedModeForItem(id);
+        if (pm && placedMode === pm) {
+          placedMode = null;
+          craftPickId = null;
+          addLog(logT('cancelPlaceMode', {}, 'Cancelled placement mode.'));
+          render();
+          renderInv();
+          return;
+        }
+        if (invItemQuickUse(id) && !itemCanBeCraftedHere(id)) {
+          craftPickId = null;
+          useInvItem(idx);
+          return;
+        }
+        if (craftPickId !== id) {
+          craftPickId = id;
+          addLog(logT('selectedCraftItem', { item: itemDisplay(craftPickId) }, `Selected ${ITEMS[craftPickId]?.name || craftPickId}`));
+        }
+        renderInv();
+      });
+      el.addEventListener('dblclick', e => {
+        e.preventDefault();
+        craftPickId = null;
+        useInvItem(+el.dataset.i);
+      });
+    });
+    list.querySelectorAll('.inv-cell[data-page]').forEach(el => {
+      const pi = +el.dataset.page;
+      el.onclick = () => showModal(
+        t('pages.lostTitle', { num: PAGE_NUMS[pi] }, `Lost page ${PAGE_NUMS[pi]}`),
+        `<p>${escapeHtml(PAGES[pi])}</p><p class="hint">${escapeHtml(t('pages.submitHint', {}, 'Submit at the crystal ball.'))}</p>`
+      );
+    });
+    renderChest();
+    renderDevTools();
+  }
+
+  function showModal(title, html) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = html;
+    setModalCloseFooter();
+    document.getElementById('modal').classList.add('show');
+  }
+
+  function bindMobileControls() {
+    const controls = document.getElementById('mobile-controls');
+    controls.querySelectorAll('.mobile-move-btn[data-move]').forEach(button => {
+      const [dx, dy] = button.dataset.move.split(',').map(Number);
+      const handleMove = e => {
+        e.preventDefault();
+        if (!mobileControlsActive) return;
+        if (document.getElementById('game-screen').classList.contains('screen-hidden')) return;
+        move(dx, dy);
+      };
+      button.addEventListener(window.PointerEvent ? 'pointerdown' : 'touchstart', handleMove, { passive: false });
+      button.addEventListener('click', e => e.preventDefault());
+    });
+  }
+
+  document.getElementById('craft-btn').onclick = doCraft;
+  document.querySelector('.craft-result-wrap').addEventListener('click', () => {
+    if (document.getElementById('c3').dataset.result) doCraft();
+  });
+  document.getElementById('dev-stamina').addEventListener('change', e => {
+    devIgnoreStaminaLimit = e.target.checked;
+    addLog(devIgnoreStaminaLimit ? logT('devStaminaOff', {}, 'Dev: stamina limit off') : logT('devStaminaOn', {}, 'Dev: stamina limit on'));
+    render();
+  });
+  document.getElementById('dev-inventory').addEventListener('change', e => {
+    devIgnoreInventoryLimit = e.target.checked;
+    addLog(devIgnoreInventoryLimit ? logT('devInventoryOff', {}, 'Dev: inventory limit off') : logT('devInventoryOn', {}, 'Dev: inventory limit on'));
+    renderInv();
+  });
+  document.getElementById('dev-movement').addEventListener('change', e => {
+    devIgnoreMovementLimit = e.target.checked;
+    addLog(devIgnoreMovementLimit ? logT('devMovementOff', {}, 'Dev: movement limit off') : logT('devMovementOn', {}, 'Dev: movement limit on'));
+    render();
+  });
+  document.getElementById('dev-daynight').addEventListener('change', e => {
+    devDisableDayNight = e.target.checked;
+    addLog(devDisableDayNight ? logT('devDayNightOff', {}, 'Dev: day/night off') : logT('devDayNightOn', {}, 'Dev: day/night on'));
+    render();
+  });
+  document.getElementById('dev-fast-mine').addEventListener('change', e => {
+    devFastMine = e.target.checked;
+    addLog(devFastMine ? logT('devFastMineOn', {}, 'Dev: fast mine on') : logT('devFastMineOff', {}, 'Dev: fast mine off'));
+    render();
+  });
+  document.getElementById('dev-clear-stones').addEventListener('click', clearAllStonesDev);
+  document.getElementById('dev-all-tools').addEventListener('change', e => {
+    devAllTools = e.target.checked;
+    addLog(devAllTools ? logT('devAllToolsOn', {}, 'Dev: all tools on') : logT('devAllToolsOff', {}, 'Dev: all tools off'));
+    render();
+  });
+  document.getElementById('dev-show-codex').addEventListener('change', e => {
+    devShowAllCodex = e.target.checked;
+    addLog(devShowAllCodex ? logT('devCodexAll', {}, 'Dev: codex shows all') : logT('devCodexLimited', {}, 'Dev: codex discovery limit restored'));
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+    renderDevTools();
+  });
+  document.getElementById('dev-search').addEventListener('input', e => {
+    devItemSearch = e.target.value;
+    renderDevTools();
+  });
+  document.getElementById('dev-item-list').addEventListener('click', e => {
+    const button = e.target.closest('.dev-item[data-id]');
+    if (!button || !devToolsActive) return;
+    const id = button.dataset.id;
+    if (addItem(id, 1)) {
+      addLog(logT('devGotItem', { item: itemDisplay(id) }, `Dev got ${ITEMS[id]?.name || id}`));
+      renderInv();
+      renderDevTools();
+    }
+  });
+  setupCraftDragDrop();
+  document.getElementById('btn-victory-restart').onclick = () => restartGame();
+  document.getElementById('btn-victory-map').onclick = () => {
+    document.getElementById('victory-modal').classList.remove('show');
+  };
+  document.getElementById('btn-start-game').onclick = () => showScreen('game');
+  document.getElementById('btn-open-codex').onclick = () => showScreen('codex');
+  document.getElementById('btn-codex-start').onclick = () => showScreen('game');
+  document.getElementById('btn-codex-back').onclick = () => showScreen('menu');
+  document.getElementById('btn-game-codex').onclick = () => showScreen('codex');
+  document.getElementById('btn-game-menu').onclick = () => showScreen('menu');
+  document.getElementById('btn-bgm-toggle').onclick = () => toggleGameBgmMute();
+
+  document.addEventListener('stonia:localechange', () => {
+    document.title = t('document.gameTitle', {}, document.title);
+    refreshLocalizedGameData();
+    refreshStationLabels();
+    updateBgmButton();
+    render();
+    if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === '`') {
+      e.preventDefault();
+      toggleDevTools();
+      return;
+    }
+    if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    if (document.getElementById('game-screen').classList.contains('screen-hidden')) return;
+    const k = e.key.toLowerCase();
+    const map = { w: [0,-1], s: [0,1], a: [-1,0], d: [1,0], arrowup: [0,-1], arrowdown: [0,1], arrowleft: [-1,0], arrowright: [1,0] };
+    if (map[k]) { e.preventDefault(); move(...map[k]); }
+  });
+
+  initDeviceMode();
+  bindMobileControls();
+  initGrid();
+  addLog(logT('startInitial', {}, 'Stamina 10. Start in the center.'));
+  updateBgmButton();
+  render();
+  showScreen('menu');
+})();
+</script>
+</body>
+</html>
