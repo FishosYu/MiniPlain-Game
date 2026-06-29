@@ -66,7 +66,7 @@
       contentTitle: 'Content Overview',
       contentLead: 'The current Web version revolves around exploration, crafting, planting, cooking, and collecting lost pages. The full item codex remains on a separate page.',
       earlyTitle: 'Opening',
-      earlyText: 'Start from the center tile and an old toolbox, break nearby stones, and gather basic minerals and wood.',
+      earlyText: 'Start from the center tile, break an adjacent stone to find the old toolbox, then gather basic minerals and wood.',
       midTitle: 'Middle',
       midText: 'Craft the forge, stone axe, iron pot, campfire, and chest, then start dealing with animals, plants, cooking, and storage.',
       lateTitle: 'Late',
@@ -101,7 +101,7 @@
       pages: {
         0: {
           title: 'Chapter I: Awake Between Stones',
-          text: 'Start from the old {icon:item:toolbox} toolbox in the center, break nearby stones, and collect stone, iron, and wood. Once you make your first real tool, the plain is not only opening up, it is starting to answer you.',
+          text: 'Start from the center tile, break an adjacent stone to find the old {icon:item:toolbox} toolbox, spend stamina opening the stony plain, and collect stone, iron, and wood. Once you make your first real tool, the plain is not only opening up, it is starting to answer you.',
         },
         1: {
           title: 'Chapter II: Fire and Pot',
@@ -121,7 +121,7 @@
         },
       },
       achievements: {
-        found_toolbox: { name: 'Old Toolbox', desc: 'Find the old toolbox on the center tile.' },
+        found_toolbox: { name: 'Old Toolbox', desc: 'Break the first adjacent stone and find the old toolbox.' },
         first_stone: { name: 'First Stone', desc: 'Break any stone by hand.' },
         first_tool: { name: 'First Tool', desc: 'Obtain a stone axe, iron sword, hammer, rod, or iron bucket.' },
         built_campfire: { name: 'Light a Campfire', desc: 'Obtain or craft a campfire.' },
@@ -169,6 +169,11 @@
       controlsHint: 'WASD / arrow keys to move · Click highlighted tiles to clear stones (must be next to normal ground and costs 1 stamina) · Click ground items to interact',
       muteBgm: 'Mute background music',
       unmuteBgm: 'Unmute background music',
+      newGame: 'New Game',
+      newGameConfirmTitle: 'Start a new game?',
+      newGameConfirmText: 'Start a new game? The old map and achievements will not be saved.',
+      newGameCancel: 'Cancel',
+      newGameConfirm: 'Confirm',
       inventory: 'Backpack',
       chest: '{icon:item:chest} Chest',
       chestHint: 'Drag items between the chest and backpack',
@@ -255,7 +260,7 @@
     },
     stats: {
       dayNightDisabled: 'Day/night off',
-      night: 'Night (4-tile vision, {icon:item:campfire} lights 3 tiles, {icon:item:oven}/{icon:entity:crystal_ball} light 8 surrounding tiles)',
+      night: 'Night',
       day: 'Day',
       cycle: 'Cycle {current}/20',
       mining: 'Mined {count}',
@@ -298,8 +303,8 @@
       inventoryFull: 'Backpack is full!',
       chestFull: 'Chest is full!',
       invalidItem: 'Invalid item',
-      startInitial: 'Stamina 10. The start {icon:entity:spawn} is at the center, with a toolbox underfoot for crafting.',
-      restart: 'A new run begins. Start at {icon:entity:spawn} and break adjacent stones to explore!',
+      startInitial: 'Stamina 10. The start {icon:entity:spawn} is at the center. Break an adjacent stone to look for the toolbox.',
+      restart: 'A new run begins. Start at {icon:entity:spawn} and break an adjacent stone to find the toolbox!',
       revealToolbox: 'Found an old toolbox! Stand on its tile to craft.',
       revealWater: 'Found a pool {icon:terrain:water}',
       revealPlant: 'Found {plantIcon} {plant}',

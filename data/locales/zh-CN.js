@@ -66,7 +66,7 @@
       contentTitle: '内容概览',
       contentLead: '当前 Web 的内容围绕探索、制造、种植、烹饪和书页收集展开。完整物品图鉴仍然放在独立子页面。',
       earlyTitle: '开局',
-      earlyText: '从中心格和破旧工具箱开始，凿开周围石头，收集基础矿物和木材。',
+      earlyText: '从中心格开始，先凿开相邻石头找到破旧工具箱，再收集基础矿物和木材。',
       midTitle: '中段',
       midText: '制造铸造台、石斧、铁锅、篝火和箱子，开始处理动物、植物、烹饪与储物问题。',
       lateTitle: '后段',
@@ -101,7 +101,7 @@
       pages: {
         0: {
           title: '第一章：石缝醒来',
-          text: '从中心格的{icon:item:toolbox}旧工具箱开始，先凿开相邻石头，收集石头、铁块和木材。等你做出第一件真正的工具，平原就不只是被打开，而是开始回应你。',
+          text: '从中心格开始，先凿开相邻石头找到{icon:item:toolbox}工具箱，消耗体力凿开石原，收集石头、铁块和木材。等你做出第一件真正的工具，平原就不只是被打开，而是开始回应你。',
         },
         1: {
           title: '第二章：火与锅',
@@ -121,7 +121,7 @@
         },
       },
       achievements: {
-        found_toolbox: { name: '旧工具箱', desc: '找到中心格的破旧工具箱。' },
+        found_toolbox: { name: '旧工具箱', desc: '凿开第一块相邻石头，找到破旧工具箱。' },
         first_stone: { name: '第一块石头', desc: '亲手凿开任意一块石头。' },
         first_tool: { name: '第一把工具', desc: '获得石斧、铁剑、锤子、鱼竿或铁桶。' },
         built_campfire: { name: '点起篝火', desc: '获得或制造一座篝火。' },
@@ -169,6 +169,11 @@
       controlsHint: 'WASD / 方向键移动 · 点击高亮格清除石头(需相邻普通地面且消耗1体力) · 点击地面物品互动',
       muteBgm: '静音背景音乐',
       unmuteBgm: '取消静音背景音乐',
+      newGame: '新游戏',
+      newGameConfirmTitle: '是否新建游戏？',
+      newGameConfirmText: '是否新建游戏？旧的地图和成就不会保存。',
+      newGameCancel: '取消',
+      newGameConfirm: '确认新建',
       inventory: '背包',
       chest: '{icon:item:chest} 箱子',
       chestHint: '与背包物品可相互拖拽转移',
@@ -246,7 +251,7 @@
     },
     stats: {
       dayNightDisabled: '昼夜关闭',
-      night: '夜间(周围4格视野，{icon:item:campfire}照亮3格，{icon:item:oven}/{icon:entity:crystal_ball}照亮周围8格)',
+      night: '夜间',
       day: '白天',
       cycle: '周期 {current}/20',
       mining: '凿石 {count}',
@@ -289,8 +294,8 @@
       inventoryFull: '背包已满！',
       chestFull: '箱子已满！',
       invalidItem: '无效物品',
-      startInitial: '体力10。起点{icon:entity:spawn}在地图中央，脚下有工具箱可制造。',
-      restart: '新一局开始。起点{icon:entity:spawn}，凿开相邻石头探索吧！',
+      startInitial: '体力10。起点{icon:entity:spawn}在地图中央，先凿开相邻石头寻找工具箱。',
+      restart: '新一局开始。起点{icon:entity:spawn}，先凿开相邻石头找到工具箱吧！',
       revealToolbox: '发现破旧工具箱！站在格上可制造。',
       revealWater: '发现水池{icon:terrain:water}',
       revealPlant: '发现{plantIcon}{plant}',

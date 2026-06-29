@@ -192,6 +192,19 @@
       --pixel-size: clamp(8px, 1.7vw, 14px);
     }
 
+    .game-title-word {
+      gap: clamp(2px, .3vw, 3px);
+      margin: 0;
+      --pixel-size: clamp(2px, .4vw, 3.5px);
+      --pixel-color: var(--pixel-dark);
+    }
+
+    .game-title-web {
+      font-size: 1.15rem;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #efc477;
+    }
+
     .brand-subtitle {
       display: inline-block;
       color: #8e3528;
@@ -246,6 +259,42 @@
     .pixel-btn.muted:hover {
       background: #706b61;
       box-shadow: 3px 3px 0 #5a5548;
+    }
+    .pixel-btn.bgm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .music-pixel-icon {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      image-rendering: pixelated;
+    }
+    .music-pixel-icon::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 1px;
+      width: 3px;
+      height: 11px;
+      background: #fff;
+      box-shadow: 7px 0 0 #fff, 3px 0 0 #fff;
+    }
+    .music-pixel-icon::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      box-shadow: 10px -2px 0 #fff;
+    }
+    .bgm-btn.bgm-off .music-pixel-icon {
+      opacity: .55;
     }
     .language-toggle {
       position: fixed;
@@ -472,9 +521,11 @@
       font-weight: 700;
     }
     .stats .adventure-book-btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      margin-left: auto;
       width: 36px;
       min-height: 28px;
       padding: 2px;
@@ -491,6 +542,21 @@
       height: 25px;
       object-fit: contain;
       image-rendering: pixelated;
+      pointer-events: none;
+    }
+    .new-page-notice {
+      position: relative;
+    }
+    .new-page-notice::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 9px;
+      height: 9px;
+      background: #d64032;
+      border: 2px solid var(--pixel-dark);
+      box-shadow: 1px 1px 0 rgba(61, 56, 48, .3);
       pointer-events: none;
     }
     #grid-wrap {
@@ -1116,6 +1182,13 @@
     }
     #victory-modal .modal { text-align: center; max-width: 400px; }
     #victory-modal h3 { font-size: 1.4rem; color: #5a4a8a; }
+    .modal.new-game-modal {
+      max-width: 420px;
+      text-align: center;
+    }
+    .modal.new-game-modal p {
+      color: #5a5548;
+    }
     .dev-tools {
       position: fixed;
       left: 12px;
@@ -1217,13 +1290,22 @@
 
   <section class="game-shell screen-hidden" id="game-screen">
     <header class="game-top">
-      <h1>
+      <h1 aria-label="Stonia Web">
         <img class="game-title-logo" src="./assets/2D/ui/stonia-logo.png" alt="" aria-hidden="true">
-        <span data-i18n="game.title">Stonia Web</span>
+        <span class="pixel-title game-title-word" aria-label="Stonia">
+          <span class="pixel-letter letter-s" aria-hidden="true"></span>
+          <span class="pixel-letter letter-t" aria-hidden="true"></span>
+          <span class="pixel-letter letter-o" aria-hidden="true"></span>
+          <span class="pixel-letter letter-n" aria-hidden="true"></span>
+          <span class="pixel-letter letter-i" aria-hidden="true"></span>
+          <span class="pixel-letter letter-a" aria-hidden="true"></span>
+        </span>
+        <span class="game-title-web">Web</span>
         <small class="game-title-subtitle" data-i18n="game.subtitle">Stonia</small>
       </h1>
       <div class="game-top-actions">
-        <button class="pixel-btn muted" type="button" id="btn-bgm-toggle" aria-label="Toggle music" title="Toggle music">&#9834;</button>
+        <button class="pixel-btn" type="button" id="btn-new-game" data-i18n="game.newGame">New Game</button>
+        <button class="pixel-btn muted bgm-btn" type="button" id="btn-bgm-toggle" aria-label="Toggle music" title="Toggle music"><span class="music-pixel-icon" aria-hidden="true"></span><span>BGM</span></button>
         <button class="pixel-btn secondary" type="button" id="btn-game-codex" data-i18n="common.codex">Codex</button>
         <button class="pixel-btn muted" type="button" id="btn-game-menu" data-i18n="common.mainMenu">Menu</button>
       </div>
@@ -1552,7 +1634,8 @@
     const label = bgmMuted
       ? t('game.unmuteBgm', {}, 'Unmute music')
       : t('game.muteBgm', {}, 'Mute music');
-    btn.textContent = bgmMuted ? 'BGM Off' : 'BGM';
+    btn.innerHTML = `<span class="music-pixel-icon" aria-hidden="true"></span><span>${bgmMuted ? 'BGM Off' : 'BGM'}</span>`;
+    btn.classList.toggle('bgm-off', bgmMuted);
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
@@ -1664,15 +1747,18 @@
   let devBulkClearingStones = false;
   let adventurePageIndex = 0;
   const adventureAchievements = new Set();
+  const viewedAdventurePages = new Set([0]);
+  const announcedAdventurePages = new Set([0]);
+  let adventureBookHasNewPage = false;
   const ADVENTURE_TOOL_IDS = new Set(['stone_axe', 'iron_sword', 'hammer', 'rod', 'iron_bucket']);
   const ADVENTURE_PAGES = [
     {
       titleKey: 'adventure.pages.0.title',
       title: '第一章：石缝醒来',
       textKey: 'adventure.pages.0.text',
-      text: '从中心格的{icon:item:toolbox}旧工具箱开始，先凿开相邻石头，收集石头、铁块和木材。等你做出第一件真正的工具，平原就不只是被打开，而是开始回应你。',
+      text: '从中心格开始，先凿开相邻石头找到{icon:item:toolbox}工具箱，消耗体力凿开石原，收集石头、铁块和木材。等你做出第一件真正的工具，平原就不只是被打开，而是开始回应你。',
       achievements: [
-        { id: 'found_toolbox', icon: 'toolbox', nameKey: 'adventure.achievements.found_toolbox.name', name: '旧工具箱', descKey: 'adventure.achievements.found_toolbox.desc', desc: '找到中心格的破旧工具箱。' },
+        { id: 'found_toolbox', icon: 'toolbox', nameKey: 'adventure.achievements.found_toolbox.name', name: '旧工具箱', descKey: 'adventure.achievements.found_toolbox.desc', desc: '凿开第一块相邻石头，找到破旧工具箱。' },
         { id: 'first_stone', icon: 'stone', nameKey: 'adventure.achievements.first_stone.name', name: '第一块石头', descKey: 'adventure.achievements.first_stone.desc', desc: '亲手凿开任意一块石头。' },
         { id: 'first_tool', icon: 'stone_axe', nameKey: 'adventure.achievements.first_tool.name', name: '第一把工具', descKey: 'adventure.achievements.first_tool.desc', desc: '获得石斧、铁剑、锤子、鱼竿或铁桶。' },
       ],
@@ -1728,6 +1814,7 @@
     const panel = document.querySelector('#modal .modal');
     if (!panel) return;
     panel.classList.toggle('adventure-modal', name === 'adventure');
+    panel.classList.toggle('new-game-modal', name === 'new-game');
   }
 
   function adventureAchievementLabel(achievement, field) {
@@ -1758,6 +1845,33 @@
     return true;
   }
 
+  function updateAdventureBookButtonBadge() {
+    document.getElementById('btn-adventure-book')?.classList.toggle('new-page-notice', adventureBookHasNewPage);
+  }
+
+  function syncAdventurePageNotifications() {
+    if (devAdventureComplete) {
+      adventureBookHasNewPage = false;
+      updateAdventureBookButtonBadge();
+      return;
+    }
+    for (let i = 1; i < ADVENTURE_PAGES.length; i++) {
+      if (canOpenAdventurePage(i) && !viewedAdventurePages.has(i) && !announcedAdventurePages.has(i)) {
+        announcedAdventurePages.add(i);
+        adventureBookHasNewPage = true;
+      }
+    }
+    updateAdventureBookButtonBadge();
+  }
+
+  function adventurePageNeedsNotice(index) {
+    return index > 0 && canOpenAdventurePage(index) && !viewedAdventurePages.has(index);
+  }
+
+  function markAdventurePageViewed(index) {
+    viewedAdventurePages.add(index);
+  }
+
   function adventureProgressText(index) {
     const page = ADVENTURE_PAGES[index];
     const done = page.achievements.filter(achievement => adventureAchievementDone(achievement.id)).length;
@@ -1769,6 +1883,7 @@
     if (!achievement || adventureAchievements.has(id)) return;
     adventureAchievements.add(id);
     addLog(t('adventure.unlockLog', { name: adventureAchievementLabel(achievement, 'name') }, `手册成就达成：${adventureAchievementLabel(achievement, 'name')}`));
+    syncAdventurePageNotifications();
     if (document.getElementById('modal').classList.contains('show') && document.querySelector('#modal .modal')?.classList.contains('adventure-modal')) {
       renderAdventureHandbook();
     }
@@ -1817,10 +1932,11 @@
 
     const prevDisabled = adventurePageIndex <= 0;
     const nextDisabled = adventurePageIndex >= ADVENTURE_PAGES.length - 1 || !canOpenAdventurePage(adventurePageIndex + 1);
+    const nextHasNotice = !nextDisabled && adventurePageNeedsNotice(adventurePageIndex + 1);
     document.getElementById('modal-footer').innerHTML = `<div class="modal-btn-row">
       <button class="pixel-btn muted" type="button" id="adventure-prev" ${prevDisabled ? 'disabled' : ''}>${escapeHtml(t('adventure.prev', {}, '上一页'))}</button>
       <span class="hint">${escapeHtml(t('adventure.pageIndicator', { current: adventurePageIndex + 1, total: ADVENTURE_PAGES.length }, `${adventurePageIndex + 1}/${ADVENTURE_PAGES.length}`))}</span>
-      <button type="button" id="adventure-next" ${nextDisabled ? 'disabled' : ''}>${escapeHtml(t('adventure.next', {}, '下一页'))}</button>
+      <button class="${nextHasNotice ? 'new-page-notice' : ''}" type="button" id="adventure-next" ${nextDisabled ? 'disabled' : ''}>${escapeHtml(t('adventure.next', {}, '下一页'))}</button>
       <button class="pixel-btn muted" type="button" id="modal-close">${escapeHtml(t('common.close', {}, 'Close'))}</button>
     </div>`;
     document.getElementById('adventure-prev').onclick = () => {
@@ -1831,6 +1947,7 @@
     document.getElementById('adventure-next').onclick = () => {
       if (adventurePageIndex >= ADVENTURE_PAGES.length - 1 || !canOpenAdventurePage(adventurePageIndex + 1)) return;
       adventurePageIndex++;
+      markAdventurePageViewed(adventurePageIndex);
       renderAdventureHandbook();
     };
     document.getElementById('modal-close').onclick = () => {
@@ -1841,6 +1958,9 @@
 
   function openAdventureHandbook() {
     while (!canOpenAdventurePage(adventurePageIndex) && adventurePageIndex > 0) adventurePageIndex--;
+    adventureBookHasNewPage = false;
+    markAdventurePageViewed(adventurePageIndex);
+    updateAdventureBookButtonBadge();
     setModalVariant('adventure');
     renderAdventureHandbook();
     document.getElementById('modal').classList.add('show');
@@ -1900,11 +2020,7 @@
     const c = grid[CENTER][CENTER];
     c.stone = false;
     c.ground = 'normal';
-    c.hidden = { type: 'toolbox' };
-    c.structure = 'toolbox';
     c.spawn = true;
-    discoverItem('toolbox');
-    unlockAdventureAchievement('found_toolbox');
   }
 
   function isNight() {
@@ -3108,6 +3224,7 @@
   function restartGame() {
     document.getElementById('victory-modal').classList.remove('show');
     document.getElementById('modal').classList.remove('show');
+    setModalVariant(null);
     player = { x: CENTER, y: CENTER, stamina: 10, exp: 0, level: 0, breaks: 0 };
     inventory = [];
     Object.keys(chestStorages).forEach(k => delete chestStorages[k]);
@@ -3137,6 +3254,11 @@
     devItemSearch = '';
     adventurePageIndex = 0;
     adventureAchievements.clear();
+    viewedAdventurePages.clear();
+    viewedAdventurePages.add(0);
+    announcedAdventurePages.clear();
+    announcedAdventurePages.add(0);
+    adventureBookHasNewPage = false;
     Object.assign(guarantees, {
       firstBreak: false, pool: false, bush: false, stone2: 0, iron2: 0,
       forcedPool: false, forcedBush: false,
@@ -3144,6 +3266,25 @@
     initGrid();
     addLog(logT('restart', {}, 'New game started.'));
     render();
+  }
+
+  function openNewGameConfirm() {
+    setModalVariant('new-game');
+    setRichText('modal-title', t('game.newGameConfirmTitle', {}, 'Start a new game?'));
+    document.getElementById('modal-body').innerHTML = `<p>${richTextMarkup(t('game.newGameConfirmText', {}, 'Start a new game? The old map and achievements will not be saved.'))}</p>`;
+    document.getElementById('modal-footer').innerHTML = `<div class="modal-btn-row">
+      <button class="pixel-btn muted" type="button" id="btn-new-game-cancel">${escapeHtml(t('game.newGameCancel', {}, 'Cancel'))}</button>
+      <button type="button" id="btn-new-game-confirm">${escapeHtml(t('game.newGameConfirm', {}, 'Confirm'))}</button>
+    </div>`;
+    document.getElementById('btn-new-game-cancel').onclick = () => {
+      document.getElementById('modal').classList.remove('show');
+      setModalVariant(null);
+    };
+    document.getElementById('btn-new-game-confirm').onclick = () => {
+      restartGame();
+      showScreen('game');
+    };
+    document.getElementById('modal').classList.add('show');
   }
 
   function openGoldenMerchant() {
@@ -3250,7 +3391,10 @@
   }
 
   document.getElementById('modal').addEventListener('click', e => {
-    if (e.target.id === 'modal') document.getElementById('modal').classList.remove('show');
+    if (e.target.id === 'modal') {
+      document.getElementById('modal').classList.remove('show');
+      setModalVariant(null);
+    }
   });
 
   function move(dx, dy) {
@@ -4189,14 +4333,15 @@
       ? t('stats.dayNightDisabled', {}, 'Day/night off')
       : `${isNight() ? t('stats.night', {}, 'Night') : t('stats.day', {}, 'Day')} / ${t('stats.cycle', { current: cyclePos }, `Cycle ${cyclePos}/20`)}`;
     const handbookLabel = t('adventure.openAria', {}, '打开冒险手册');
+    syncAdventurePageNotifications();
     document.getElementById('stats').innerHTML = `
       <span>HP ${player.stamina}/${STAMINA_MAX}</span>
-      <button class="adventure-book-btn" type="button" id="btn-adventure-book" aria-label="${escapeHtml(handbookLabel)}" title="${escapeHtml(handbookLabel)}">
-        <img src="./assets/2D/ui/adventure-book.svg" alt="" aria-hidden="true">
-      </button>
       <span>Lv.${player.level} (${player.exp}/${expToNext()})</span>
       <span>${escapeHtml(t('stats.mining', { count: player.breaks }, `Mined ${player.breaks}`))}</span>
       <span class="${nightPhase ? 'tag-night' : ''}">${richTextMarkup(dayNightText)}</span>
+      <button class="adventure-book-btn ${adventureBookHasNewPage ? 'new-page-notice' : ''}" type="button" id="btn-adventure-book" aria-label="${escapeHtml(handbookLabel)}" title="${escapeHtml(handbookLabel)}">
+        <img src="./assets/2D/ui/adventure-book.svg" alt="" aria-hidden="true">
+      </button>
     `;
     document.getElementById('btn-adventure-book').onclick = () => openAdventureHandbook();
     renderInv();
@@ -4517,6 +4662,7 @@
   document.getElementById('btn-codex-back').onclick = () => showScreen('menu');
   document.getElementById('btn-game-codex').onclick = () => showScreen('codex');
   document.getElementById('btn-game-menu').onclick = () => showScreen('menu');
+  document.getElementById('btn-new-game').onclick = () => openNewGameConfirm();
   document.getElementById('btn-bgm-toggle').onclick = () => toggleGameBgmMute();
 
   document.addEventListener('stonia:localechange', () => {
@@ -4547,7 +4693,7 @@
   initDeviceMode();
   bindMobileControls();
   initGrid();
-  addLog(logT('startInitial', {}, 'Stamina 10. Start in the center.'));
+  addLog(logT('startInitial', {}, 'Stamina 10. Start in the center and break an adjacent stone to find the toolbox.'));
   updateBgmButton();
   render();
   showScreen('menu');

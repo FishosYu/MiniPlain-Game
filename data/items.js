@@ -465,7 +465,7 @@ window.MINIPLAIN_ITEMS = {
     vol: 0,
     category: '货币与任务',
     texts: {
-      overview: '本 Demo 的主目标，收集并提交 7 页即可通关。',
+      overview: '本 Web 的主目标，收集并提交 7 页即可通关。',
       game: '遗落书页',
       codex: '被石头压住的故事，等你一页一页捡回来。',
       obtain: ['凿石探索时随机发现。'],
