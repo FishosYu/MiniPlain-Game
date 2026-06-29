@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stonia Demo</title>
+  <title>Stonia Web</title>
   <link rel="icon" type="image/png" href="./assets/2D/ui/stonia-logo.png">
   <style>
     :root {
@@ -471,6 +471,28 @@
       box-shadow: 3px 3px 0 #d8c896;
       font-weight: 700;
     }
+    .stats .adventure-book-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      min-height: 28px;
+      padding: 2px;
+      background: #ffe4ba;
+      border-color: #8e3528;
+      box-shadow: 3px 3px 0 #c9b072;
+    }
+    .stats .adventure-book-btn:hover {
+      background: #ffd58d;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .stats .adventure-book-btn img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      pointer-events: none;
+    }
     #grid-wrap {
       overflow: auto;
       display: flex;
@@ -595,6 +617,7 @@
       isolation: isolate;
       overflow: hidden;
     }
+    .cell::before,
     .cell::after {
       content: "";
       position: absolute;
@@ -864,6 +887,145 @@
     }
     .modal h3 { margin-bottom: 10px; font-size: 1rem; color: var(--pixel-dark); text-shadow: 2px 2px 0 #efc477; }
     .modal p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 8px; }
+    .modal.adventure-modal {
+      width: min(900px, 94vw);
+      max-width: min(900px, 94vw);
+      background: #d69a50;
+      box-shadow: 9px 9px 0 #8e5f2f, 13px 13px 0 rgba(61, 56, 48, .28);
+    }
+    .adventure-book {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      padding: 14px;
+      background:
+        linear-gradient(90deg, transparent calc(50% - 6px), #8e5f2f calc(50% - 6px), #8e5f2f calc(50% + 6px), transparent calc(50% + 6px)),
+        #b9793e;
+      border: 4px solid var(--pixel-dark);
+      box-shadow: inset 0 0 0 4px rgba(255, 236, 188, .45), 5px 5px 0 rgba(61, 56, 48, .18);
+    }
+    .adventure-page {
+      min-height: 330px;
+      padding: 16px;
+      background:
+        linear-gradient(rgba(255,255,255,.32), rgba(255,255,255,0)),
+        var(--pixel-paper);
+      border: 3px solid var(--pixel-dark);
+      box-shadow: inset -4px -4px 0 rgba(198, 154, 82, .18), 4px 4px 0 rgba(61, 56, 48, .12);
+    }
+    .adventure-chapter {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      font-size: .72rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .adventure-copy {
+      color: #4d4338;
+      line-height: 1.75;
+    }
+    .adventure-achievement-list {
+      display: grid;
+      gap: 10px;
+    }
+    .adventure-achievement {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 64px;
+      padding: 8px;
+      background: #fffef9;
+      border: 3px solid var(--pixel-dark);
+      box-shadow: 3px 3px 0 #d8c896;
+    }
+    .adventure-achievement.done {
+      background: #e0edd8;
+      border-color: #4d6e42;
+      box-shadow: 3px 3px 0 #8dae72;
+    }
+    .adventure-achievement.locked {
+      opacity: .62;
+      background:
+        linear-gradient(45deg, rgba(61,56,48,.08) 25%, transparent 25%, transparent 75%, rgba(61,56,48,.08) 75%),
+        #faf8f4;
+      background-size: 12px 12px;
+    }
+    .adventure-achievement-icon {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      background: #fff4d8;
+      border: 2px solid #8e3528;
+      box-shadow: inset 0 -3px 0 rgba(61, 56, 48, .08);
+    }
+    .adventure-achievement-icon .item-icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto;
+    }
+    .adventure-achievement-icon .cell-icon {
+      width: 32px;
+      height: 32px;
+    }
+    .adventure-achievement-name {
+      display: block;
+      color: var(--pixel-dark);
+      font-size: .78rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .adventure-achievement-desc {
+      display: block;
+      margin-top: 3px;
+      color: #6a655c;
+      font-size: .68rem;
+      line-height: 1.35;
+    }
+    .adventure-achievement-state {
+      min-width: 2.2em;
+      color: #8e3528;
+      font-size: .72rem;
+      font-weight: 900;
+      text-align: center;
+    }
+    .adventure-progress {
+      margin-top: 12px;
+      padding: 7px 8px;
+      background: #ffe4ba;
+      border: 2px solid #8e3528;
+      color: #8e3528;
+      font-size: .72rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 #c9b072;
+    }
+    .adventure-locked-note {
+      margin-top: 10px;
+      padding: 8px;
+      background: #f2e2c4;
+      border: 2px dashed #8e5f2f;
+      color: #7a4f32;
+      font-size: .72rem;
+      line-height: 1.45;
+    }
+    @media (max-width: 720px) {
+      .adventure-book {
+        grid-template-columns: 1fr;
+        background: #b9793e;
+      }
+      .adventure-page {
+        min-height: auto;
+      }
+      .adventure-achievement {
+        grid-template-columns: 40px 1fr auto;
+      }
+    }
     .hint { font-size: 0.72rem; color: #8a8578; margin-top: 6px; line-height: 1.45; }
     .hint .hint-icon {
       width: 18px;
@@ -907,22 +1069,27 @@
         url("./assets/2D/tiles/terrain/stone.png"),
         url("./assets/2D/tiles/terrain/grass.png");
     }
-    body.night-mode #grid .cell.campfire-lit {
+    body.night-mode #grid .cell.warm-lit {
       box-shadow: inset 0 0 12px rgba(255, 180, 80, 0.35);
     }
-    body.night-mode #grid .cell.campfire-lit::after {
+    body.night-mode #grid .cell.warm-lit::after {
       opacity: 1;
       background: rgba(255, 186, 86, .12);
       mix-blend-mode: screen;
     }
-    body.night-mode #grid .cell.campfire-light-0::after { background: rgba(255, 202, 104, .24); }
-    body.night-mode #grid .cell.campfire-light-1::after { background: rgba(255, 194, 92, .20); }
-    body.night-mode #grid .cell.campfire-light-2::after { background: rgba(255, 184, 78, .15); }
-    body.night-mode #grid .cell.campfire-light-3::after { background: rgba(255, 176, 68, .10); }
-    body.night-mode #grid .cell.campfire-lit span { visibility: visible !important; color: inherit; }
-    body.night-mode #grid .cell:not(.visible-night):not(.player):not(.campfire-lit):not(.crystal-lit) span { visibility: hidden; }
+    body.night-mode #grid .cell.warm-light-0::after { background: rgba(255, 202, 104, .24); }
+    body.night-mode #grid .cell.warm-light-1::after { background: rgba(255, 194, 92, .20); }
+    body.night-mode #grid .cell.warm-light-2::after { background: rgba(255, 184, 78, .15); }
+    body.night-mode #grid .cell.warm-light-3::after { background: rgba(255, 176, 68, .10); }
+    body.night-mode #grid .cell.warm-lit span { visibility: visible !important; color: inherit; }
+    body.night-mode #grid .cell:not(.visible-night):not(.player):not(.warm-lit):not(.crystal-lit) span { visibility: hidden; }
     body.night-mode #grid .cell.crystal-lit {
       box-shadow: inset 0 0 14px rgba(180, 160, 255, 0.45);
+    }
+    body.night-mode #grid .cell.crystal-lit::before {
+      opacity: 1;
+      background: rgba(190, 160, 255, .16);
+      mix-blend-mode: screen;
     }
     body.night-mode #grid .cell.crystal-lit span { visibility: visible !important; color: inherit; }
     .cell.spawn-tile { background: #f5e8e6; box-shadow: inset 0 0 0 1px #e8b4b0; }
@@ -1052,7 +1219,7 @@
     <header class="game-top">
       <h1>
         <img class="game-title-logo" src="./assets/2D/ui/stonia-logo.png" alt="" aria-hidden="true">
-        <span data-i18n="game.title">Stonia Demo</span>
+        <span data-i18n="game.title">Stonia Web</span>
         <small class="game-title-subtitle" data-i18n="game.subtitle">Stonia</small>
       </h1>
       <div class="game-top-actions">
@@ -1071,6 +1238,7 @@
     <label class="dev-row"><input type="checkbox" id="dev-fast-mine"> <span data-i18n="devTools.fastMine">Fast mine all stones</span></label>
     <label class="dev-row"><input type="checkbox" id="dev-all-tools"> <span data-i18n="devTools.allTools">All tools</span></label>
     <label class="dev-row"><input type="checkbox" id="dev-show-codex"> <span data-i18n="devTools.showCodex">Show all codex</span></label>
+    <label class="dev-row"><input type="checkbox" id="dev-adventure-complete"> <span data-i18n="devTools.adventureComplete">View completed adventure handbook</span></label>
     <button class="dev-action pixel-btn secondary" type="button" id="dev-clear-stones" data-i18n="devTools.clearStones">Clear stones</button>
     <div class="hint" data-i18n="devTools.hint">Search and click an item to add one.</div>
     <input type="text" id="dev-search" placeholder="Search item name or id" data-i18n-placeholder="devTools.searchPlaceholder">
@@ -1491,8 +1659,192 @@
   let devFastMine = false;
   let devAllTools = false;
   let devShowAllCodex = false;
+  let devAdventureComplete = false;
   let devItemSearch = '';
   let devBulkClearingStones = false;
+  let adventurePageIndex = 0;
+  const adventureAchievements = new Set();
+  const ADVENTURE_TOOL_IDS = new Set(['stone_axe', 'iron_sword', 'hammer', 'rod', 'iron_bucket']);
+  const ADVENTURE_PAGES = [
+    {
+      titleKey: 'adventure.pages.0.title',
+      title: '第一章：石缝醒来',
+      textKey: 'adventure.pages.0.text',
+      text: '从中心格的{icon:item:toolbox}旧工具箱开始，先凿开相邻石头，收集石头、铁块和木材。等你做出第一件真正的工具，平原就不只是被打开，而是开始回应你。',
+      achievements: [
+        { id: 'found_toolbox', icon: 'toolbox', nameKey: 'adventure.achievements.found_toolbox.name', name: '旧工具箱', descKey: 'adventure.achievements.found_toolbox.desc', desc: '找到中心格的破旧工具箱。' },
+        { id: 'first_stone', icon: 'stone', nameKey: 'adventure.achievements.first_stone.name', name: '第一块石头', descKey: 'adventure.achievements.first_stone.desc', desc: '亲手凿开任意一块石头。' },
+        { id: 'first_tool', icon: 'stone_axe', nameKey: 'adventure.achievements.first_tool.name', name: '第一把工具', descKey: 'adventure.achievements.first_tool.desc', desc: '获得石斧、铁剑、锤子、鱼竿或铁桶。' },
+      ],
+    },
+    {
+      titleKey: 'adventure.pages.1.title',
+      title: '第二章：火与锅',
+      textKey: 'adventure.pages.1.text',
+      text: '工具让你能追上火。用木材和打火石做出{icon:item:campfire}篝火，再用铸造台敲出{icon:item:iron_pot}铁锅。靠近火时，把食材放进合成格，第一份料理会把体力还给你。',
+      achievements: [
+        { id: 'built_campfire', icon: 'campfire', nameKey: 'adventure.achievements.built_campfire.name', name: '点起篝火', descKey: 'adventure.achievements.built_campfire.desc', desc: '获得或制造一座篝火。' },
+        { id: 'made_iron_pot', icon: 'iron_pot', nameKey: 'adventure.achievements.made_iron_pot.name', name: '认真下锅', descKey: 'adventure.achievements.made_iron_pot.desc', desc: '获得铁锅，让篝火料理可用。' },
+        { id: 'first_meal', icon: 'grilled_veg', nameKey: 'adventure.achievements.first_meal.name', name: '第一份料理', descKey: 'adventure.achievements.first_meal.desc', desc: '通过料理站做出任意一份料理。' },
+      ],
+    },
+    {
+      titleKey: 'adventure.pages.2.title',
+      title: '第三章：田与面粉',
+      textKey: 'adventure.pages.2.text',
+      text: '当树留下旧地，{icon:item:wheat_seed}小麦种子就能扎根。收获小麦后，把它带到{icon:item:mill}石磨变成面粉，再让烤箱把面团或富面团烤成能继续旅行的主食。',
+      achievements: [
+        { id: 'planted_wheat', icon: 'wheat_seed', nameKey: 'adventure.achievements.planted_wheat.name', name: '种下一粒麦', descKey: 'adventure.achievements.planted_wheat.desc', desc: '在曾经有树的地块种下小麦。' },
+        { id: 'made_flour', icon: 'flour', nameKey: 'adventure.achievements.made_flour.name', name: '磨出面粉', descKey: 'adventure.achievements.made_flour.desc', desc: '用石磨把小麦加工成面粉。' },
+        { id: 'baked_bread', icon: 'bread', nameKey: 'adventure.achievements.baked_bread.name', name: '第一炉面包', descKey: 'adventure.achievements.baked_bread.desc', desc: '用烤箱做出面包。' },
+      ],
+    },
+    {
+      titleKey: 'adventure.pages.3.title',
+      title: '第四章：秘密菜单',
+      textKey: 'adventure.pages.3.text',
+      text: '有些料理不在锅里发生。把{icon:item:iron_plate}铁板放在篝火旁，面粉裹住鸡肉，再交给热铁板。那份名字有点神秘的鸡肉，会成为更大餐点的核心。',
+      achievements: [
+        { id: 'made_iron_plate', icon: 'iron_plate', nameKey: 'adventure.achievements.made_iron_plate.name', name: '热铁板', descKey: 'adventure.achievements.made_iron_plate.desc', desc: '获得铁板，准备把它放在篝火旁。' },
+        { id: 'original_chicken', icon: 'original_chicken', nameKey: 'adventure.achievements.original_chicken.name', name: '神秘的吮指原味鸡', descKey: 'adventure.achievements.original_chicken.desc', desc: '用铁板做出吮指原味鸡。' },
+        { id: 'chicken_burger', icon: 'chicken_burger', nameKey: 'adventure.achievements.chicken_burger.name', name: '夹进面包里', descKey: 'adventure.achievements.chicken_burger.desc', desc: '把面包和吮指原味鸡做成鸡肉汉堡。' },
+      ],
+    },
+    {
+      titleKey: 'adventure.pages.4.title',
+      title: '第五章：遗落书页',
+      textKey: 'adventure.pages.4.text',
+      text: '平原深处藏着遗落书页，也藏着会回应书页的{icon:entity:crystal_ball}水晶球。继续凿开石头，找到书页后带去水晶球提交，故事会一点点合上。',
+      achievements: [
+        { id: 'found_page', icon: 'page', nameKey: 'adventure.achievements.found_page.name', name: '第一张书页', descKey: 'adventure.achievements.found_page.desc', desc: '发现任意一张遗落书页。' },
+        { id: 'found_crystal', iconKind: 'entity', icon: 'crystal_ball', nameKey: 'adventure.achievements.found_crystal.name', name: '水晶球现身', descKey: 'adventure.achievements.found_crystal.desc', desc: '在地图上找到水晶球。' },
+        { id: 'submitted_page', icon: 'page', nameKey: 'adventure.achievements.submitted_page.name', name: '把故事交回去', descKey: 'adventure.achievements.submitted_page.desc', desc: '向水晶球提交任意一张书页。' },
+      ],
+    },
+  ];
+  const ADVENTURE_ACHIEVEMENT_MAP = new Map(ADVENTURE_PAGES.flatMap(page => page.achievements.map(achievement => [achievement.id, achievement])));
+
+  function setModalVariant(name) {
+    const panel = document.querySelector('#modal .modal');
+    if (!panel) return;
+    panel.classList.toggle('adventure-modal', name === 'adventure');
+  }
+
+  function adventureAchievementLabel(achievement, field) {
+    const key = field === 'name' ? achievement.nameKey : achievement.descKey;
+    return t(key, {}, achievement[field]);
+  }
+
+  function adventureAchievementIcon(achievement) {
+    if (achievement.iconKind === 'entity') return mapIconMarkup(achievement.icon, '?');
+    return itemIconMarkup(achievement.icon, 'item-icon', '?');
+  }
+
+  function adventureAchievementDone(id) {
+    return devAdventureComplete || adventureAchievements.has(id);
+  }
+
+  function adventurePageComplete(index) {
+    const page = ADVENTURE_PAGES[index];
+    return !!page && page.achievements.every(achievement => adventureAchievementDone(achievement.id));
+  }
+
+  function canOpenAdventurePage(index) {
+    if (devAdventureComplete) return true;
+    if (index <= 0) return true;
+    for (let i = 0; i < index; i++) {
+      if (!adventurePageComplete(i)) return false;
+    }
+    return true;
+  }
+
+  function adventureProgressText(index) {
+    const page = ADVENTURE_PAGES[index];
+    const done = page.achievements.filter(achievement => adventureAchievementDone(achievement.id)).length;
+    return t('adventure.progress', { done, total: page.achievements.length }, `本页成就 ${done}/${page.achievements.length}`);
+  }
+
+  function unlockAdventureAchievement(id) {
+    const achievement = ADVENTURE_ACHIEVEMENT_MAP.get(id);
+    if (!achievement || adventureAchievements.has(id)) return;
+    adventureAchievements.add(id);
+    addLog(t('adventure.unlockLog', { name: adventureAchievementLabel(achievement, 'name') }, `手册成就达成：${adventureAchievementLabel(achievement, 'name')}`));
+    if (document.getElementById('modal').classList.contains('show') && document.querySelector('#modal .modal')?.classList.contains('adventure-modal')) {
+      renderAdventureHandbook();
+    }
+  }
+
+  function maybeUnlockAdventureForItem(id) {
+    if (ADVENTURE_TOOL_IDS.has(id)) unlockAdventureAchievement('first_tool');
+    if (id === 'campfire') unlockAdventureAchievement('built_campfire');
+    if (id === 'iron_pot') unlockAdventureAchievement('made_iron_pot');
+    if (id === 'flour') unlockAdventureAchievement('made_flour');
+    if (id === 'bread') unlockAdventureAchievement('baked_bread');
+    if (id === 'iron_plate') unlockAdventureAchievement('made_iron_plate');
+    if (id === 'original_chicken') unlockAdventureAchievement('original_chicken');
+    if (id === 'chicken_burger') unlockAdventureAchievement('chicken_burger');
+  }
+
+  function renderAdventureHandbook() {
+    const page = ADVENTURE_PAGES[adventurePageIndex] || ADVENTURE_PAGES[0];
+    setRichText('modal-title', t('adventure.title', {}, '冒险手册'));
+    const chapter = t(page.titleKey, {}, page.title);
+    const lockedNext = adventurePageIndex < ADVENTURE_PAGES.length - 1 && !canOpenAdventurePage(adventurePageIndex + 1);
+    const achievementHtml = page.achievements.map(achievement => {
+      const done = adventureAchievementDone(achievement.id);
+      return `<article class="adventure-achievement ${done ? 'done' : ''}">
+        <span class="adventure-achievement-icon">${adventureAchievementIcon(achievement)}</span>
+        <span>
+          <span class="adventure-achievement-name">${escapeHtml(adventureAchievementLabel(achievement, 'name'))}</span>
+          <span class="adventure-achievement-desc">${escapeHtml(adventureAchievementLabel(achievement, 'desc'))}</span>
+        </span>
+        <span class="adventure-achievement-state">${escapeHtml(done ? t('adventure.done', {}, '完成') : t('adventure.pending', {}, '未达成'))}</span>
+      </article>`;
+    }).join('');
+
+    document.getElementById('modal-body').innerHTML = `<div class="adventure-book">
+      <section class="adventure-page adventure-page-left">
+        <span class="adventure-chapter">${escapeHtml(chapter)}</span>
+        <p class="adventure-copy">${richTextMarkup(t(page.textKey, {}, page.text))}</p>
+        <div class="adventure-progress">${escapeHtml(adventureProgressText(adventurePageIndex))}</div>
+        ${lockedNext ? `<div class="adventure-locked-note">${escapeHtml(t('adventure.lockedNote', {}, '完成本页全部成就后，下一页才会翻开。'))}</div>` : ''}
+      </section>
+      <section class="adventure-page adventure-page-right" aria-label="${escapeHtml(t('adventure.achievementListAria', {}, '本页成就'))}">
+        <span class="adventure-chapter">${escapeHtml(t('adventure.achievementTitle', {}, '相关成就'))}</span>
+        <div class="adventure-achievement-list">${achievementHtml}</div>
+      </section>
+    </div>`;
+
+    const prevDisabled = adventurePageIndex <= 0;
+    const nextDisabled = adventurePageIndex >= ADVENTURE_PAGES.length - 1 || !canOpenAdventurePage(adventurePageIndex + 1);
+    document.getElementById('modal-footer').innerHTML = `<div class="modal-btn-row">
+      <button class="pixel-btn muted" type="button" id="adventure-prev" ${prevDisabled ? 'disabled' : ''}>${escapeHtml(t('adventure.prev', {}, '上一页'))}</button>
+      <span class="hint">${escapeHtml(t('adventure.pageIndicator', { current: adventurePageIndex + 1, total: ADVENTURE_PAGES.length }, `${adventurePageIndex + 1}/${ADVENTURE_PAGES.length}`))}</span>
+      <button type="button" id="adventure-next" ${nextDisabled ? 'disabled' : ''}>${escapeHtml(t('adventure.next', {}, '下一页'))}</button>
+      <button class="pixel-btn muted" type="button" id="modal-close">${escapeHtml(t('common.close', {}, 'Close'))}</button>
+    </div>`;
+    document.getElementById('adventure-prev').onclick = () => {
+      if (adventurePageIndex <= 0) return;
+      adventurePageIndex--;
+      renderAdventureHandbook();
+    };
+    document.getElementById('adventure-next').onclick = () => {
+      if (adventurePageIndex >= ADVENTURE_PAGES.length - 1 || !canOpenAdventurePage(adventurePageIndex + 1)) return;
+      adventurePageIndex++;
+      renderAdventureHandbook();
+    };
+    document.getElementById('modal-close').onclick = () => {
+      document.getElementById('modal').classList.remove('show');
+      setModalVariant(null);
+    };
+  }
+
+  function openAdventureHandbook() {
+    while (!canOpenAdventurePage(adventurePageIndex) && adventurePageIndex > 0) adventurePageIndex--;
+    setModalVariant('adventure');
+    renderAdventureHandbook();
+    document.getElementById('modal').classList.add('show');
+  }
 
   const guarantees = {
     firstBreak: false,
@@ -1552,6 +1904,7 @@
     c.structure = 'toolbox';
     c.spawn = true;
     discoverItem('toolbox');
+    unlockAdventureAchievement('found_toolbox');
   }
 
   function isNight() {
@@ -1806,6 +2159,7 @@
       if (slot) slot.count += n;
       else list.push({ id, count: n });
       discoverItem(id);
+      maybeUnlockAdventureForItem(id);
       return true;
     }
     const currentVol = containerVolume(list);
@@ -1820,7 +2174,10 @@
     const slot = list.find(i => i.id === id);
     if (slot) slot.count += n;
     else list.push({ id, count: n });
-    if (list === inventory) discoverItem(id);
+    if (list === inventory) {
+      discoverItem(id);
+      maybeUnlockAdventureForItem(id);
+    }
     return true;
   }
 
@@ -2115,6 +2472,7 @@
         c.structure = 'toolbox';
         c.ground = 'normal';
         discoverItem('toolbox');
+        unlockAdventureAchievement('found_toolbox');
         addLog(logT('revealToolbox', {}, 'Found an old toolbox.'));
         break;
       case 'water':
@@ -2164,6 +2522,7 @@
           pageCount = collectedPages.length;
           player.exp += player.level;
           discoverItem('page');
+          unlockAdventureAchievement('found_page');
           addLog(logT('revealPage', { num: PAGE_NUMS[hidden.idx], exp: player.level }, `Found page ${PAGE_NUMS[hidden.idx]} +${player.level} exp`));
           checkLevel();
         }
@@ -2198,6 +2557,7 @@
         c.structure = 'crystal_ball';
         c.ground = 'normal';
         crystalBallPos = { x, y };
+        unlockAdventureAchievement('found_crystal');
         addLog(logT('revealCrystal', {}, 'Found the crystal ball.'));
         break;
     }
@@ -2237,6 +2597,7 @@
 
     if (!devIgnoreStaminaLimit) player.stamina -= 1;
     player.breaks++;
+    unlockAdventureAchievement('first_stone');
     stoneBreaks++;
     c.stone = false;
     c.ground = 'normal';
@@ -2375,26 +2736,29 @@
       adjacent(player.x, player.y).some(([ax, ay]) => ax === x && ay === y);
   }
 
-  function campfireLightDistance(x, y) {
+  function warmLightDistance(x, y) {
     let nearest = null;
-    for (let y2 = 0; y2 < SIZE; y2++)
-      for (let x2 = 0; x2 < SIZE; x2++)
-        if (grid[y2][x2].structure === 'campfire') {
+    for (let y2 = 0; y2 < SIZE; y2++) {
+      for (let x2 = 0; x2 < SIZE; x2++) {
+        const structure = grid[y2][x2].structure;
+        const radius = structure === 'campfire' ? 3 : structure === 'oven' ? 1 : 0;
+        if (radius > 0) {
           const dist = chebDist(x, y, x2, y2);
-          if (dist <= 3 && (nearest === null || dist < nearest)) nearest = dist;
+          if (dist <= radius && (nearest === null || dist < nearest)) nearest = dist;
         }
+      }
+    }
     return nearest;
   }
 
   function isLit(x, y) {
-    return campfireLightDistance(x, y) !== null;
+    return warmLightDistance(x, y) !== null;
   }
 
   function isCrystalLit(x, y) {
     if (!crystalBallPos) return false;
     const { x: cx, y: cy } = crystalBallPos;
-    if (x === cx && y === cy) return true;
-    return adjacent(cx, cy).some(([ax, ay]) => ax === x && ay === y);
+    return chebDist(x, y, cx, cy) <= 1;
   }
 
   function canSee(x, y) {
@@ -2508,6 +2872,7 @@
       c.plant = 'wheat';
       c.wheatHits = 0;
       placedMode = null;
+      unlockAdventureAchievement('planted_wheat');
       addLog(logT('plantWheat', {}, 'Planted wheat.'));
       render();
       return;
@@ -2663,6 +3028,7 @@
   }
 
   function openCrystalBallUI() {
+    setModalVariant(null);
     const body = document.getElementById('modal-body');
     const footer = document.getElementById('modal-footer');
     setRichText('modal-title', t('crystal.title', {}, 'Crystal Ball'));
@@ -2723,6 +3089,7 @@
         const pi = +btn.dataset.submitPage;
         if (!collectedPages.includes(pi) || submittedPages.includes(pi)) return;
         submittedPages.push(pi);
+        unlockAdventureAchievement('submitted_page');
         addLog(logT('submitPage', { num: PAGE_NUMS[pi] }, `Submitted page ${PAGE_NUMS[pi]}`));
         openCrystalBallUI();
         renderInv();
@@ -2766,7 +3133,10 @@
     devFastMine = false;
     devAllTools = false;
     devShowAllCodex = false;
+    devAdventureComplete = false;
     devItemSearch = '';
+    adventurePageIndex = 0;
+    adventureAchievements.clear();
     Object.assign(guarantees, {
       firstBreak: false, pool: false, bush: false, stone2: 0, iron2: 0,
       forcedPool: false, forcedBush: false,
@@ -2777,6 +3147,7 @@
   }
 
   function openGoldenMerchant() {
+    setModalVariant(null);
     const body = document.getElementById('modal-body');
     setRichText('modal-title', t('merchant.goldenTitle', {}, 'Golden Box'));
     let html = `<p>${richTextMarkup(t('merchant.goldenBalance', {
@@ -2830,6 +3201,7 @@
   }
 
   function openSilverMerchant() {
+    setModalVariant(null);
     const body = document.getElementById('modal-body');
     setRichText('modal-title', t('merchant.silverTitle', {}, 'Silver Meal Shop'));
     const bal = getSilverBalance();
@@ -3333,6 +3705,9 @@
     (recipe?.returns || []).forEach(item => {
       addItem(item.id, item.count || 1);
     });
+    if (mode === 'cook' && ITEM_DATA[productId]?.category === '料理') {
+      unlockAdventureAchievement('first_meal');
+    }
 
     if (isPlaceableItem(productId)) {
       addLog(logT('craftedPlaceable', { item: ITEMS[productId].name }, `Crafted ${ITEMS[productId].name}. Place it from inventory.`));
@@ -3707,7 +4082,7 @@
         el.className = 'cell';
         const c = grid[y][x];
         const see = canSee(x, y);
-        const campfireDistance = night ? campfireLightDistance(x, y) : null;
+        const warmLightDistanceToSource = night ? warmLightDistance(x, y) : null;
 
         if (!see) el.classList.add('hidden');
         if (night && see) el.classList.add('visible-night');
@@ -3726,8 +4101,8 @@
         if (c.structure === 'crystal_ball') el.classList.add('has-crystal');
         if (c.structure === 'bridge') el.classList.add('has-bridge');
         if (c.spawn) el.classList.add('spawn-tile');
-        if (campfireDistance !== null) {
-          el.classList.add('campfire-lit', `campfire-light-${campfireDistance}`);
+        if (warmLightDistanceToSource !== null) {
+          el.classList.add('warm-lit', `warm-light-${warmLightDistanceToSource}`);
         }
         if (night && isCrystalLit(x, y)) el.classList.add('crystal-lit');
         if (placedMode === 'sapling' && !c.stone && canPlaceOnCell(x, y) && nearWater(x, y)) {
@@ -3813,12 +4188,17 @@
     const dayNightText = devDisableDayNight
       ? t('stats.dayNightDisabled', {}, 'Day/night off')
       : `${isNight() ? t('stats.night', {}, 'Night') : t('stats.day', {}, 'Day')} / ${t('stats.cycle', { current: cyclePos }, `Cycle ${cyclePos}/20`)}`;
+    const handbookLabel = t('adventure.openAria', {}, '打开冒险手册');
     document.getElementById('stats').innerHTML = `
       <span>HP ${player.stamina}/${STAMINA_MAX}</span>
+      <button class="adventure-book-btn" type="button" id="btn-adventure-book" aria-label="${escapeHtml(handbookLabel)}" title="${escapeHtml(handbookLabel)}">
+        <img src="./assets/2D/ui/adventure-book.svg" alt="" aria-hidden="true">
+      </button>
       <span>Lv.${player.level} (${player.exp}/${expToNext()})</span>
       <span>${escapeHtml(t('stats.mining', { count: player.breaks }, `Mined ${player.breaks}`))}</span>
       <span class="${nightPhase ? 'tag-night' : ''}">${richTextMarkup(dayNightText)}</span>
     `;
+    document.getElementById('btn-adventure-book').onclick = () => openAdventureHandbook();
     renderInv();
     renderChest();
     updateCraft();
@@ -3897,6 +4277,7 @@
     document.getElementById('dev-fast-mine').checked = devFastMine;
     document.getElementById('dev-all-tools').checked = devAllTools;
     document.getElementById('dev-show-codex').checked = devShowAllCodex;
+    document.getElementById('dev-adventure-complete').checked = devAdventureComplete;
     const search = document.getElementById('dev-search');
     if (document.activeElement !== search) search.value = devItemSearch;
 
@@ -3922,12 +4303,16 @@
     devFastMine = false;
     devAllTools = false;
     devShowAllCodex = false;
+    devAdventureComplete = false;
     devItemSearch = '';
     addLog(logT('devToolsClosed', {}, 'Developer tools closed.'));
     renderDevTools();
     render();
     renderInv();
     if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+    if (document.getElementById('modal').classList.contains('show') && document.querySelector('#modal .modal')?.classList.contains('adventure-modal')) {
+      renderAdventureHandbook();
+    }
   }
 
   function toggleDevTools() {
@@ -3969,7 +4354,7 @@
             : (canUsePlaceableAsCraftMaterial(it.id) ? t('tips.placeOrCraft', {}, 'Click to place, or drag into craft slot') : t('tips.placeOnMap', {}, 'Click then place on map')))
           : (invItemQuickUse(it.id) && !quickUsesAsCraftMat)
             ? t('tips.singleClickUse', {}, 'Click to use')
-            : t('tips.selectForCraft', {}, 'Click to select for crafting') + chestBulk;
+            : t('tips.selectForCraft', {}, 'Click to select for crafting; click again to cancel') + chestBulk;
         const drag = placeable && !canUsePlaceableAsCraftMaterial(it.id) ? 'false' : 'true';
         const countHtml = it.count > 1 ? `<div class="inv-cell-count">${countSuffix(it.count)}</div>` : '';
         return `<div class="inv-cell ${sel}" draggable="${drag}" data-id="${it.id}" data-i="${i}" title="${escapeHtml(tip)}">
@@ -4002,14 +4387,24 @@
           useInvItem(idx);
           return;
         }
-        if (craftPickId !== id) {
+        if (craftPickId === id) {
+          craftPickId = null;
+          selectedInv = null;
+        } else {
           craftPickId = id;
+          selectedInv = null;
           addLog(logT('selectedCraftItem', { item: itemDisplay(craftPickId) }, `Selected ${ITEMS[craftPickId]?.name || craftPickId}`));
         }
         renderInv();
       });
       el.addEventListener('dblclick', e => {
         e.preventDefault();
+        if (!invItemQuickUse(el.dataset.id)) {
+          craftPickId = null;
+          selectedInv = null;
+          renderInv();
+          return;
+        }
         craftPickId = null;
         useInvItem(+el.dataset.i);
       });
@@ -4026,6 +4421,7 @@
   }
 
   function showModal(title, html) {
+    setModalVariant(null);
     setRichText('modal-title', title);
     document.getElementById('modal-body').innerHTML = html;
     setModalCloseFooter();
@@ -4088,6 +4484,14 @@
     if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
     renderDevTools();
   });
+  document.getElementById('dev-adventure-complete').addEventListener('change', e => {
+    devAdventureComplete = e.target.checked;
+    addLog(devAdventureComplete ? logT('devAdventureCompleteOn', {}, 'Dev: adventure handbook completed view on') : logT('devAdventureCompleteOff', {}, 'Dev: adventure handbook restored'));
+    if (document.getElementById('modal').classList.contains('show') && document.querySelector('#modal .modal')?.classList.contains('adventure-modal')) {
+      renderAdventureHandbook();
+    }
+    renderDevTools();
+  });
   document.getElementById('dev-search').addEventListener('input', e => {
     devItemSearch = e.target.value;
     renderDevTools();
@@ -4122,6 +4526,9 @@
     updateBgmButton();
     render();
     if (!document.getElementById('codex-screen').classList.contains('screen-hidden')) renderCodex();
+    if (document.getElementById('modal').classList.contains('show') && document.querySelector('#modal .modal')?.classList.contains('adventure-modal')) {
+      renderAdventureHandbook();
+    }
   });
 
   document.addEventListener('keydown', e => {
