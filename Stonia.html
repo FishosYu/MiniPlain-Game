@@ -592,6 +592,16 @@
       background-repeat: no-repeat;
       image-rendering: pixelated;
       transition: transform .08s ease, filter .08s ease;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+      opacity: 0;
     }
     .cell span {
       position: relative;
@@ -873,14 +883,45 @@
       color: transparent;
       text-shadow: none;
     }
+    body.night-mode #grid .cell.visible-night.ground-normal {
+      background-color: #5f7d3d;
+      background-image:
+        linear-gradient(rgba(32, 31, 45, .36), rgba(32, 31, 45, .36)),
+        url("./assets/2D/tiles/terrain/grass.png");
+    }
+    body.night-mode #grid .cell.visible-night.ground-normal.terrain-bottom {
+      background-image:
+        linear-gradient(rgba(32, 31, 45, .36), rgba(32, 31, 45, .36)),
+        url("./assets/2D/tiles/terrain/grass-dirt-edge.png");
+    }
+    body.night-mode #grid .cell.visible-night.ground-water {
+      background-color: #4c8498;
+      background-image:
+        linear-gradient(rgba(30, 35, 58, .35), rgba(30, 35, 58, .35)),
+        url("./assets/2D/tiles/terrain/water.png");
+    }
+    body.night-mode #grid .cell.visible-night.ground-stone {
+      background-color: #8c7656;
+      background-image:
+        linear-gradient(rgba(34, 32, 48, .38), rgba(34, 32, 48, .38)),
+        url("./assets/2D/tiles/terrain/stone.png"),
+        url("./assets/2D/tiles/terrain/grass.png");
+    }
     body.night-mode #grid .cell.campfire-lit {
-      background: #5c5648 !important;
       box-shadow: inset 0 0 12px rgba(255, 180, 80, 0.35);
     }
+    body.night-mode #grid .cell.campfire-lit::after {
+      opacity: 1;
+      background: rgba(255, 186, 86, .12);
+      mix-blend-mode: screen;
+    }
+    body.night-mode #grid .cell.campfire-light-0::after { background: rgba(255, 202, 104, .24); }
+    body.night-mode #grid .cell.campfire-light-1::after { background: rgba(255, 194, 92, .20); }
+    body.night-mode #grid .cell.campfire-light-2::after { background: rgba(255, 184, 78, .15); }
+    body.night-mode #grid .cell.campfire-light-3::after { background: rgba(255, 176, 68, .10); }
     body.night-mode #grid .cell.campfire-lit span { visibility: visible !important; color: inherit; }
     body.night-mode #grid .cell:not(.visible-night):not(.player):not(.campfire-lit):not(.crystal-lit) span { visibility: hidden; }
     body.night-mode #grid .cell.crystal-lit {
-      background: #4a4868 !important;
       box-shadow: inset 0 0 14px rgba(180, 160, 255, 0.45);
     }
     body.night-mode #grid .cell.crystal-lit span { visibility: visible !important; color: inherit; }
@@ -2334,12 +2375,19 @@
       adjacent(player.x, player.y).some(([ax, ay]) => ax === x && ay === y);
   }
 
-  function isLit(x, y) {
+  function campfireLightDistance(x, y) {
+    let nearest = null;
     for (let y2 = 0; y2 < SIZE; y2++)
       for (let x2 = 0; x2 < SIZE; x2++)
-        if (grid[y2][x2].structure === 'campfire' && chebDist(x, y, x2, y2) <= 3)
-          return true;
-    return false;
+        if (grid[y2][x2].structure === 'campfire') {
+          const dist = chebDist(x, y, x2, y2);
+          if (dist <= 3 && (nearest === null || dist < nearest)) nearest = dist;
+        }
+    return nearest;
+  }
+
+  function isLit(x, y) {
+    return campfireLightDistance(x, y) !== null;
   }
 
   function isCrystalLit(x, y) {
@@ -2947,13 +2995,18 @@
         .map(output => RECIPES.find(recipe => recipe.station === station && recipe.output === output))
         .filter(Boolean);
     }
-    return RECIPES.filter(recipe => recipe.station === station);
+    const recipes = RECIPES.filter(recipe => recipe.station === station);
+    if (station === 'campfire') return recipes.filter(recipe => recipe.inputs.length === 1);
+    return recipes;
   }
 
   function stationRecipeHintHtml(station) {
     const recipes = recipesForHintStation(station);
     const stationName = ITEMS[station]?.name || STATION_LABELS[station] || station;
-    return `${recipeHintIcon(station)}${escapeHtml(stationName)}: ${recipes.map(recipeHintRecipe).join('')}`;
+    const extraHint = station === 'campfire'
+      ? `<span class="recipe-entry">${escapeHtml(t('craft.campfireTwoIngredientHint', {}, '如果尝试两种食材的话会……？'))}</span>`
+      : '';
+    return `${recipeHintIcon(station)}${escapeHtml(stationName)}: ${recipes.map(recipeHintRecipe).join('')}${extraHint}`;
   }
 
   function packResult(id, count = 1) {
@@ -3642,7 +3695,8 @@
   }
 
   function render() {
-    document.body.classList.toggle('night-mode', isNight());
+    const night = isNight();
+    document.body.classList.toggle('night-mode', night);
     const g = document.getElementById('grid');
     g.innerHTML = '';
     const breakable = new Set(getBreakableCells().map(([x,y]) => `${x},${y}`));
@@ -3653,9 +3707,10 @@
         el.className = 'cell';
         const c = grid[y][x];
         const see = canSee(x, y);
+        const campfireDistance = night ? campfireLightDistance(x, y) : null;
 
         if (!see) el.classList.add('hidden');
-        if (isNight() && see) el.classList.add('visible-night');
+        if (night && see) el.classList.add('visible-night');
 
         if (!c.stone) {
           if (c.ground === 'water') el.classList.add('ground-water');
@@ -3671,8 +3726,10 @@
         if (c.structure === 'crystal_ball') el.classList.add('has-crystal');
         if (c.structure === 'bridge') el.classList.add('has-bridge');
         if (c.spawn) el.classList.add('spawn-tile');
-        if (isNight() && isLit(x, y)) el.classList.add('campfire-lit');
-        if (isNight() && isCrystalLit(x, y)) el.classList.add('crystal-lit');
+        if (campfireDistance !== null) {
+          el.classList.add('campfire-lit', `campfire-light-${campfireDistance}`);
+        }
+        if (night && isCrystalLit(x, y)) el.classList.add('crystal-lit');
         if (placedMode === 'sapling' && !c.stone && canPlaceOnCell(x, y) && nearWater(x, y)) {
           el.classList.add('breakable');
         }

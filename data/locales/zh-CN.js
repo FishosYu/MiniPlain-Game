@@ -141,6 +141,7 @@
       makeHintPrefix: '',
       forgeHint: '铸造台：按当前铸造配方处理',
       cookHint: '{station}：按当前工具配方处理；篝火四格内并持有铁锅也可烹饪',
+      campfireTwoIngredientHint: '如果尝试两种食材的话会……？',
       lockedHint: '站在{icon:item:toolbox}/{icon:item:forge}/{icon:item:iron_plate}/{icon:item:mill}/{icon:item:prep_table}/{icon:item:oven}工具格上，或在{icon:item:campfire}篝火四格内并持有{icon:item:iron_pot}铁锅',
       needPotHint: '篝火烹饪需要背包中有{icon:item:iron_pot}铁锅（铸造台：{icon:item:iron}+{icon:item:iron}）',
       wrongCookRecipe: '烹饪配方不对，见上方说明',
