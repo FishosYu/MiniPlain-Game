@@ -458,6 +458,12 @@
       height: 34px;
       margin: 0 auto;
     }
+    .codex-icon .cell-icon,
+    .codex-icon .terrain-icon {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto;
+    }
     .codex-name {
       display: block;
       font-size: 0.72rem;
@@ -712,6 +718,7 @@
       pointer-events: none;
     }
     .cell .cell-content-layer { z-index: 1; }
+    .cell .cell-egg-layer { z-index: 2; }
     .cell .cell-player-layer { z-index: 6; }
     .cell-icon {
       display: block;
@@ -729,6 +736,12 @@
     .cell-animal-layer .cell-icon {
       width: 30px;
       height: 30px;
+      filter: drop-shadow(1px 1px 0 rgba(47, 43, 38, .35));
+    }
+    .cell-egg-layer .cell-icon {
+      width: 20px;
+      height: 20px;
+      transform: translate(5px, -5px);
       filter: drop-shadow(1px 1px 0 rgba(47, 43, 38, .35));
     }
     .cell.hidden { background: #9f978d !important; opacity: 0.42; }
@@ -1243,6 +1256,7 @@
     .dev-item:hover { background: var(--highlight); color: var(--text); }
     .dev-item .dev-item-icon { display: block; font-size: 1.3rem; line-height: 1; margin-bottom: 3px; }
     .dev-item .item-icon { width: 24px; height: 24px; margin: 0 auto 3px; }
+    .dev-item .cell-icon { width: 24px; height: 24px; margin: 0 auto 3px; }
   </style>
 </head>
 <body>
@@ -1275,8 +1289,8 @@
     <div class="codex-panel">
       <div class="codex-header">
         <div>
-          <h1 id="codex-title" data-i18n="codex.title">Item Codex</h1>
-          <p class="codex-lead" data-i18n="codex.lead">Discovered items show their names and descriptions.</p>
+          <h1 id="codex-title" data-i18n="codex.title">Stonia Codex</h1>
+          <p class="codex-lead" data-i18n="codex.lead">Discovered items and map entries show their names and descriptions.</p>
           <span class="codex-progress" id="codex-progress"></span>
         </div>
         <div class="codex-actions">
@@ -1325,6 +1339,8 @@
     <div class="hint" data-i18n="devTools.hint">Search and click an item to add one.</div>
     <input type="text" id="dev-search" placeholder="Search item name or id" data-i18n-placeholder="devTools.searchPlaceholder">
     <div class="dev-item-list" id="dev-item-list"></div>
+    <div class="hint" data-i18n="devTools.animalHint">Click an animal to spawn it on the player tile.</div>
+    <div class="dev-item-list" id="dev-animal-list"></div>
   </aside>
   <div class="layout">
     <div class="panel">
@@ -1447,6 +1463,7 @@
     fruit: 'fruit',
     veg: 'veg',
     potato: 'potato',
+    potato_crop: 'sprouted_potato',
     carrot: 'carrot',
     sapling: 'sapling',
     wheat: 'wheat',
@@ -1461,6 +1478,7 @@
     spawn: { file: 'spawn.png', label: '???' },
     chicken: { file: 'chicken.png', label: '?' },
     cow: { file: 'cow.png', label: '?' },
+    liangtian_dog: { file: 'liangtian_dog.png', label: '??' },
     wolf: { file: 'wolf.png', label: '?' },
     tree: { file: 'tree.png', label: '??' },
     bush: { file: 'bush.png', label: '??' },
@@ -1471,6 +1489,29 @@
     crystal_ball: { file: 'crystal_ball.png', label: '???' },
     shelter: { file: 'shelter.png', label: '???' },
   };
+  const TERRAIN_ICON_ROOT = './assets/2D/tiles/terrain/';
+  const TERRAIN_ICONS = {
+    water: { file: 'water.png', label: '~~' },
+  };
+  const CODEX_MAP_CATEGORY = '地图发现';
+  const CODEX_MAP_PREFIX = 'entity:';
+  const CODEX_MAP_ENTRIES = [
+    { id: 'spawn', iconKind: 'entity', icon: 'spawn', name: '起点', desc: '最初那一格看起来很普通，但它已经默默负责了所有开始。' },
+    { id: 'water', iconKind: 'terrain', icon: 'water', name: '水池', desc: '平原的一小块蓝色借口，树苗、鱼竿和铁桶都会想靠近它。' },
+    { id: 'chicken', iconKind: 'entity', icon: 'chicken', name: '鸡', desc: '走路像在发表意见，下蛋像是在留下谜题。' },
+    { id: 'cow', iconKind: 'entity', icon: 'cow', name: '牛', desc: '很安静地站着，仿佛早就知道你会带着桶回来。' },
+    { id: 'liangtian_dog', iconKind: 'entity', icon: 'liangtian_dog', name: '良田犬', desc: '不管你给小狗什么，它都愿意努力回报你。' },
+    { id: 'wolf', iconKind: 'entity', icon: 'wolf', name: '狼', desc: '平原的黑色访客，却好像不会主动伤害你。' },
+    { id: 'tree', iconKind: 'entity', icon: 'tree', name: '成树', desc: '从小树苗变成木材计划书，只差一把斧头签字。' },
+    { id: 'bush', iconKind: 'entity', icon: 'bush', name: '灌木丛', desc: '朽木不可雕也，灌木倒是能大雕特雕。' },
+    { id: 'treasure_chest', iconKind: 'entity', icon: 'treasure_chest', name: '木宝箱', desc: '它不说自己装了什么，这是宝箱这么会装的秘诀。' },
+    { id: 'bag', iconKind: 'entity', icon: 'bag', name: '纸袋', desc: '轻飘飘的袋子里，常常藏着比外表更有分量的小惊喜。' },
+    { id: 'golden', iconKind: 'entity', icon: 'golden', name: '神秘金色盒子', desc: '金光闪闪地出现，然后严肃地提醒你金币有用。' },
+    { id: 'silver_box', iconKind: 'entity', icon: 'silver_box', name: '银色盒子', desc: '像一个随地开张的小饭馆，只收银色的认真。' },
+    { id: 'crystal_ball', iconKind: 'entity', icon: 'crystal_ball', name: '水晶球', desc: '它收集那些遗落的书页，不想自己或许也曾是某人的遗憾。' },
+    { id: 'shelter', iconKind: 'entity', icon: 'shelter', name: '庇护所', desc: '四块地围出来的安心角落，休息时连时间都愿意配合。' },
+  ];
+  const CODEX_MAP_ENTRY_BY_KEY = Object.fromEntries(CODEX_MAP_ENTRIES.map(entry => [`${CODEX_MAP_PREFIX}${entry.id}`, entry]));
 
   function itemDisplay(id) {
     const def = ITEMS[id];
@@ -1504,7 +1545,18 @@
     saveDiscoveredItems();
   }
 
-  const CODEX_CATEGORIES = window.MINIPLAIN_ITEM_CATEGORIES || [];
+  function mapCodexKey(id) {
+    return `${CODEX_MAP_PREFIX}${id}`;
+  }
+
+  function discoverMapEntry(id) {
+    const key = mapCodexKey(id);
+    if (!CODEX_MAP_ENTRY_BY_KEY[key] || discoveredItems.has(key)) return;
+    discoveredItems.add(key);
+    saveDiscoveredItems();
+  }
+
+  const CODEX_CATEGORIES = [...(window.MINIPLAIN_ITEM_CATEGORIES || []), CODEX_MAP_CATEGORY];
   const CODEX_ITEM_CATEGORIES = Object.fromEntries(Object.entries(ITEM_DATA)
     .filter(([, item]) => item.category)
     .map(([id, item]) => [id, item.category]));
@@ -1547,6 +1599,14 @@
     return escapeHtml(fallback || '');
   }
 
+  function terrainIconMarkup(id, fallback = '') {
+    const icon = TERRAIN_ICONS[id];
+    if (icon) {
+      return `<img class="terrain-icon" src="${escapeHtml(TERRAIN_ICON_ROOT + icon.file)}" alt="${escapeHtml(icon.label || id)}" loading="lazy">`;
+    }
+    return escapeHtml(fallback || '');
+  }
+
   function codexEntry(id) {
     const def = ITEMS[id] || (id === 'page'
       ? { name: t('pages.lostTitle', { num: '' }, 'Lost page') }
@@ -1558,11 +1618,27 @@
       cat: CODEX_ITEM_CATEGORIES[id],
       name: I18N.itemName(id) || data.name || def.name,
       desc: I18N.itemText(id, 'codex', texts.codex || texts.game || texts.overview || t('codex.fallbackDesc', {}, 'Waiting to be discovered.')),
+      icon: itemIconMarkup(id, 'item-icon', '?'),
+    };
+  }
+
+  function codexMapEntry(entry) {
+    return {
+      id: mapCodexKey(entry.id),
+      cat: CODEX_MAP_CATEGORY,
+      name: t(`codex.mapEntries.${entry.id}.name`, {}, entry.name),
+      desc: t(`codex.mapEntries.${entry.id}.desc`, {}, entry.desc),
+      icon: entry.iconKind === 'terrain'
+        ? terrainIconMarkup(entry.icon || entry.id, '?')
+        : mapIconMarkup(entry.icon || entry.id, '?'),
     };
   }
 
   function renderCodex() {
-    const allEntries = Object.keys(CODEX_ITEM_CATEGORIES).map(codexEntry);
+    const allEntries = [
+      ...Object.keys(CODEX_ITEM_CATEGORIES).map(codexEntry),
+      ...CODEX_MAP_ENTRIES.map(codexMapEntry),
+    ];
     const discoveredCount = allEntries.filter(entry => discoveredItems.has(entry.id)).length;
     document.getElementById('codex-progress').textContent = devShowAllCodex
       ? t('codex.devProgress', { count: discoveredCount, total: allEntries.length }, `Dev view all ? found ${discoveredCount}/${allEntries.length}`)
@@ -1577,7 +1653,7 @@
           ${group.map(entry => {
             const found = devShowAllCodex || discoveredItems.has(entry.id);
             const name = found ? entry.name : t('common.undiscovered', {}, 'Undiscovered');
-            const icon = found ? itemIconMarkup(entry.id, 'item-icon', '?') : '?';
+            const icon = found ? entry.icon : '?';
             const desc = found ? entry.desc : '?';
             const category = found ? I18N.categoryName(entry.cat) : '?';
             const title = t('codex.titleTemplate', { name, category, desc }, `${name} / Category: ${category} / ${desc}`);
@@ -1731,6 +1807,7 @@
   let eggGuaranteed = false;
   let merchantBought = { rod: false, sword: false, axe: false };
   let goldenBoxSpawned = 0;
+  let liangtianDogSpawned = false;
   const GOLDEN_BOX_MAX = 2;
   let placedMode = null; // sapling, wheat, building, egg, place_*
   let shelterRest = false;
@@ -1798,8 +1875,19 @@
     },
     {
       titleKey: 'adventure.pages.4.title',
-      title: '第五章：遗落书页',
+      title: '第五章：时间的配方',
       textKey: 'adventure.pages.4.text',
+      text: '有些配方不是立刻发生的。用{icon:item:wood_plank}木板和{icon:item:stone_slab}石板做出{icon:item:aging_table}放置台，把牛奶、水果、土豆、水或小麦放进去，再让凿石或庇护所休整推动时间。时间大概是最容易被忽略的一味配方。',
+      achievements: [
+        { id: 'fermented_food', icon: 'yogurt', nameKey: 'adventure.achievements.fermented_food.name', name: '第一口发酵', descKey: 'adventure.achievements.fermented_food.desc', desc: '通过放置台获得酸奶或果酒。' },
+        { id: 'harvested_potato', icon: 'potato', nameKey: 'adventure.achievements.harvested_potato.name', name: '土豆回来更多', descKey: 'adventure.achievements.harvested_potato.desc', desc: '种下发芽的土豆并收获一次土豆。' },
+        { id: 'hatched_chick', iconKind: 'entity', icon: 'chicken', nameKey: 'adventure.achievements.hatched_chick.name', name: '窝里有动静', descKey: 'adventure.achievements.hatched_chick.desc', desc: '把鸡蛋放在干草窝上，孵化出一只鸡。' },
+      ],
+    },
+    {
+      titleKey: 'adventure.pages.5.title',
+      title: '第六章：遗落书页',
+      textKey: 'adventure.pages.5.text',
       text: '平原深处藏着遗落书页，也藏着会回应书页的{icon:entity:crystal_ball}水晶球。继续凿开石头，找到书页后带去水晶球提交，故事会一点点合上。',
       achievements: [
         { id: 'found_page', icon: 'page', nameKey: 'adventure.achievements.found_page.name', name: '第一张书页', descKey: 'adventure.achievements.found_page.desc', desc: '发现任意一张遗落书页。' },
@@ -1898,6 +1986,7 @@
     if (id === 'iron_plate') unlockAdventureAchievement('made_iron_plate');
     if (id === 'original_chicken') unlockAdventureAchievement('original_chicken');
     if (id === 'chicken_burger') unlockAdventureAchievement('chicken_burger');
+    if (id === 'yogurt' || id === 'fruit_wine') unlockAdventureAchievement('fermented_food');
   }
 
   function renderAdventureHandbook() {
@@ -2008,8 +2097,10 @@
           mature: 0,
           treeHits: 0,
           wheatHits: 0,
+          potatoHits: 0,
           hadTree: false,
           incubatingEgg: 0,
+          agingItem: null,
           groundLoot: null,
           lit: false,
           spawn: false,
@@ -2021,6 +2112,7 @@
     c.stone = false;
     c.ground = 'normal';
     c.spawn = true;
+    discoverMapEntry('spawn');
   }
 
   function isNight() {
@@ -2040,7 +2132,7 @@
     return [[0,-1],[0,1],[-1,0],[1,0]].map(([dx,dy]) => [x+dx, y+dy]).filter(([ax,ay]) => inBounds(ax,ay));
   }
 
-  const ANIMAL_LAYER_RANK = { cow: 1, chicken: 2, wolf: 3 };
+  const ANIMAL_LAYER_RANK = { cow: 1, chicken: 2, wolf: 3, liangtian_dog: 4 };
 
   function cellAnimals(c) {
     if (!Array.isArray(c.entities)) c.entities = [];
@@ -2065,8 +2157,11 @@
     return cellAnimals(c).length > 0;
   }
 
-  function addAnimalToCell(c, type) {
-    const animal = { type, alive: true };
+  function addAnimalToCell(c, typeOrAnimal) {
+    const animal = typeof typeOrAnimal === 'string'
+      ? { type: typeOrAnimal, alive: true }
+      : typeOrAnimal;
+    animal.alive = true;
     cellAnimals(c).push(animal);
     c.entity = topAnimal(c);
     return animal;
@@ -2127,6 +2222,17 @@
     return adjacent(x, y).some(([ax, ay]) => grid[ay][ax].ground === 'water');
   }
 
+  function nearWater8(x, y) {
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (inBounds(nx, ny) && grid[ny][nx].ground === 'water') return true;
+      }
+    }
+    return false;
+  }
+
   function adjacentToMatureWheat(x, y) {
     return adjacent(x, y).some(([ax, ay]) => {
       const nc = grid[ay][ax];
@@ -2134,9 +2240,94 @@
     });
   }
 
+  const AGING_TABLE_RECIPES = {
+    milk: () => countItem('fisher_fish') > 0 || Math.random() < 0.5 ? 'yogurt' : 'spoiled_milk',
+    fruit: () => countItem('fisher_fish') > 0 || Math.random() < 0.5 ? 'fruit_wine' : 'rotten_fruit',
+    potato: () => 'sprouted_potato',
+    water: () => null,
+    wheat: () => 'hay',
+  };
+  const AGEABLE_ITEMS = new Set(Object.keys(AGING_TABLE_RECIPES));
+
+  function canAgeItem(id) {
+    return AGEABLE_ITEMS.has(id);
+  }
+
+  const DOG_GIFT_ITEMS = [
+    'stone', 'iron', 'silver', 'gold', 'wood', 'flint',
+    'fruit', 'veg', 'potato', 'carrot', 'sapling', 'wheat_seed', 'wheat',
+    'fish', 'egg', 'milk', 'water', 'wood_plank', 'stone_slab', 'flour',
+    'dough', 'rich_dough', 'hay', 'yogurt', 'fruit_wine',
+  ];
+
+  function canDogCarryItem(id) {
+    if (id === 'fisher_fish') return true;
+    return (ITEMS[id]?.vol || 0) > 0;
+  }
+
+  function dogGiftFor(inputId) {
+    const pool = DOG_GIFT_ITEMS.filter(id => id !== inputId && ITEMS[id]);
+    return pool[Math.floor(Math.random() * pool.length)] || 'stone';
+  }
+
+  function findAnimalCell(animal) {
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        if (cellAnimals(grid[y][x]).includes(animal)) return { x, y, c: grid[y][x] };
+      }
+    }
+    return null;
+  }
+
+  function removeAnimalEverywhere(animal) {
+    const loc = findAnimalCell(animal);
+    if (loc) removeAnimalFromCell(loc.c, animal);
+  }
+
+  const DEV_ANIMAL_TYPES = ['chicken', 'cow', 'wolf', 'liangtian_dog'];
+
+  function animalDisplayName(type) {
+    return t(`codex.mapEntries.${type}.name`, {}, type);
+  }
+
+  function createAnimal(type) {
+    if (type === 'liangtian_dog') {
+      liangtianDogSpawned = true;
+      return { type, alive: true, bagItem: null };
+    }
+    return type;
+  }
+
+  function spawnAnimalAtPlayerDev(type) {
+    if (!DEV_ANIMAL_TYPES.includes(type)) return false;
+    const c = grid[player.y]?.[player.x];
+    if (!c || c.stone) return false;
+    addAnimalToCell(c, createAnimal(type));
+    discoverMapEntry(type);
+    addLog(logT('devSpawnedAnimal', { animal: animalDisplayName(type) }, `Developer spawned ${animalDisplayName(type)}`));
+    render();
+    return true;
+  }
+
+  function currentAgingTableCell() {
+    const c = grid[player.y]?.[player.x];
+    return c?.structure === 'aging_table' ? c : null;
+  }
+
+  function canPlacePotatoCropCell(x, y) {
+    return canPlaceOnCell(x, y) && nearWater8(x, y);
+  }
+
+  function canPlaceNestEggCell(x, y) {
+    const c = grid[y][x];
+    return !c.stone && c.ground === 'normal' && c.structure === 'hay_nest' &&
+      !hasAnimals(c) && !c.incubatingEgg && !c.groundLoot;
+  }
+
   function placedModeForItem(id) {
     if (id === 'sapling') return 'sapling';
     if (id === 'wheat_seed') return 'wheat';
+    if (id === 'sprouted_potato') return 'potato';
     if (id === 'building') return 'building';
     if (id === 'egg') return 'egg';
     if (isPlaceableItem(id)) return 'place_' + id;
@@ -2494,8 +2685,10 @@
     c.mature = 0;
     c.treeHits = 0;
     c.wheatHits = 0;
+    c.potatoHits = 0;
     c.hadTree = false;
     c.incubatingEgg = 0;
+    c.agingItem = null;
     c.groundLoot = null;
     c.lit = false;
   }
@@ -2560,6 +2753,7 @@
     }
     if (r < 0.40) return { type: 'water' };
     if (r < 0.60) {
+      if (!liangtianDogSpawned && Math.random() < 0.05) return { type: 'liangtian_dog' };
       if (player.breaks > 20 && Math.random() < 0.08) return { type: 'wolf' };
       if (Math.random() < 0.5) return { type: 'chicken' };
       return { type: 'cow' };
@@ -2594,6 +2788,7 @@
       case 'water':
         c.ground = 'water';
         guarantees.pool = true;
+        discoverMapEntry('water');
         addLog(logT('revealWater', {}, 'Found a water pool.'));
         break;
       case 'plant':
@@ -2607,27 +2802,39 @@
       case 'chicken':
         addAnimalToCell(c, 'chicken');
         c.ground = 'normal';
+        discoverMapEntry('chicken');
         addLog(logT('revealChicken', {}, 'Found a chicken.'));
         break;
       case 'cow':
         addAnimalToCell(c, 'cow');
         c.ground = 'normal';
+        discoverMapEntry('cow');
         addLog(logT('revealCow', {}, 'Found a cow.'));
+        break;
+      case 'liangtian_dog':
+        addAnimalToCell(c, { type: 'liangtian_dog', alive: true, bagItem: null });
+        c.ground = 'normal';
+        liangtianDogSpawned = true;
+        discoverMapEntry('liangtian_dog');
+        addLog(logT('revealLiangtianDog', {}, 'Found Liangtian Dog.'));
         break;
       case 'wolf':
         addAnimalToCell(c, 'wolf');
         c.ground = 'normal';
+        discoverMapEntry('wolf');
         addLog(logT('revealWolf', {}, 'Found a wolf!'));
         maybeWolfAttack();
         break;
       case 'wood_chest':
         c.structure = 'treasure_chest';
         c.ground = 'normal';
+        discoverMapEntry('treasure_chest');
         addLog(logT('revealWoodChest', {}, 'Found a wooden chest.'));
         break;
       case 'paper_bag':
         c.structure = 'bag';
         c.ground = 'normal';
+        discoverMapEntry('bag');
         addLog(logT('revealBag', {}, 'Found a paper bag.'));
         break;
       case 'page':
@@ -2648,12 +2855,14 @@
         c.ground = 'normal';
         c.hadTree = true;
         c.treeHits = 3;
+        discoverMapEntry('tree');
         addLog(logT('revealTree', {}, 'Found a tree.'));
         break;
       case 'bush':
         c.plant = 'bush';
         c.ground = 'normal';
         guarantees.bush = true;
+        discoverMapEntry('bush');
         addLog(logT('revealBush', {}, 'Found a bush.'));
         break;
       case 'empty':
@@ -2662,17 +2871,20 @@
       case 'golden':
         c.structure = 'golden';
         c.ground = 'normal';
+        discoverMapEntry('golden');
         addLog(logT('revealGolden', { max: GOLDEN_BOX_MAX }, `Found a golden box. Max ${GOLDEN_BOX_MAX}.`));
         break;
       case 'silver_box':
         c.structure = 'silver_box';
         c.ground = 'normal';
+        discoverMapEntry('silver_box');
         addLog(logT('revealSilver', {}, 'Found a silver box.'));
         break;
       case 'crystal_ball':
         c.structure = 'crystal_ball';
         c.ground = 'normal';
         crystalBallPos = { x, y };
+        discoverMapEntry('crystal_ball');
         unlockAdventureAchievement('found_crystal');
         addLog(logT('revealCrystal', {}, 'Found the crystal ball.'));
         break;
@@ -2692,6 +2904,30 @@
       const [tx, ty] = targets[Math.floor(Math.random() * targets.length)];
       removeTopAnimalFromCell(grid[ty][tx]);
       addLog(logT('wolfAttack', {}, 'The wolf attacked nearby animals!'));
+    }
+  }
+
+  function processLiangtianDogDawnGifts() {
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        const dogs = cellAnimals(c).filter(animal => animal.type === 'liangtian_dog');
+        dogs.forEach(dog => {
+          const slot = dog.bagItem;
+          if (!slot || slot.giftReady) return;
+          if (slot.id === 'fisher_fish') {
+            removeAnimalFromCell(c, dog);
+            addLog(logT('dogFisherFarewell', {}, '良田犬和鱼者去寻找王的农药，离开了你！'));
+            return;
+          }
+          const giftId = dogGiftFor(slot.id);
+          dog.bagItem = { id: giftId, giftReady: true };
+          dog.seekPlayer = true;
+          discoverItem(giftId);
+          maybeUnlockAdventureForItem(giftId);
+          addLog(logT('dogGiftReady', { item: itemDisplay(giftId) }, `小狗的感谢礼：${ITEMS[giftId]?.name || giftId}`));
+        });
+      }
     }
   }
 
@@ -2739,9 +2975,8 @@
 
     applyReveal(x, y, hidden);
     onBreakEffects();
-    tickEggIncubation();
     checkLevel();
-    tickPlants();
+    tickTimedProcesses();
     if (!devBulkClearingStones) render();
   }
 
@@ -2769,6 +3004,7 @@
     }
     if (!devDisableDayNight && player.breaks >= 25 && player.breaks % 20 === 5) {
       addLog(logT('dayBreaks', {}, 'Day breaks.'));
+      processLiangtianDogDawnGifts();
     }
   }
 
@@ -2781,6 +3017,8 @@
         if (c.incubatingEgg <= 0) {
           c.incubatingEgg = 0;
           addAnimalToCell(c, 'chicken');
+          discoverMapEntry('chicken');
+          unlockAdventureAchievement('hatched_chick');
           addLog(logT('eggHatched', {}, 'Egg hatched into a chicken!'));
         }
       }
@@ -2791,12 +3029,49 @@
       for (let x = 0; x < SIZE; x++) {
         const c = grid[y][x];
         if (c.plant === 'sapling' || c.plant === 'tree') {
-          if (c.treeHits < 3) c.treeHits++;
+          if (c.treeHits < 3) {
+            c.treeHits++;
+            if (c.treeHits >= 3) discoverMapEntry('tree');
+          }
         }
         if (c.plant === 'wheat') {
           if (c.wheatHits < 3) c.wheatHits++;
         }
+        if (c.plant === 'potato_crop') {
+          if (c.potatoHits < 3) c.potatoHits++;
+        }
       }
+  }
+
+  function tickAgingTables() {
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const c = grid[y][x];
+        const slot = c.agingItem;
+        if (c.structure !== 'aging_table' || !slot || slot.ready) continue;
+        slot.remaining--;
+        if (slot.remaining > 0) continue;
+
+        const resolver = AGING_TABLE_RECIPES[slot.id];
+        const productId = resolver ? resolver() : slot.id;
+        if (!productId) {
+          c.agingItem = null;
+          addLog(logT('agingTableWaterGone', {}, '放置台里的水消失了。'));
+          continue;
+        }
+
+        c.agingItem = { id: productId, remaining: 0, ready: true };
+        discoverItem(productId);
+        maybeUnlockAdventureForItem(productId);
+        addLog(logT('agingTableReady', { item: itemDisplay(productId) }, `放置台产出了${ITEMS[productId]?.name || productId}`));
+      }
+    }
+  }
+
+  function tickTimedProcesses() {
+    tickEggIncubation();
+    tickPlants();
+    tickAgingTables();
   }
 
   function checkLevel() {
@@ -2817,7 +3092,21 @@
     if (type === 'wolf') return mapIconMarkup('wolf');
     if (type === 'chicken') return mapIconMarkup('chicken');
     if (type === 'cow') return mapIconMarkup('cow');
+    if (type === 'liangtian_dog') return mapIconMarkup('liangtian_dog');
     return '';
+  }
+
+  function discoverVisibleMapEntries(c) {
+    if (c.stone) return;
+    if (c.spawn) discoverMapEntry('spawn');
+    if (c.ground === 'water') discoverMapEntry('water');
+    cellAnimals(c).forEach(animal => discoverMapEntry(animal.type));
+    if (c.structure === 'treasure_chest' || c.structure === 'bag' || c.structure === 'golden' ||
+      c.structure === 'silver_box' || c.structure === 'crystal_ball' || c.structure === 'shelter') {
+      discoverMapEntry(c.structure);
+    }
+    if (c.plant === 'tree' || (c.plant === 'sapling' && c.treeHits >= 3)) discoverMapEntry('tree');
+    if (c.plant === 'bush') discoverMapEntry('bush');
   }
 
   function cellIconMarkup(x, y) {
@@ -2826,6 +3115,7 @@
     if (c.structure === 'bridge') return itemCellIconMarkup('bridge');
     if (c.ground === 'water') return '';
     if (c.spawn) return mapIconMarkup('spawn');
+    if (c.structure === 'aging_table' && c.agingItem) return itemCellIconMarkup(c.agingItem.id);
     if (c.structure) {
       const itemId = STRUCTURE_ITEM_IDS[c.structure];
       return itemId
@@ -2835,6 +3125,7 @@
     if (c.plant === 'fruit') return itemCellIconMarkup('fruit');
     if (c.plant === 'veg') return itemCellIconMarkup('veg');
     if (c.plant === 'potato') return itemCellIconMarkup('potato');
+    if (c.plant === 'potato_crop') return c.potatoHits >= 3 ? itemCellIconMarkup('potato') : itemCellIconMarkup('sprouted_potato');
     if (c.plant === 'carrot') return itemCellIconMarkup('carrot');
     if (c.plant === 'sapling') return c.treeHits >= 3 ? mapIconMarkup('tree') : itemCellIconMarkup('sapling');
     if (c.plant === 'tree') return mapIconMarkup('tree');
@@ -2843,7 +3134,6 @@
     if (c.groundLoot) {
       return itemCellIconMarkup(c.groundLoot.id);
     }
-    if (c.incubatingEgg > 0) return itemCellIconMarkup('egg');
     return '';
   }
 
@@ -2900,6 +3190,86 @@
     return list;
   }
 
+  function dogBackpackTitle() {
+    return `${iconToken('entity', 'liangtian_dog')} ${t('codex.mapEntries.liangtian_dog.name', {}, '良田犬')}`;
+  }
+
+  function dogCarriableInventorySlots() {
+    return inventory
+      .map((slot, index) => ({ ...slot, index }))
+      .filter(slot => canDogCarryItem(slot.id));
+  }
+
+  function openLiangtianDogBackpack(dog) {
+    if (!dog?.alive) return;
+    setModalVariant(null);
+    setRichText('modal-title', dogBackpackTitle());
+    const body = document.getElementById('modal-body');
+    const slot = dog.bagItem;
+    let html = '';
+
+    if (slot) {
+      const itemName = itemDisplay(slot.id);
+      html += `<p>${richTextMarkup(slot.giftReady
+        ? t('log.dogGiftReady', { item: itemName }, `小狗的感谢礼：${ITEMS[slot.id]?.name || slot.id}`)
+        : t('log.dogBackpackWaiting', { item: itemName }, `良田犬背着${ITEMS[slot.id]?.name || slot.id}，等一个夜晚过去。`))}</p>`;
+      html += `<div class="merchant-item">${richTextMarkup(itemName)}</div>`;
+      if (slot.giftReady) {
+        html += `<button type="button" class="merchant-item" data-dog-take="1">${escapeHtml(t('craft.take', {}, '取出'))}</button>`;
+      }
+    } else {
+      const slots = dogCarriableInventorySlots();
+      html += `<p>${richTextMarkup(t('log.dogBackpackEmpty', {}, '良田犬的背包是空的。'))}</p>`;
+      if (!slots.length) {
+        html += `<p class="hint">${escapeHtml(t('log.dogNoCarriableItem', {}, '没有可放入小狗背包的物品。'))}</p>`;
+      } else {
+        slots.forEach(slotInfo => {
+          html += `<button type="button" class="merchant-item" data-dog-put="${escapeHtml(slotInfo.id)}">
+            ${richTextMarkup(itemDisplay(slotInfo.id))}
+          </button>`;
+        });
+      }
+    }
+
+    body.innerHTML = html;
+    body.querySelectorAll('[data-dog-put]').forEach(button => {
+      button.onclick = () => {
+        const id = button.dataset.dogPut;
+        if (dog.bagItem) return;
+        if (!canDogCarryItem(id)) {
+          addLog(logT('dogCannotCarryItem', {}, '这个物品不能放进小狗背包。'));
+          return;
+        }
+        if (!removeItem(id)) return;
+        dog.bagItem = { id, giftReady: false };
+        dog.seekPlayer = false;
+        addLog(logT('dogBackpackPut', { item: itemDisplay(id) }, `把${ITEMS[id]?.name || id}放进良田犬的背包。`));
+        renderInv();
+        render();
+        openLiangtianDogBackpack(dog);
+      };
+    });
+    body.querySelectorAll('[data-dog-take]').forEach(button => {
+      button.onclick = () => {
+        if (!dog.bagItem?.giftReady) return;
+        const id = dog.bagItem.id;
+        if (!addItem(id)) {
+          addLog(logT('dogGiftInventoryFull', {}, '背包已满，小狗的感谢礼暂时取不下。'));
+          renderInv();
+          return;
+        }
+        dog.bagItem = null;
+        dog.seekPlayer = false;
+        addLog(logT('dogGiftTake', { item: itemDisplay(id) }, `取出小狗的感谢礼：${ITEMS[id]?.name || id}`));
+        renderInv();
+        render();
+        openLiangtianDogBackpack(dog);
+      };
+    });
+    setModalCloseFooter();
+    document.getElementById('modal').classList.add('show');
+  }
+
   function interactCell(x, y) {
     const c = grid[y][x];
     if (c.stone) {
@@ -2927,6 +3297,10 @@
     if (animal) {
       if (placedMode) {
         addLog(logT('cannotPlaceHere', {}, 'Cannot place here.'));
+        return;
+      }
+      if (animal.type === 'liangtian_dog') {
+        openLiangtianDogBackpack(animal);
         return;
       }
       if (animal.type === 'chicken') {
@@ -2969,6 +3343,20 @@
       return;
     }
 
+    if (!placedMode && c.structure === 'aging_table') {
+      if (!c.agingItem) {
+        addLog(logT('agingTableEmpty', {}, '放置台是空的。站在上面点击可发酵物品放入。'));
+      } else if (addItem(c.agingItem.id)) {
+        const itemId = c.agingItem.id;
+        c.agingItem = null;
+        addLog(logT('agingTableTake', { item: itemDisplay(itemId) }, `取出${ITEMS[itemId]?.name || itemId}`));
+      } else {
+        addLog(logT('inventoryFull', {}, 'Inventory full!'));
+      }
+      render();
+      return;
+    }
+
     if (placedMode === 'sapling') {
       if (!nearWater(x, y)) { addLog(logT('needSaplingNearWater', {}, 'Sapling must be planted near water.')); return; }
       if (c.ground !== 'normal' || c.plant || c.structure || hasAnimals(c) || c.groundLoot) { addLog(logT('cannotPlantHere', {}, 'Cannot plant here.')); return; }
@@ -2994,13 +3382,34 @@
       return;
     }
 
+    if (placedMode === 'potato') {
+      if (!nearWater8(x, y)) { addLog(logT('potatoNeedsWater8', {}, '发芽的土豆必须种在水边八格内的地面。')); return; }
+      if (!canPlaceOnCell(x, y)) { addLog(logT('cannotFarmHere', {}, 'Cannot farm here.')); return; }
+      if (!removeItem('sprouted_potato')) return;
+      c.plant = 'potato_crop';
+      c.potatoHits = 0;
+      placedMode = null;
+      addLog(logT('plantPotato', {}, '种下发芽的土豆。'));
+      render();
+      return;
+    }
+
     if (placedMode === 'egg') {
-      if (!adjacentToMatureWheat(x, y)) { addLog(logT('eggNeedsWheat', {}, 'Egg must be placed near mature wheat.')); return; }
+      if (c.structure === 'hay_nest') {
+        if (!canPlaceNestEggCell(x, y)) { addLog(logT('cannotPlaceEgg', {}, 'Cannot place egg here.')); return; }
+        if (!removeItem('egg')) return;
+        c.incubatingEgg = 3;
+        placedMode = null;
+        addLog(logT('placeEggOnNest', {}, '鸡蛋放进干草窝，再过3个时间单位会孵出小鸡。'));
+        render();
+        return;
+      }
+      if (!adjacentToMatureWheat(x, y)) { addLog(logT('eggNeedsWheatOrNest', {}, '鸡蛋需要放在干草窝上，或成熟小麦旁的空地。')); return; }
       if (!canPlaceEggCell(x, y)) { addLog(logT('cannotPlaceEgg', {}, 'Cannot place egg here.')); return; }
       if (!removeItem('egg')) return;
-      c.incubatingEgg = 4;
+      c.incubatingEgg = 3;
       placedMode = null;
-      addLog(logT('placeEgg', {}, 'Placed egg. Mine 4 stones to hatch it.'));
+      addLog(logT('placeEgg', {}, 'Placed egg. Mine 3 stones to hatch it.'));
       render();
       return;
     }
@@ -3030,6 +3439,7 @@
         grid[cy][cx].structure = 'shelter';
       }
       placedMode = null;
+      discoverMapEntry('shelter');
       addLog(logT('buildShelter', {}, 'Built a shelter.'));
       render();
       return;
@@ -3085,6 +3495,16 @@
       return;
     }
 
+    if (c.plant === 'potato_crop' && c.potatoHits >= 3) {
+      addItem('potato', 3);
+      c.plant = null;
+      c.potatoHits = 0;
+      unlockAdventureAchievement('harvested_potato');
+      addLog(logT('harvestPotato', {}, '收获土豆×3。'));
+      render();
+      return;
+    }
+
     if (c.structure === 'treasure_chest') {
       const loot = ['rod','iron_sword','stone_axe','coin'][Math.floor(Math.random() * 4)];
       const id = loot === 'coin' ? 'coin' : loot;
@@ -3136,7 +3556,7 @@
     if (c.structure === 'shelter') {
       player.breaks++;
       onBreakEffects();
-      tickPlants();
+      tickTimedProcesses();
       addLog(logT('restShelter', {}, 'Rested at shelter.'));
       render();
       return;
@@ -3242,6 +3662,7 @@
     eggGuaranteed = false;
     merchantBought = { rod: false, sword: false, axe: false };
     goldenBoxSpawned = 0;
+    liangtianDogSpawned = false;
     devToolsActive = false;
     devIgnoreStaminaLimit = false;
     devIgnoreInventoryLimit = false;
@@ -3421,13 +3842,20 @@
     animals.forEach(({ x, y, animal }) => {
       const c = grid[y]?.[x];
       if (!c || !cellAnimals(c).includes(animal)) return;
-      if (chebDist(x, y, player.x, player.y) > 4) return;
+      const seekingPlayer = animal.type === 'liangtian_dog' && animal.bagItem?.giftReady;
+      if (!seekingPlayer && chebDist(x, y, player.x, player.y) > 4) return;
       const opts = adjacent(x, y).filter(([ax, ay]) => canMoveTo(ax, ay));
       if (!opts.length) return;
-      if (Math.random() > 0.35) return;
-      const [nx, ny] = opts[Math.floor(Math.random() * opts.length)];
+      if (Math.random() > (seekingPlayer ? 0.8 : 0.35)) return;
+      const nextOptions = seekingPlayer
+        ? opts.filter(([ax, ay]) => {
+          const bestDistance = Math.min(...opts.map(([ox, oy]) => chebDist(ox, oy, player.x, player.y)));
+          return chebDist(ax, ay, player.x, player.y) === bestDistance;
+        })
+        : opts;
+      const [nx, ny] = nextOptions[Math.floor(Math.random() * nextOptions.length)];
       removeAnimalFromCell(c, animal);
-      addAnimalToCell(grid[ny][nx], animal.type);
+      addAnimalToCell(grid[ny][nx], animal);
     });
   }
 
@@ -3441,7 +3869,8 @@
 
   const COOK_STATIONS = new Set(['campfire', 'iron_plate', 'mill', 'prep_table', 'oven']);
   const CRAFT_STATIONS = new Set(['toolbox', 'forge']);
-  const RECIPE_STATIONS = new Set([...COOK_STATIONS, ...CRAFT_STATIONS]);
+  const AGE_STATIONS = new Set(['aging_table']);
+  const RECIPE_STATIONS = new Set([...COOK_STATIONS, ...CRAFT_STATIONS, ...AGE_STATIONS]);
   const STATION_LABELS = {
     toolbox: t('stations.toolbox', {}, 'Toolbox'),
     forge: t('stations.forge', {}, 'Forge'),
@@ -3450,6 +3879,7 @@
     mill: t('stations.mill', {}, 'Mill'),
     prep_table: t('stations.prep_table', {}, 'Prep table'),
     oven: t('stations.oven', {}, 'Oven'),
+    aging_table: t('stations.aging_table', {}, 'Aging table'),
   };
 
   function refreshStationLabels() {
@@ -3460,6 +3890,7 @@
     STATION_LABELS.mill = t('stations.mill', {}, 'Mill');
     STATION_LABELS.prep_table = t('stations.prep_table', {}, 'Prep table');
     STATION_LABELS.oven = t('stations.oven', {}, 'Oven');
+    STATION_LABELS.aging_table = t('stations.aging_table', {}, 'Aging table');
   }
   const COOK_FOODS = [...new Set(RECIPES
     .filter(recipe => COOK_STATIONS.has(recipe.station))
@@ -3484,7 +3915,7 @@
   }, {});
 
   const STATION_HINT_OUTPUTS = {
-    toolbox: ['forge', 'flint', 'chest', 'campfire', 'wood_plank'],
+    toolbox: ['forge', 'flint', 'chest', 'campfire', 'wood_plank', 'aging_table', 'hay_nest'],
   };
   const RECIPE_HINT_INPUTS = {
     forge: ['stone', 'iron'],
@@ -3492,6 +3923,8 @@
     chest: ['wood', 'wood'],
     campfire: ['wood', 'flint'],
     wood_plank: ['wood', 'stone_axe'],
+    aging_table: ['wood_plank', 'stone_slab'],
+    hay_nest: ['hay', 'hay'],
   };
 
   function recipeHintText(id, count = 1) {
@@ -3566,6 +3999,10 @@
     const mode = getCraftMode();
     const station = stationForMode(mode);
     if (!station) return false;
+    if (mode === 'age') {
+      const table = currentAgingTableCell();
+      return canAgeItem(id) && !table?.agingItem;
+    }
     return RECIPES.some(recipe => recipe.station === station && recipe.inputs.includes(id));
   }
 
@@ -3574,6 +4011,7 @@
     const station = currentRecipeStation();
     if (station) {
       if (CRAFT_STATIONS.has(station)) return station === 'forge' ? 'forge' : 'make';
+      if (AGE_STATIONS.has(station)) return 'age';
       if (COOK_STATIONS.has(station)) {
         if (station !== 'campfire') return 'cook';
         return countItem('iron_pot') > 0 ? 'cook' : null;
@@ -3636,7 +4074,7 @@
 
   function canPlaceOnCell(x, y) {
     const c = grid[y][x];
-    return !c.stone && c.ground === 'normal' && !c.plant && !c.structure && !hasAnimals(c) && !c.groundLoot;
+    return !c.stone && c.ground === 'normal' && !c.plant && !c.structure && !hasAnimals(c) && !c.incubatingEgg && !c.groundLoot;
   }
 
   function canPlaceEggCell(x, y) {
@@ -3679,6 +4117,21 @@
     if (mode === 'cook' && !COOK_FOODS.includes(itemId)) {
       addLog(t('craft.wrongCookRecipe', {}, 'Wrong cooking ingredient.'));
       return false;
+    }
+    if (mode === 'age') {
+      const table = currentAgingTableCell();
+      if (table?.agingItem) {
+        addLog(logT('agingTableOccupied', {}, '放置台里已经有物品了，先取出来吧。'));
+        return false;
+      }
+      if (slotIndex !== 0) {
+        addLog(logT('agingTableOneSlot', {}, '放置台一次只放一格物品，请放入左侧格子。'));
+        return false;
+      }
+      if (!canAgeItem(itemId)) {
+        addLog(logT('agingTableWrongItem', {}, '这个物品暂时不能放进放置台。'));
+        return false;
+      }
     }
     if ((mode === 'make' || mode === 'forge') && COOK_FOODS.includes(itemId)) {
       addLog(t('craft.needStation', {}, 'Use a cooking station for food.'));
@@ -3790,6 +4243,17 @@
       title.textContent = station === 'mill' ? t('craft.mill', {}, 'Mill') : station === 'prep_table' ? t('craft.prep', {}, 'Prep') : station === 'oven' ? t('craft.oven', {}, 'Bake') : t('craft.cook', {}, 'Cook');
       hint.innerHTML = stationRecipeHintHtml(station);
       craftBtn.textContent = title.textContent;
+    } else if (mode === 'age') {
+      title.textContent = t('craft.age', {}, '放置');
+      const table = currentAgingTableCell();
+      const slot = table.agingItem;
+      hint.innerHTML = slot
+        ? richTextMarkup(t(slot.ready ? 'craft.agingTableReadyHint' : 'craft.agingTableOccupied', {
+          item: itemDisplay(slot.id),
+          remaining: slot.remaining,
+        }, slot.ready ? `放置台内：${ITEMS[slot.id]?.name || slot.id}，点击放置台取出。` : `放置台内：${ITEMS[slot.id]?.name || slot.id}，还需 ${slot.remaining} 个时间单位。`))
+        : richTextMarkup(t('craft.agingTableHint', {}, '把牛奶、水果，或其他你能想到的东西放进左侧格子，3个时间单位后查看结果。'));
+      craftBtn.textContent = slot?.ready ? t('craft.take', {}, '取出') : t('craft.age', {}, '放置');
     } else {
       title.textContent = t('craft.combine', {}, 'Combine');
       hint.innerHTML = richTextMarkup(t('craft.lockedHint', {}, 'Stand on a tool tile or near campfire with pot.'));
@@ -3806,6 +4270,37 @@
     const r3 = document.getElementById('c3');
     const r3Icon = document.getElementById('c3-icon');
     const r3Name = document.getElementById('c3-name');
+    if (mode === 'age') {
+      const table = currentAgingTableCell();
+      const slot = table?.agingItem;
+      const input = craftSlots[0];
+      const blockedBySecondSlot = !!craftSlots[1];
+      if (slot) {
+        r3Icon.innerHTML = itemIconMarkup(slot.id, 'item-icon', '?');
+        r3Name.textContent = slot.ready
+          ? t('craft.agingReady', {}, '可取出')
+          : t('craft.agingRemaining', { remaining: slot.remaining }, `剩余${slot.remaining}`);
+        r3.dataset.result = slot.ready ? 'age:take' : '';
+        r3.title = slot.ready ? t('craft.collectResultTitle', {}, 'Click to collect result') : '';
+        document.getElementById('craft-btn').disabled = !slot.ready;
+      } else if (input && canAgeItem(input) && !blockedBySecondSlot) {
+        r3Icon.innerHTML = itemIconMarkup('aging_table', 'item-icon', '?');
+        r3Name.textContent = t('craft.placeForAging', {}, '放入等待');
+        r3.dataset.result = 'age:place';
+        r3.title = t('craft.placeForAgingTitle', {}, '点击放入放置台');
+        document.getElementById('craft-btn').disabled = false;
+      } else {
+        r3Icon.textContent = mode ? '?' : '';
+        r3Name.textContent = blockedBySecondSlot
+          ? t('craft.agingOneSlot', {}, '只放左侧一格')
+          : t('craft.placeOneItem', {}, '放入一格物品');
+        r3.dataset.result = '';
+        r3.title = '';
+        document.getElementById('craft-btn').disabled = true;
+      }
+      return;
+    }
+
     if (result) {
       const { id, count } = unpackResult(result);
       r3Icon.innerHTML = itemIconMarkup(id, 'item-icon', '?');
@@ -3823,6 +4318,10 @@
   function doCraft() {
     const result = document.getElementById('c3').dataset.result;
     const mode = getCraftMode();
+    if (mode === 'age') {
+      doAgingTableAction();
+      return;
+    }
     if (!result || !mode) {
       if (mode === 'cook') addLog(t('craft.wrongCookRecipe', {}, 'Wrong cooking recipe.'));
       else if (slotsHaveFood() && !canCookHere()) addLog(t('craft.needCampfireAndPot', {}, 'Cooking needs campfire and pot.'));
@@ -3861,6 +4360,52 @@
 
     updateCraft();
     renderInv();
+  }
+
+  function doAgingTableAction() {
+    const table = currentAgingTableCell();
+    if (!table) {
+      addLog(t('craft.needStation', {}, 'Stand on the matching station.'));
+      return;
+    }
+    if (table.agingItem) {
+      if (!table.agingItem.ready) {
+        addLog(logT('agingTableNotReady', { remaining: table.agingItem.remaining }, `还需要${table.agingItem.remaining}个时间单位。`));
+        return;
+      }
+      const itemId = table.agingItem.id;
+      if (!addItem(itemId)) {
+        addLog(logT('inventoryFull', {}, 'Inventory full!'));
+        return;
+      }
+      table.agingItem = null;
+      addLog(logT('agingTableTake', { item: itemDisplay(itemId) }, `取出${ITEMS[itemId]?.name || itemId}`));
+      updateCraft();
+      renderInv();
+      render();
+      return;
+    }
+
+    const [itemId, extraItemId] = craftSlots;
+    if (extraItemId) {
+      addLog(logT('agingTableOneSlot', {}, '放置台一次只放一格物品，请放入左侧格子。'));
+      return;
+    }
+    if (!itemId) {
+      addLog(logT('agingTableNeedItem', {}, '请先把要等待的物品放进左侧格子。'));
+      return;
+    }
+    if (!canAgeItem(itemId)) {
+      addLog(logT('agingTableWrongItem', {}, '这个物品暂时不能放进放置台。'));
+      return;
+    }
+
+    craftSlots = [null, null];
+    table.agingItem = { id: itemId, remaining: 3, ready: false };
+    addLog(logT('agingTableStart', { item: itemDisplay(itemId) }, `把${ITEMS[itemId]?.name || itemId}放入放置台，等待3个时间单位。`));
+    updateCraft();
+    renderInv();
+    render();
   }
 
   function handleCraftDrop(slotIndex, data) {
@@ -4061,6 +4606,7 @@
   /** Items that trigger directly on inventory click; other items are selected for crafting. */
   function invItemQuickUse(id) {
     if (!id || !ITEMS[id]) return false;
+    if (currentAgingTableCell() && canAgeItem(id)) return true;
     if (isPlaceableItem(id)) return true;
     if (ITEMS[id].use || ITEMS[id].plant) return true;
     if (id === 'wheat_seed' || id === 'rod' || id === 'building' || id === 'iron_bucket') return true;
@@ -4071,6 +4617,14 @@
     const it = inventory[idx];
     if (!it) return;
     const id = it.id;
+
+    if (currentAgingTableCell() && canAgeItem(id)) {
+      craftPickId = id;
+      selectedInv = null;
+      addLog(logT('agingTableSelectSlot', { item: itemDisplay(id) }, `已选${ITEMS[id]?.name || id}，请点左侧放置格。`));
+      renderInv();
+      return;
+    }
 
     if (ITEMS[id]?.use) {
       const u = ITEMS[id].use;
@@ -4119,13 +4673,25 @@
     }
     if (id === 'rod') {
       if (!playerAdjacentTo('water')) { addLog(logT('needWaterForFishing', {}, 'Need to stand near water to fish.')); return; }
-      if (Math.random() < 0.6) { addItem('fish'); addLog(logT('caughtFish', {}, 'Caught a fish.')); }
-      else addLog(logT('noFish', {}, 'No fish.'));
+      const hasFisherFish = countItem('fisher_fish') > 0;
+      if (Math.random() < 0.05) {
+        addItem('fisher_fish');
+        addLog(logT('caughtFisherFish', {}, 'Caught a Fisher Fish.'));
+      } else if (hasFisherFish || Math.random() < 0.6) {
+        addItem('fish');
+        addLog(logT('caughtFish', {}, 'Caught a fish.'));
+      } else {
+        addLog(logT('noFish', {}, 'No fish.'));
+      }
       renderInv();
       return;
     }
     if (id === 'wheat_seed') {
       togglePlacedMode('wheat', logT('wheatMode', {}, 'Farming mode: click a tile that once had a tree.'));
+      return;
+    }
+    if (id === 'sprouted_potato') {
+      togglePlacedMode('potato', logT('potatoMode', {}, '土豆种植模式：点水边八格内的空地（再点发芽的土豆取消）'));
       return;
     }
     if (id === 'egg') {
@@ -4210,6 +4776,19 @@
       addLog(logT('placePrepTable', {}, 'Placed prep table.'));
       return true;
     }
+    if (placedMode === 'place_aging_table' && removeItem('aging_table')) {
+      c.structure = 'aging_table';
+      c.agingItem = null;
+      placedMode = null;
+      addLog(logT('placeAgingTable', {}, '放置放置台，站在格上可放入一格物品等待变化。'));
+      return true;
+    }
+    if (placedMode === 'place_hay_nest' && removeItem('hay_nest')) {
+      c.structure = 'hay_nest';
+      placedMode = null;
+      addLog(logT('placeHayNest', {}, '放置干草窝，鸡蛋可以放在上面孵化。'));
+      return true;
+    }
     return false;
   }
 
@@ -4273,16 +4852,25 @@
         if (placedMode === 'place_prep_table' && canPlaceOnCell(x, y)) {
           el.classList.add('breakable');
         }
+        if (placedMode === 'place_aging_table' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
+        if (placedMode === 'place_hay_nest' && canPlaceOnCell(x, y)) {
+          el.classList.add('breakable');
+        }
         if (placedMode === 'place_bridge' && canPlaceBridge(x, y)) {
           el.classList.add('breakable');
         }
         if (placedMode === 'wheat' && !c.stone && c.hadTree && canPlaceOnCell(x, y)) {
           el.classList.add('breakable');
         }
+        if (placedMode === 'potato' && !c.stone && canPlacePotatoCropCell(x, y)) {
+          el.classList.add('breakable');
+        }
         if (placedMode === 'building' && canPlaceBuildingAt(x, y)) {
           el.classList.add('breakable');
         }
-        if (placedMode === 'egg' && canPlaceEggCell(x, y) && adjacentToMatureWheat(x, y)) {
+        if (placedMode === 'egg' && ((canPlaceEggCell(x, y) && adjacentToMatureWheat(x, y)) || canPlaceNestEggCell(x, y))) {
           el.classList.add('breakable');
         }
         if (placedMode === 'milk' && canMilkCowAt(x, y)) {
@@ -4291,7 +4879,9 @@
 
         let icon = '';
         if (see) {
+          discoverVisibleMapEntries(c);
           const cellIcon = cellIconMarkup(x, y);
+          const eggIcon = c.incubatingEgg > 0 ? itemCellIconMarkup('egg') : '';
           const animalIcons = cellAnimals(c)
             .slice()
             .sort((a, b) => (ANIMAL_LAYER_RANK[a.type] || 0) - (ANIMAL_LAYER_RANK[b.type] || 0))
@@ -4302,9 +4892,10 @@
               return `<span class="cell-icon-layer cell-animal-layer" data-animal="${escapeHtml(animal.type)}" style="z-index:${layer}">${animalIcon}</span>`;
             }).join('');
           const playerIcon = x === player.x && y === player.y ? mapIconMarkup('player') : '';
-          if (cellIcon || animalIcons || playerIcon) {
+          if (cellIcon || eggIcon || animalIcons || playerIcon) {
             icon = [
               cellIcon ? `<span class="cell-icon-layer cell-content-layer">${cellIcon}</span>` : '',
+              eggIcon ? `<span class="cell-icon-layer cell-egg-layer">${eggIcon}</span>` : '',
               animalIcons,
               playerIcon ? `<span class="cell-icon-layer cell-player-layer">${playerIcon}</span>` : '',
             ].join('');
@@ -4437,6 +5028,13 @@
         <span>${escapeHtml(def.name || id)}</span>
       </button>
     `).join('') || `<div class="hint">${escapeHtml(t('devTools.noItemMatches', {}, 'No matching items'))}</div>`;
+
+    document.getElementById('dev-animal-list').innerHTML = DEV_ANIMAL_TYPES.map(type => `
+      <button type="button" class="dev-item" data-animal="${escapeHtml(type)}" title="${escapeHtml(t('devTools.spawnAnimalTitle', { animal: animalDisplayName(type) }, `Spawn ${animalDisplayName(type)}`))}">
+        <span class="dev-item-icon">${mapIconMarkup(type, '?')}</span>
+        <span>${escapeHtml(animalDisplayName(type))}</span>
+      </button>
+    `).join('');
   }
 
   function closeDevTools() {
@@ -4529,6 +5127,12 @@
         }
         if (invItemQuickUse(id) && !itemCanBeCraftedHere(id)) {
           craftPickId = null;
+          useInvItem(idx);
+          return;
+        }
+        if (craftPickId === id && id === 'egg') {
+          craftPickId = null;
+          selectedInv = null;
           useInvItem(idx);
           return;
         }
@@ -4650,6 +5254,12 @@
       renderInv();
       renderDevTools();
     }
+  });
+  document.getElementById('dev-animal-list').addEventListener('click', e => {
+    const button = e.target.closest('.dev-item[data-animal]');
+    if (!button || !devToolsActive) return;
+    spawnAnimalAtPlayerDev(button.dataset.animal);
+    renderDevTools();
   });
   setupCraftDragDrop();
   document.getElementById('btn-victory-restart').onclick = () => restartGame();

@@ -20,6 +20,8 @@ window.MINIPLAIN_RECIPES = [
   { station: 'toolbox', inputs: ['stone', 'wood_plank'], output: 'bridge' },
   { station: 'toolbox', inputs: ['stone_slab', 'stone'], output: 'mill' },
   { station: 'toolbox', inputs: ['wood_plank', 'wood'], output: 'prep_table' },
+  { station: 'toolbox', inputs: ['wood_plank', 'stone_slab'], output: 'aging_table' },
+  { station: 'toolbox', inputs: ['hay', 'hay'], output: 'hay_nest' },
   { station: 'toolbox', inputs: ['stone_axe', 'wood'], output: 'wood_plank', returns: [{ id: 'stone_axe', count: 1 }] },
   { station: 'toolbox', inputs: ['iron_sheet', 'iron_sheet'], output: 'iron_bucket' },
   { station: 'toolbox', inputs: ['hammer', 'iron'], output: 'iron_sheet', returns: [{ id: 'hammer', count: 1 }] },
@@ -90,7 +92,7 @@ window.MINIPLAIN_RECIPES = [
 
   { station: 'prep_table', inputs: ['flour', 'milk'], output: 'rich_dough' },
   { station: 'prep_table', inputs: ['flour', 'water'], output: 'dough' },
-  { station: 'prep_table', inputs: ['dough', 'egg'], output: 'cake_base' },
+  { station: 'prep_table', inputs: ['rich_dough', 'egg'], output: 'cake_base' },
   { station: 'prep_table', inputs: ['bread', 'original_chicken'], output: 'chicken_burger' },
   { station: 'prep_table', inputs: ['bread', 'plain_steak'], output: 'beef_burger' },
 

@@ -292,6 +292,32 @@ function drawFish(c, grilled = false) {
   }
 }
 
+function drawFisherFish(c) {
+  shadow(c);
+  const outline = palette.brownDark;
+  const head = '#f3bd8c';
+  const headLight = '#ffe2bd';
+  const body = '#e85f45';
+  const bodyLight = '#ff7c55';
+  const bodyDark = '#a85b45';
+  const tail = '#35534b';
+
+  c.ellipse(14, 16, 11, 7, outline);
+  c.ellipse(11, 15, 7, 6, head);
+  c.rect(8, 12, 5, 3, headLight);
+  c.rect(11, 10, 8, 2, headLight);
+  c.rect(15, 12, 5, 11, body);
+  c.rect(17, 12, 6, 9, bodyLight);
+  c.rect(14, 20, 10, 3, bodyDark);
+  c.line(15, 21, 22, 14, bodyDark);
+  c.rect(24, 14, 5, 4, outline);
+  c.rect(24, 18, 5, 5, outline);
+  c.rect(23, 15, 4, 4, tail);
+  c.rect(24, 20, 3, 3, tail);
+  c.rect(25, 16, 3, 1, '#496b62');
+  c.set(11, 15, palette.brownDark);
+}
+
 function drawEgg(c, fried = false) {
   shadow(c);
   if (fried) {
@@ -584,6 +610,45 @@ function drawWolf(c) {
   c.rect(19, 22, 2, 6, palette.line);
 }
 
+function drawLiangtianDog(c) {
+  shadow(c);
+  const fur = '#f6f0df';
+  const furLight = '#fffdf2';
+  const furDark = '#d7c8ad';
+  const outline = palette.brownDark;
+
+  c.ellipse(14, 19, 9, 6, outline);
+  c.ellipse(14, 18, 8, 5, fur);
+  c.ellipse(10, 17, 4, 4, outline);
+  c.ellipse(10, 17, 3, 3, furLight);
+  c.ellipse(17, 16, 6, 4, furLight);
+  c.rect(9, 22, 3, 5, outline);
+  c.rect(10, 22, 2, 4, fur);
+  c.rect(17, 22, 3, 5, outline);
+  c.rect(18, 22, 2, 4, fur);
+
+  c.ellipse(23, 13, 7, 6, outline);
+  c.ellipse(23, 12, 6, 5, furLight);
+  c.ellipse(19, 14, 4, 6, outline);
+  c.ellipse(19, 14, 3, 5, furDark);
+  c.ellipse(27, 15, 3, 5, outline);
+  c.ellipse(27, 15, 2, 4, furDark);
+  c.ellipse(24, 15, 4, 3, fur);
+  c.rect(22, 12, 1, 1, palette.line);
+  c.rect(26, 12, 1, 1, palette.line);
+  c.rect(24, 15, 2, 2, palette.line);
+  c.line(24, 17, 23, 18, outline);
+  c.line(25, 17, 26, 18, outline);
+  c.rect(21, 9, 4, 2, furLight);
+  c.rect(17, 11, 4, 2, '#eee0c6');
+
+  c.ellipse(6, 13, 5, 5, outline);
+  c.ellipse(7, 13, 4, 4, fur);
+  c.ellipse(8, 14, 2, 2, '#00000000');
+  c.rect(7, 17, 5, 3, outline);
+  c.rect(8, 17, 4, 2, fur);
+}
+
 function drawTree(c) {
   shadow(c);
   c.rect(13, 15, 7, 12, palette.brownDark);
@@ -866,6 +931,7 @@ const drawers = {
   wheat_seed: c => drawWheat(c, true),
   wheat: c => drawWheat(c, false),
   fish: drawFish,
+  fisher_fish: drawFisherFish,
   egg: drawEgg,
   chicken: c => drawMeat(c, 'chicken', false),
   beef: c => drawMeat(c, 'beef', false),
@@ -903,6 +969,7 @@ const entityDrawers = {
   chicken: drawLiveChicken,
   cow: drawCow,
   wolf: drawWolf,
+  liangtian_dog: drawLiangtianDog,
   tree: drawTree,
   bush: drawBush,
   treasure_chest: drawTreasureChest,
